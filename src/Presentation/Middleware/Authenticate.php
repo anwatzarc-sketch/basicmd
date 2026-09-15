@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aster\Presentation\Middleware;
 
 use Aster\Application\Service\AuthService;
+use Aster\Infrastructure\Persistence\AuditLogger;
 use Aster\Infrastructure\Security\SessionManager;
 use Aster\Infrastructure\Support\Config;
 use Aster\Presentation\Http\Request;
@@ -18,7 +19,16 @@ use Aster\Presentation\Http\Response;
  * were trying to go. Request::safeRedirectTarget() validates that value on
  * the way back out, so the parameter cannot become an open redirect.
  *
- * Also enforces the session timeouts and the must-change-password gate.
+ * Also enforces the session timeouts and the must-change-password gate, and
+ * binds the resolved user onto the shared AuditLogger - before this, only
+ * AuthService::login()/logout() ever called withActor(), so every OTHER
+ * audit row written during an authenticated request (creating a user,
+ * verifying a payment, updating an appointment...) was silently recorded
+ * with user_id and actor_label both NULL. Confirmed against the live
+ * audit_logs table before this fix: `user.created` rows carried no actor
+ * at all. AuditLogger is a per-request singleton, so binding the actor
+ * once here makes every later ->record() call in the SAME request
+ * correctly attributed, with no change needed at each call site.
  */
 final readonly class Authenticate
 {
@@ -26,6 +36,7 @@ final readonly class Authenticate
         private AuthService $auth,
         private SessionManager $session,
         private Config $config,
+        private AuditLogger $audit,
     ) {
     }
 
@@ -57,6 +68,14 @@ final readonly class Authenticate
 
         // Cached on the request so controllers and views need not re-query.
         $GLOBALS['aster_current_user'] = $user;
+
+        // See this class's docblock: without this, every audit row written
+        // for the rest of the request would have no actor attached.
+        $this->audit->withActor(
+            $user,
+            $request->ipBinary($this->config->trustProxy()),
+            $request->userAgent(),
+        );
 
         return $next($request)->withoutCache();
     }

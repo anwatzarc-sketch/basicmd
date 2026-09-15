@@ -1,0 +1,32 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Aster\Domain\Repository;
+
+use Aster\Domain\Entity\Encounter;
+use Aster\Domain\ValueObject\VisitNumber;
+
+interface EncounterRepositoryInterface
+{
+    public function findById(int $id): ?Encounter;
+
+    public function findByVisitNumber(VisitNumber $visitNumber): ?Encounter;
+
+    /**
+     * Same as findByVisitNumber(), but takes a row lock held until the
+     * enclosing transaction ends. This is the serialisation point for
+     * EncounterService::upgradeOpdToIpd() - see WardLocationRepositoryInterface's
+     * docblock for why the lock belongs at the interface boundary, not in
+     * the caller.
+     */
+    public function findByVisitNumberForUpdate(VisitNumber $visitNumber): ?Encounter;
+
+    public function findByAppointmentId(int $appointmentId): ?Encounter;
+
+    /** @param array<string, mixed> $data */
+    public function create(array $data): int;
+
+    /** @param array<string, mixed> $data */
+    public function update(int $id, array $data): bool;
+}

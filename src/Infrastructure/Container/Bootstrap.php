@@ -11,6 +11,16 @@ use Aster\Application\Service\NotificationService;
 use Aster\Application\Service\PaymentService;
 use Aster\Application\Service\PricingService;
 use Aster\Application\Service\SeoService;
+use Aster\Domain\Repository\AdvisoryLockInterface;
+use Aster\Domain\Repository\AuditLoggerInterface;
+use Aster\Domain\Repository\EncounterRepositoryInterface;
+use Aster\Domain\Repository\NumberSequenceInterface;
+use Aster\Domain\Repository\PatientRepositoryInterface;
+use Aster\Domain\Repository\StaffDirectoryInterface;
+use Aster\Domain\Repository\TransactionManagerInterface;
+use Aster\Domain\Repository\WardLocationRepositoryInterface;
+use Aster\Domain\Services\EncounterService;
+use Aster\Domain\Services\PatientDeduplicationService;
 use Aster\Infrastructure\Mail\Mailer;
 use Aster\Infrastructure\Mail\MailQueue;
 use Aster\Infrastructure\Mail\MailRenderer;
@@ -19,14 +29,22 @@ use Aster\Infrastructure\Persistence\ArticleRepository;
 use Aster\Infrastructure\Persistence\AuditLogger;
 use Aster\Infrastructure\Persistence\Database;
 use Aster\Infrastructure\Persistence\DoctorRepository;
+use Aster\Infrastructure\Persistence\EncounterRepository;
 use Aster\Infrastructure\Persistence\FacilityRepository;
 use Aster\Infrastructure\Persistence\InquiryRepository;
 use Aster\Infrastructure\Persistence\PackageRepository;
+use Aster\Infrastructure\Persistence\PatientRepository;
 use Aster\Infrastructure\Persistence\PaymentRepository;
+use Aster\Infrastructure\Persistence\PdoAdvisoryLock;
+use Aster\Infrastructure\Persistence\PdoNumberSequence;
+use Aster\Infrastructure\Persistence\PdoTransactionManager;
 use Aster\Infrastructure\Persistence\ServiceRepository;
 use Aster\Infrastructure\Persistence\SettingsRepository;
+use Aster\Infrastructure\Persistence\StaffDirectory;
 use Aster\Infrastructure\Persistence\UserRepository;
+use Aster\Infrastructure\Persistence\WardLocationRepository;
 use Aster\Infrastructure\Security\Csrf;
+use Aster\Infrastructure\Security\Encryptor;
 use Aster\Infrastructure\Security\PasswordHasher;
 use Aster\Infrastructure\Security\RateLimiter;
 use Aster\Infrastructure\Security\SessionManager;
@@ -100,6 +118,12 @@ final class Bootstrap
             InquiryRepository::class,
             FacilityRepository::class,
             UserRepository::class,
+            PdoNumberSequence::class,
+            WardLocationRepository::class,
+            EncounterRepository::class,
+            PdoTransactionManager::class,
+            PdoAdvisoryLock::class,
+            StaffDirectory::class,
         ] as $repository) {
             $container->singleton(
                 $repository,
@@ -107,7 +131,54 @@ final class Bootstrap
             );
         }
 
+        $container->singleton(PatientRepository::class, static fn (Container $c): PatientRepository
+            => new PatientRepository($c->get(Database::class), $c->get(Encryptor::class)));
+
+        // Domain services depend on the interface (ports-in-Domain,
+        // PDO-in-Infrastructure), so each resolves to the same singleton
+        // instance as its concrete class above.
+        $container->singleton(
+            NumberSequenceInterface::class,
+            static fn (Container $c): NumberSequenceInterface => $c->get(PdoNumberSequence::class),
+        );
+        $container->singleton(
+            PatientRepositoryInterface::class,
+            static fn (Container $c): PatientRepositoryInterface => $c->get(PatientRepository::class),
+        );
+        $container->singleton(
+            WardLocationRepositoryInterface::class,
+            static fn (Container $c): WardLocationRepositoryInterface => $c->get(WardLocationRepository::class),
+        );
+        $container->singleton(
+            EncounterRepositoryInterface::class,
+            static fn (Container $c): EncounterRepositoryInterface => $c->get(EncounterRepository::class),
+        );
+        $container->singleton(
+            TransactionManagerInterface::class,
+            static fn (Container $c): TransactionManagerInterface => $c->get(PdoTransactionManager::class),
+        );
+        $container->singleton(
+            AdvisoryLockInterface::class,
+            static fn (Container $c): AdvisoryLockInterface => $c->get(PdoAdvisoryLock::class),
+        );
+        $container->singleton(
+            StaffDirectoryInterface::class,
+            static fn (Container $c): StaffDirectoryInterface => $c->get(StaffDirectory::class),
+        );
+        // AuditLogger already implements AuditLoggerInterface directly -
+        // no separate concrete-vs-interface pair needed, unlike the
+        // repositories above (those have a Pdo*/*Repository split because
+        // their concrete class name differs from the interface; here it
+        // is the SAME object, just also usable as the Domain port).
+        $container->singleton(
+            AuditLoggerInterface::class,
+            static fn (Container $c): AuditLoggerInterface => $c->get(AuditLogger::class),
+        );
+
         // --- Security ----------------------------------------------------
+
+        $container->singleton(Encryptor::class, static fn (Container $c): Encryptor
+            => new Encryptor($c->get(Config::class)->appKey));
 
         $container->singleton(SessionManager::class, static fn (): SessionManager => new SessionManager($config));
 
@@ -149,6 +220,31 @@ final class Bootstrap
                 supportEmail: $settings->string('email_public', ''),
             );
         });
+
+        // --- Domain services (Phase II) -----------------------------------
+        //
+        // Live in Domain\Services per the FRS's own stated paths, but depend
+        // only on the interfaces registered above - never on Database, PDO,
+        // or a concrete repository class - per the "ports in Domain, PDO in
+        // Infrastructure" decision.
+
+        $container->singleton(PatientDeduplicationService::class, static fn (Container $c): PatientDeduplicationService
+            => new PatientDeduplicationService(
+                $c->get(PatientRepositoryInterface::class),
+                $c->get(NumberSequenceInterface::class),
+                $c->get(AdvisoryLockInterface::class),
+            ));
+
+        $container->singleton(EncounterService::class, static fn (Container $c): EncounterService
+            => new EncounterService(
+                $c->get(EncounterRepositoryInterface::class),
+                $c->get(PatientRepositoryInterface::class),
+                $c->get(WardLocationRepositoryInterface::class),
+                $c->get(StaffDirectoryInterface::class),
+                $c->get(NumberSequenceInterface::class),
+                $c->get(TransactionManagerInterface::class),
+                $c->get(AuditLoggerInterface::class),
+            ));
 
         // --- Application services ----------------------------------------
 

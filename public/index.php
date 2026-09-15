@@ -273,7 +273,12 @@ $router = new Router();
 $router->registerMiddleware('headers', new SecurityHeaders($config));
 $router->registerMiddleware('locale', new SetLocale($container->get(\Aster\Infrastructure\Support\Translator::class), $config));
 $router->registerMiddleware('csrf', new VerifyCsrf($container->get(Csrf::class), $logger));
-$router->registerMiddleware('auth', new Authenticate($container->get(AuthService::class), $session, $config));
+$router->registerMiddleware('auth', new Authenticate(
+    $container->get(AuthService::class),
+    $session,
+    $config,
+    $container->get(AuditLogger::class),
+));
 
 // One Authorize instance per permission, named so the route table reads as
 // an access-control list.

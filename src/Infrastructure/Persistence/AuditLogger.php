@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aster\Infrastructure\Persistence;
 
 use Aster\Domain\Entity\User;
+use Aster\Domain\Repository\AuditLoggerInterface;
 use Aster\Infrastructure\Support\Logger;
 use Throwable;
 
@@ -25,7 +26,7 @@ use Throwable;
  *    Losing the trail is bad; refusing to confirm a patient's appointment
  *    because the trail is unavailable is worse. Failures go to the error log.
  */
-final class AuditLogger
+final class AuditLogger implements AuditLoggerInterface
 {
     // Action constants, so a typo is a fatal rather than an unsearchable row.
     public const string LOGIN            = 'auth.login';
