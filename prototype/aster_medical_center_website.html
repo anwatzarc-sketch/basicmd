@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Aster Medical Center — exceptional healthcare designed around you in Addis Ababa.">
+  <meta property="og:title" content="Aster Medical Center | Exceptional Healthcare">
+  <meta property="og:description" content="Modern healthcare services, experienced doctors and convenient appointment requests in Addis Ababa.">
+  <meta property="og:type" content="website">
+  <title>Aster Medical Center | Exceptional Healthcare</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Ethiopic', 'sans-serif']
+          },
+          colors: {
+            medical: {
+              50: '#effcfb',
+              100: '#d8f7f4',
+              500: '#0f8f89',
+              600: '#087b77',
+              700: '#056460',
+              800: '#0c4a47',
+              900: '#063b3a',
+              950: '#032423'
+            },
+            gold: '#d99a32'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans Ethiopic', sans-serif;
+    }
+    .hero {
+      min-height: 720px;
+    }
+    .eyebrow {
+      display: inline-block;
+      border-radius: 999px;
+      background: #d8f7f4;
+      color: #056460;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .section-title {
+      margin-top: 0.75rem;
+      max-width: 720px;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.08;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #063b3a;
+    }
+    .soft-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 1.25rem;
+      padding: 1.35rem;
+      background: white;
+      transition: all 0.2s ease;
+    }
+    .soft-card:hover {
+      border-color: #0f8f89;
+    }
+    .soft-card b {
+      font-size: 1.05rem;
+      color: #063b3a;
+    }
+    .soft-card p {
+      margin-top: 0.5rem;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .service-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      background: white;
+      transition: all 0.25s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 45px rgba(6, 59, 58, 0.1);
+      border-color: #d8f7f4;
+    }
+    .service-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      background: #effcfb;
+      font-size: 1.4rem;
+    }
+    .doctor-card {
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.5rem;
+      background: white;
+      transition: all 0.25s ease;
+    }
+    .doctor-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 35px rgba(6, 59, 58, 0.08);
+    }
+    .doctor-avatar {
+      height: 200px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #d8f7f4, #f8fafc);
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #056460;
+    }
+    .facility-card {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.5rem;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+    .facility-card span {
+      font-size: 0.75rem;
+      color: #9ce6e1;
+      font-weight: 700;
+    }
+    .facility-card h3 {
+      margin-top: 1.25rem;
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+    .facility-card p {
+      margin-top: 0.6rem;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .package {
+      display: grid;
+      gap: 0.3rem;
+      border: 1px solid #d8f7f4;
+      border-radius: 1.25rem;
+      background: white;
+      padding: 1.25rem;
+    }
+    .package b {
+      color: #063b3a;
+    }
+    .package strong {
+      font-size: 1.4rem;
+      color: #087b77;
+    }
+    .package small {
+      color: #64748b;
+    }
+    .article-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      background: white;
+      transition: all 0.2s ease;
+    }
+    .article-card:hover {
+      border-color: #0f8f89;
+    }
+    .map-placeholder {
+      min-height: 340px;
+      border-radius: 2rem;
+      background: linear-gradient(135deg, #c9eae7 25%, #e6f4f2 25% 50%, #c9eae7 50% 75%, #e6f4f2 75%);
+      background-size: 60px 60px;
+      display: grid;
+      place-items: center;
+    }
+    .faq {
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 1rem 1.2rem;
+      background: white;
+    }
+    .faq summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #063b3a;
+    }
+    .faq p {
+      margin-top: 0.7rem;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    label {
+      display: grid;
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.85rem;
+      padding: 0.8rem 0.9rem;
+      font: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      background: #fff;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #0f8f89;
+      box-shadow: 0 0 0 3px rgba(15, 143, 137, 0.12);
+    }
+    .hero-card {
+      animation: float 5s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+  <!-- Interactive Demo Bar -->
+  <div class="bg-medical-950 px-4 py-2 text-white text-xs font-medium flex items-center justify-between z-50 relative border-b border-white/10">
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Live Design Prototype: <strong>Aster Medical Center (Addis Ababa)</strong></span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button id="toggle-view-btn" class="bg-medical-700 hover:bg-medical-600 px-3 py-1 rounded-lg text-white font-semibold transition">
+        Switch to Admin Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- PATIENT WEBSITE VIEW -->
+  <div id="patient-website-view">
+    <!-- Header -->
+    <header id="site-header" class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
+        <a href="#home" class="flex items-center gap-3">
+          <span class="grid h-11 w-11 place-items-center rounded-2xl bg-medical-700 text-xl font-extrabold text-white shadow-md shadow-medical-700/30">A</span>
+          <span>
+            <strong class="block text-lg leading-none text-medical-900" id="brand-name">Aster Medical</strong>
+            <small class="text-xs text-slate-500 font-semibold tracking-wider">CENTER · ADDIS ABABA</small>
+          </span>
+        </a>
+        <nav class="hidden items-center gap-6 text-sm font-semibold text-slate-700 lg:flex">
+          <a href="#about" class="hover:text-medical-600 transition" data-i18n="nav_about">About</a>
+          <a href="#services" class="hover:text-medical-600 transition" data-i18n="nav_services">Services</a>
+          <a href="#doctors" class="hover:text-medical-600 transition" data-i18n="nav_doctors">Doctors</a>
+          <a href="#facilities" class="hover:text-medical-600 transition" data-i18n="nav_facilities">Facilities</a>
+          <a href="#articles" class="hover:text-medical-600 transition" data-i18n="nav_articles">Articles</a>
+          <a href="#locations" class="hover:text-medical-600 transition" data-i18n="nav_locations">Locations</a>
+          <a href="#contact" class="hover:text-medical-600 transition" data-i18n="nav_contact">Contact</a>
+        </nav>
+        <div class="hidden items-center gap-3 sm:flex">
+          <div class="flex rounded-xl bg-slate-100 p-1 border border-slate-200">
+            <button class="lang-btn rounded-lg px-2.5 py-1 text-xs font-extrabold bg-white text-medical-900 shadow-sm" data-lang="en">EN</button>
+            <button class="lang-btn rounded-lg px-2.5 py-1 text-xs font-bold text-slate-600 hover:text-slate-900" data-lang="am">አማ</button>
+          </div>
+          <a href="#appointment" class="rounded-xl bg-medical-700 hover:bg-medical-600 transition px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-medical-700/20" data-i18n="btn_book">Book Appointment</a>
+        </div>
+        <button id="menu-btn" class="rounded-xl border px-3 py-2 text-slate-700 lg:hidden focus:outline-none" aria-label="Open menu">☰</button>
+      </div>
+
+      <!-- Mobile Dropdown Menu -->
+      <div id="mobile-menu" class="hidden border-t bg-white px-5 py-5 lg:hidden">
+        <div class="grid gap-3 text-sm font-semibold text-slate-700">
+          <a href="#about" class="py-1">About</a>
+          <a href="#services" class="py-1">Services</a>
+          <a href="#doctors" class="py-1">Doctors</a>
+          <a href="#facilities" class="py-1">Facilities</a>
+          <a href="#articles" class="py-1">Articles</a>
+          <a href="#locations" class="py-1">Locations</a>
+          <a href="#contact" class="py-1">Contact</a>
+          <div class="flex items-center gap-2 py-2 border-t border-slate-100 mt-2">
+            <span class="text-xs text-slate-500 font-bold">Language:</span>
+            <button class="lang-btn rounded-lg px-3 py-1 text-xs font-bold bg-medical-700 text-white" data-lang="en">EN</button>
+            <button class="lang-btn rounded-lg px-3 py-1 text-xs font-bold bg-slate-100 text-slate-700" data-lang="am">አማርኛ</button>
+          </div>
+          <a href="#appointment" class="mt-2 rounded-xl bg-medical-700 px-4 py-3 text-center text-white font-bold shadow-md">Book Appointment</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="home">
+      <!-- Hero Section -->
+      <section class="hero relative overflow-hidden pt-12 pb-20">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(15,143,137,.18),transparent_35%),linear-gradient(135deg,#f7fffe,#eef8f7)]"></div>
+        <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-12 lg:grid-cols-2 lg:px-8 lg:py-20">
+          <div>
+            <span class="eyebrow" data-i18n="hero_eyebrow">Trusted care · Addis Ababa</span>
+            <h1 class="mt-5 max-w-3xl text-4xl font-extrabold tracking-tight text-medical-900 sm:text-6xl" id="hero-title">
+              Exceptional healthcare. <span class="text-medical-600">Designed around you.</span>
+            </h1>
+            <p class="mt-6 max-w-xl text-lg leading-8 text-slate-600" id="hero-desc">
+              Compassionate specialists, modern diagnostics and coordinated care for you and your family.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="#appointment" class="rounded-2xl bg-medical-700 hover:bg-medical-600 transition px-6 py-4 font-bold text-white shadow-xl shadow-medical-700/20" data-i18n="btn_book">Book Appointment</a>
+              <a href="tel:+251911123456" class="rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 transition px-6 py-4 font-bold text-medical-900 shadow-sm flex items-center gap-2">
+                <span>☎</span> <span data-i18n="btn_call">Call Us</span>
+              </a>
+            </div>
+            <div class="mt-10 grid max-w-xl grid-cols-3 gap-5 border-t border-slate-200/80 pt-7">
+              <div>
+                <strong class="text-2xl font-extrabold text-medical-800">15+</strong>
+                <span class="block text-xs font-semibold text-slate-500 mt-0.5" data-i18n="stat_specialists">Specialists</span>
+              </div>
+              <div>
+                <strong class="text-2xl font-extrabold text-medical-800">12</strong>
+                <span class="block text-xs font-semibold text-slate-500 mt-0.5" data-i18n="stat_services">Care services</span>
+              </div>
+              <div>
+                <strong class="text-2xl font-extrabold text-medical-800">24/7</strong>
+                <span class="block text-xs font-semibold text-slate-500 mt-0.5" data-i18n="stat_emergency">Emergency line</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Graphic Card -->
+          <div class="relative">
+            <div class="hero-card overflow-hidden rounded-[2rem] bg-medical-900 p-3 shadow-2xl shadow-medical-900/25">
+              <div class="rounded-[1.5rem] bg-white/10 p-6 lg:p-8 backdrop-blur-sm">
+                <div class="mb-6 flex items-center justify-between">
+                  <span class="rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold text-white tracking-wide">CARE THAT LISTENS</span>
+                  <span class="text-xl text-teal-200">✦</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="rounded-2xl bg-white p-4 shadow-sm">
+                    <div class="mb-3 text-2xl">🫀</div>
+                    <strong class="block text-sm text-medical-900 font-extrabold">Cardiology</strong>
+                    <p class="mt-0.5 text-xs text-slate-500">Heart & vascular care</p>
+                  </div>
+                  <div class="rounded-2xl bg-white p-4 shadow-sm">
+                    <div class="mb-3 text-2xl">🧒</div>
+                    <strong class="block text-sm text-medical-900 font-extrabold">Pediatrics</strong>
+                    <p class="mt-0.5 text-xs text-slate-500">Care for every age</p>
+                  </div>
+                  <div class="rounded-2xl bg-white p-4 shadow-sm">
+                    <div class="mb-3 text-2xl">🧪</div>
+                    <strong class="block text-sm text-medical-900 font-extrabold">Laboratory</strong>
+                    <p class="mt-0.5 text-xs text-slate-500">Accurate diagnostics</p>
+                  </div>
+                  <div class="rounded-2xl bg-white p-4 shadow-sm">
+                    <div class="mb-3 text-2xl">🩻</div>
+                    <strong class="block text-sm text-medical-900 font-extrabold">Imaging</strong>
+                    <p class="mt-0.5 text-xs text-slate-500">Modern diagnostics</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="absolute -bottom-5 -left-4 rounded-2xl bg-white p-4 shadow-xl border border-slate-100 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg">✓</div>
+              <div>
+                <strong class="block text-sm text-medical-900 font-bold">Patient-first Care</strong>
+                <span class="text-xs text-slate-500">Compassionate & evidence-based</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Why Choose Us / About -->
+      <section id="about" class="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-2">
+          <div>
+            <span class="eyebrow" data-i18n="about_eyebrow">Why choose us</span>
+            <h2 class="section-title" id="about-title">Healthcare built on trust, expertise and comfort.</h2>
+          </div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div class="soft-card">
+              <b>Experienced specialists</b>
+              <p>Multidisciplinary clinicians focused on evidence-based care.</p>
+            </div>
+            <div class="soft-card">
+              <b>Modern diagnostics</b>
+              <p>Convenient laboratory and imaging services under one roof.</p>
+            </div>
+            <div class="soft-card">
+              <b>Human-centered care</b>
+              <p>Clear communication and respectful patient experience.</p>
+            </div>
+            <div class="soft-card">
+              <b>Convenient access</b>
+              <p>Simple appointment requests and easy-to-find location information.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Services Section -->
+      <section id="services" class="bg-white py-20 border-y border-slate-200/60">
+        <div class="mx-auto max-w-7xl px-5 lg:px-8">
+          <div class="flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <span class="eyebrow" data-i18n="services_eyebrow">Medical services</span>
+              <h2 class="section-title" id="services-title">Complete care for everyday health.</h2>
+            </div>
+            <a href="#appointment" class="font-bold text-medical-700 hover:text-medical-600 transition flex items-center gap-1">
+              <span>Request an appointment</span> <span>→</span>
+            </a>
+          </div>
+          <div id="service-grid" class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
+        </div>
+      </section>
+
+      <!-- Doctors Section -->
+      <section id="doctors" class="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div>
+          <span class="eyebrow" data-i18n="doctors_eyebrow">Our specialists</span>
+          <h2 class="section-title" id="doctors-title">Meet the people behind your care.</h2>
+        </div>
+        <div id="doctor-grid" class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4"></div>
+      </section>
+
+      <!-- Facilities Section -->
+      <section id="facilities" class="bg-medical-900 py-20 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(15,143,137,.25),transparent_40%)]"></div>
+        <div class="relative mx-auto max-w-7xl px-5 lg:px-8">
+          <span class="eyebrow !bg-medical-800 !text-medical-100">Our facilities</span>
+          <h2 class="mt-3 max-w-2xl text-4xl font-extrabold tracking-tight">A calm, modern environment for better care.</h2>
+          <div class="mt-10 grid gap-5 md:grid-cols-3">
+            <div class="facility-card">
+              <span>01</span>
+              <h3>Modern consultation rooms</h3>
+              <p>Private, comfortable spaces designed for meaningful conversations and patient confidentiality.</p>
+            </div>
+            <div class="facility-card">
+              <span>02</span>
+              <h3>Diagnostic services</h3>
+              <p>Laboratory and imaging access with a streamlined patient journey for fast result turnarounds.</p>
+            </div>
+            <div class="facility-card">
+              <span>03</span>
+              <h3>Pharmacy support</h3>
+              <p>Convenient access to prescribed medicines and professional medication guidance on-site.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Health Packages -->
+      <section class="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="rounded-[2rem] bg-gradient-to-br from-medical-50 via-teal-50/30 to-white p-8 ring-1 ring-medical-100/80 shadow-sm lg:p-12">
+          <div class="grid items-center gap-10 lg:grid-cols-2">
+            <div>
+              <span class="eyebrow">Health packages</span>
+              <h2 class="section-title">Preventive care made simple.</h2>
+              <p class="mt-4 text-slate-600 leading-relaxed">Choose a health screening package designed around prevention, early detection, and lifestyle wellness support.</p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="package shadow-sm hover:border-medical-500 transition">
+                <b class="text-lg">Essential Check</b>
+                <strong>ETB 2,500</strong>
+                <small>Basic preventive screening & lab battery</small>
+              </div>
+              <div class="package shadow-sm hover:border-medical-500 transition">
+                <b class="text-lg">Executive Health</b>
+                <strong>ETB 6,500</strong>
+                <small>Comprehensive annual screening & specialist consultation</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Articles Section -->
+      <section id="articles" class="bg-white py-20 border-t border-slate-200/60">
+        <div class="mx-auto max-w-7xl px-5 lg:px-8">
+          <span class="eyebrow">Health knowledge</span>
+          <h2 class="section-title">Useful guidance from our care team.</h2>
+          <div class="mt-10 grid gap-5 md:grid-cols-3">
+            <article class="article-card flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-extrabold tracking-wider text-medical-600 uppercase">PREVENTION</span>
+                <h3>5 habits that support heart health</h3>
+                <p class="mt-3">Simple daily choices can make a meaningful difference to long-term cardiovascular wellbeing.</p>
+              </div>
+              <a href="#articles" class="mt-6 inline-block font-bold text-medical-700 hover:text-medical-600">Read article →</a>
+            </article>
+            <article class="article-card flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-extrabold tracking-wider text-medical-600 uppercase">FAMILY HEALTH</span>
+                <h3>When should your child see a doctor?</h3>
+                <p class="mt-3">A practical guide to common pediatric symptoms and when professional assessment is recommended.</p>
+              </div>
+              <a href="#articles" class="mt-6 inline-block font-bold text-medical-700 hover:text-medical-600">Read article →</a>
+            </article>
+            <article class="article-card flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-extrabold tracking-wider text-medical-600 uppercase">WELLNESS</span>
+                <h3>Why routine health checks matter</h3>
+                <p class="mt-3">Preventive checkups can identify risk factors early before they become larger health issues.</p>
+              </div>
+              <a href="#articles" class="mt-6 inline-block font-bold text-medical-700 hover:text-medical-600">Read article →</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Appointment Form Section -->
+      <section id="appointment" class="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <span class="eyebrow">Appointment request</span>
+            <h2 class="section-title">Tell us how we can help.</h2>
+            <p class="mt-4 text-slate-600 leading-relaxed">Submit your preferred service, doctor, date and time. Our intake team will contact you to confirm availability.</p>
+            
+            <div class="mt-8 rounded-2xl bg-medical-900 p-6 text-white shadow-lg">
+              <b class="text-lg font-bold block">Need Emergency Assistance?</b>
+              <p class="mt-2 text-sm text-white/70">For urgent medical emergencies, please reach out directly to our 24/7 emergency dispatch line.</p>
+              <a href="tel:+251911123456" class="mt-4 inline-flex items-center gap-2 font-bold text-teal-300 text-lg hover:underline">
+                <span>☎</span> <span>+251 911 123 456</span>
+              </a>
+            </div>
+          </div>
+
+          <form id="appointment-form" class="rounded-[2rem] bg-white p-7 shadow-xl ring-1 ring-slate-200/80">
+            <div class="grid gap-5 sm:grid-cols-2">
+              <label>
+                Service *
+                <select name="service" required>
+                  <option value="">Select service</option>
+                  <option>Cardiology</option>
+                  <option>Pediatrics</option>
+                  <option>Internal Medicine</option>
+                  <option>Gynecology</option>
+                  <option>Orthopedics</option>
+                  <option>Dermatology</option>
+                  <option>Laboratory</option>
+                  <option>Imaging</option>
+                </select>
+              </label>
+              <label>
+                Doctor
+                <select name="doctor">
+                  <option value="">Any available doctor</option>
+                  <option>Dr. Hana Tesfaye</option>
+                  <option>Dr. Dawit Bekele</option>
+                  <option>Dr. Sara Alemu</option>
+                  <option>Dr. Michael Getachew</option>
+                </select>
+              </label>
+              <label>
+                Preferred date *
+                <input name="date" type="date" required>
+              </label>
+              <label>
+                Preferred time *
+                <select name="time" required>
+                  <option value="">Select time block</option>
+                  <option>08:00 – 10:00</option>
+                  <option>10:00 – 12:00</option>
+                  <option>14:00 – 16:00</option>
+                  <option>16:00 – 18:00</option>
+                </select>
+              </label>
+              <label>
+                Full name *
+                <input name="name" required placeholder="Patient full name">
+              </label>
+              <label>
+                Phone number *
+                <input name="phone" required placeholder="+251 9XX XXX XXX">
+              </label>
+              <label class="sm:col-span-2">
+                Email Address
+                <input name="email" type="email" placeholder="name@example.com">
+              </label>
+              <label class="sm:col-span-2">
+                Message / Notes
+                <textarea name="message" rows="3" placeholder="Describe symptoms or specific requests (optional)"></textarea>
+              </label>
+            </div>
+            <button class="mt-6 w-full rounded-2xl bg-medical-700 hover:bg-medical-600 transition px-5 py-4 font-bold text-white shadow-lg shadow-medical-700/20">
+              Submit Appointment Request
+            </button>
+            <div id="appointment-result" class="mt-4 hidden rounded-xl bg-teal-50 border border-teal-200 p-4 text-sm font-semibold text-medical-900"></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Locations Section -->
+      <section id="locations" class="bg-slate-100 py-20 border-t border-slate-200/60">
+        <div class="mx-auto max-w-7xl px-5 lg:px-8">
+          <div class="grid gap-8 lg:grid-cols-2">
+            <div>
+              <span class="eyebrow">Visit us</span>
+              <h2 class="section-title">Conveniently located in Addis Ababa.</h2>
+              <div class="mt-8 space-y-4 text-slate-700 font-medium">
+                <p class="flex items-center gap-3">
+                  <span class="text-xl">📍</span>
+                  <span>Bole Sub-city, Addis Ababa, Ethiopia</span>
+                </p>
+                <p class="flex items-center gap-3">
+                  <span class="text-xl">☎</span>
+                  <span>+251 911 123 456 / +251 116 000 000</span>
+                </p>
+                <p class="flex items-center gap-3">
+                  <span class="text-xl">✉</span>
+                  <span>hello@astermedical.et</span>
+                </p>
+                <p class="flex items-center gap-3">
+                  <span class="text-xl">🕘</span>
+                  <span>Mon–Sat: 08:00 – 18:00 · Emergency 24/7</span>
+                </p>
+              </div>
+            </div>
+            
+            <div class="map-placeholder border border-slate-300/60 p-6 shadow-inner">
+              <div class="rounded-3xl bg-white/95 p-6 shadow-xl text-center max-w-sm">
+                <strong class="block text-lg text-medical-900 font-extrabold">ASTER MEDICAL CENTER</strong>
+                <p class="mt-1 text-xs text-slate-500 font-semibold">Bole, Addis Ababa, Ethiopia</p>
+                <a class="mt-5 inline-block rounded-xl bg-medical-700 hover:bg-medical-600 transition px-5 py-3 text-sm font-bold text-white shadow-md" href="https://www.google.com/maps/search/?api=1&query=Bole%2C%20Addis%20Ababa" target="_blank" rel="noopener">
+                  Open in Google Maps ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact" class="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-2">
+          <div>
+            <span class="eyebrow">Contact us</span>
+            <h2 class="section-title">We are here to help.</h2>
+            <p class="mt-4 text-slate-600 leading-relaxed">Have a question about our services, insurance partners, or specialist schedules? Send a message and our team will get back to you.</p>
+          </div>
+          <form id="contact-form" class="rounded-[2rem] bg-white p-7 shadow-xl ring-1 ring-slate-200/80">
+            <div class="grid gap-5 sm:grid-cols-2">
+              <label>Name *<input name="name" required placeholder="Your full name"></label>
+              <label>Phone *<input name="phone" required placeholder="+251 9XX XXX XXX"></label>
+              <label class="sm:col-span-2">Email<input name="email" type="email" placeholder="name@example.com"></label>
+              <label class="sm:col-span-2">Message *<textarea name="message" rows="4" required placeholder="How can we assist you?"></textarea></label>
+            </div>
+            <button class="mt-6 rounded-2xl bg-medical-700 hover:bg-medical-600 transition px-6 py-4 font-bold text-white shadow-lg shadow-medical-700/20">
+              Send Message
+            </button>
+            <div id="contact-result" class="mt-4 hidden rounded-xl bg-teal-50 border border-teal-200 p-4 text-sm font-semibold text-medical-900"></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="border-t border-slate-200/60 bg-white py-16">
+        <div class="mx-auto max-w-7xl px-5 lg:px-8">
+          <span class="eyebrow">FAQ</span>
+          <h2 class="section-title text-3xl">Frequently Asked Questions</h2>
+          <div class="mt-6 grid gap-4 md:grid-cols-2">
+            <details class="faq">
+              <summary>Do you accept walk-in patients?</summary>
+              <p>Yes, walk-ins are welcome for general consultations, though advance appointment requests are recommended to minimize waiting times.</p>
+            </details>
+            <details class="faq">
+              <summary>How are appointment requests confirmed?</summary>
+              <p>Our intake coordinator reviews your requested slot and contacts you by phone or SMS to confirm your exact appointment time.</p>
+            </details>
+            <details class="faq">
+              <summary>Do you provide 24/7 emergency services?</summary>
+              <p>Yes. Our emergency support team is active 24/7. For immediate assistance, please call our emergency hotline directly.</p>
+            </details>
+            <details class="faq">
+              <summary>Can I request care in Amharic?</summary>
+              <p>Yes, all our clinical staff and patient service representatives fluently communicate in Amharic and English.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-medical-950 text-white">
+      <div class="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4 lg:px-8">
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-3">
+            <span class="grid h-11 w-11 place-items-center rounded-2xl bg-medical-700 font-extrabold text-white text-xl">A</span>
+            <b class="text-xl tracking-tight">Aster Medical Center</b>
+          </div>
+          <p class="mt-4 max-w-md text-sm leading-7 text-white/60">
+            Professional, compassionate healthcare services in Addis Ababa. Modern facilities and expert clinical staff designed around your wellness.
+          </p>
+        </div>
+        <div>
+          <b class="text-sm font-bold uppercase tracking-wider text-teal-300">Explore</b>
+          <div class="mt-4 grid gap-3 text-sm text-white/70">
+            <a href="#about" class="hover:text-white transition">About Us</a>
+            <a href="#services" class="hover:text-white transition">Medical Services</a>
+            <a href="#doctors" class="hover:text-white transition">Specialists</a>
+            <a href="#articles" class="hover:text-white transition">Health Articles</a>
+          </div>
+        </div>
+        <div>
+          <b class="text-sm font-bold uppercase tracking-wider text-teal-300">Contact</b>
+          <div class="mt-4 grid gap-3 text-sm text-white/70">
+            <span>Bole Sub-city, Addis Ababa</span>
+            <span>+251 911 123 456</span>
+            <span>hello@astermedical.et</span>
+            <button id="footer-admin-link" class="text-left text-teal-300 hover:underline font-semibold mt-2">
+              Admin Dashboard Demo →
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 px-5 py-5 text-center text-xs text-white/40">
+        © 2026 Aster Medical Center. All rights reserved. Addis Ababa, Ethiopia.
+      </div>
+    </footer>
+  </div>
+
+  <!-- ADMIN DASHBOARD PREVIEW VIEW (Hidden by default) -->
+  <div id="admin-dashboard-view" class="hidden min-h-screen bg-slate-100">
+    <div class="min-h-screen">
+      <!-- Admin Sidebar -->
+      <aside class="fixed inset-y-0 left-0 hidden w-64 bg-medical-900 p-6 text-white md:block z-30">
+        <div class="text-xl font-extrabold tracking-tight">Aster Medical</div>
+        <div class="mt-1 text-xs font-bold tracking-widest text-teal-300 uppercase">CONTENT ADMIN</div>
+        <nav class="mt-8 grid gap-1.5 text-sm font-medium">
+          <a class="rounded-xl bg-white/10 px-4 py-2.5 text-white font-bold" href="#">Dashboard</a>
+          <a class="rounded-xl px-4 py-2.5 text-white/70 hover:bg-white/5 hover:text-white transition" href="#">Content Manager</a>
+          <a class="rounded-xl px-4 py-2.5 text-white/70 hover:bg-white/5 hover:text-white transition" href="#">Doctors</a>
+          <a class="rounded-xl px-4 py-2.5 text-white/70 hover:bg-white/5 hover:text-white transition" href="#">Services</a>
+          <a class="rounded-xl px-4 py-2.5 text-white/70 hover:bg-white/5 hover:text-white transition" href="#">Facilities</a>
+          <a class="rounded-xl px-4 py-2.5 text-white/70 hover:bg-white/5 hover:text-white transition" href="#">Health Articles</a>
+          <a class="rounded-xl px-4 py-2.5 text-white/70 hover:bg-white/5 hover:text-white transition" href="#">Appointments</a>
+          <a class="rounded-xl px-4 py-2.5 text-white/70 hover:bg-white/5 hover:text-white transition" href="#">Settings</a>
+        </nav>
+      </aside>
+
+      <!-- Admin Main Content -->
+      <main class="md:ml-64">
+        <header class="border-b border-slate-200 bg-white px-5 py-5 lg:px-8">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-widest text-medical-600">Administration</p>
+              <h1 class="mt-1 text-2xl font-extrabold text-medical-900">Website Control Dashboard</h1>
+            </div>
+            <button id="exit-admin-btn" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition">
+              ← Back to Website
+            </button>
+          </div>
+        </header>
+
+        <section class="p-5 lg:p-8">
+          <!-- Metric Cards -->
+          <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200/70">
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Appointment Requests</span>
+              <b class="mt-2 block text-3xl font-extrabold text-medical-800">24</b>
+              <span class="mt-1 block text-xs text-emerald-600 font-semibold">+6 new today</span>
+            </div>
+            <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200/70">
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Doctors</span>
+              <b class="mt-2 block text-3xl font-extrabold text-medical-800">15</b>
+              <span class="mt-1 block text-xs text-slate-400">4 departments</span>
+            </div>
+            <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200/70">
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Services Listed</span>
+              <b class="mt-2 block text-3xl font-extrabold text-medical-800">12</b>
+              <span class="mt-1 block text-xs text-slate-400">All updated</span>
+            </div>
+            <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-200/70">
+              <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Contact Inquiries</span>
+              <b class="mt-2 block text-3xl font-extrabold text-medical-800">18</b>
+              <span class="mt-1 block text-xs text-amber-600 font-semibold">3 pending reply</span>
+            </div>
+          </div>
+
+          <!-- Content Panels -->
+          <div class="mt-8 grid gap-6 lg:grid-cols-2">
+            <!-- Recent Appointments -->
+            <div class="rounded-2xl bg-white p-6 shadow-sm border border-slate-200/70">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="font-extrabold text-medical-900 text-lg">Recent Appointment Requests</h2>
+                <span class="text-xs font-bold text-medical-600 cursor-pointer">View all</span>
+              </div>
+              <div class="grid gap-3">
+                <div class="rounded-xl bg-slate-50 p-4 border border-slate-100 flex items-center justify-between">
+                  <div>
+                    <b class="text-slate-900">Meron Kebede</b>
+                    <span class="block text-xs text-slate-500 mt-0.5">Cardiology · Tomorrow · 10:00–12:00</span>
+                  </div>
+                  <span class="px-2.5 py-1 text-xs font-extrabold bg-amber-100 text-amber-800 rounded-full">Pending</span>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-4 border border-slate-100 flex items-center justify-between">
+                  <div>
+                    <b class="text-slate-900">Abel Tadesse</b>
+                    <span class="block text-xs text-slate-500 mt-0.5">Pediatrics · Sep 18 · 14:00–16:00</span>
+                  </div>
+                  <span class="px-2.5 py-1 text-xs font-extrabold bg-teal-100 text-teal-800 rounded-full">Confirmed</span>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-4 border border-slate-100 flex items-center justify-between">
+                  <div>
+                    <b class="text-slate-900">Selamawit Bekele</b>
+                    <span class="block text-xs text-slate-500 mt-0.5">Laboratory · Sep 18 · 08:00–10:00</span>
+                  </div>
+                  <span class="px-2.5 py-1 text-xs font-extrabold bg-teal-100 text-teal-800 rounded-full">Confirmed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Management Actions -->
+            <div class="rounded-2xl bg-white p-6 shadow-sm border border-slate-200/70">
+              <h2 class="font-extrabold text-medical-900 text-lg">Quick CMS Actions</h2>
+              <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                <button class="rounded-xl bg-medical-50 hover:bg-medical-100 transition p-4 text-left font-bold text-medical-800 flex items-center gap-2">
+                  <span>➕</span> Add New Doctor
+                </button>
+                <button class="rounded-xl bg-medical-50 hover:bg-medical-100 transition p-4 text-left font-bold text-medical-800 flex items-center gap-2">
+                  <span>➕</span> Add Service
+                </button>
+                <button class="rounded-xl bg-medical-50 hover:bg-medical-100 transition p-4 text-left font-bold text-medical-800 flex items-center gap-2">
+                  <span>📝</span> Publish Article
+                </button>
+                <button class="rounded-xl bg-medical-50 hover:bg-medical-100 transition p-4 text-left font-bold text-medical-800 flex items-center gap-2">
+                  <span>🏥</span> Update Facility Info
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Services Data
+    const services = [
+      ["🫀", "Cardiology", "Heart and vascular assessment, prevention and ongoing care.", "Heart & vascular care"],
+      ["🧒", "Pediatrics", "Compassionate medical care for infants, children and adolescents.", "Child health"],
+      ["🩺", "Internal Medicine", "Comprehensive diagnosis and treatment for adult health conditions.", "Adult medicine"],
+      ["🌸", "Gynecology", "Women's health, reproductive care and preventive services.", "Women's health"],
+      ["🦴", "Orthopedics", "Assessment and treatment for bones, joints and mobility.", "Bone & joint care"],
+      ["🧴", "Dermatology", "Clinical care for skin, hair and nail conditions.", "Skin health"],
+      ["🧪", "Laboratory", "Convenient diagnostic testing with reliable results.", "Diagnostics"],
+      ["🩻", "Imaging", "Modern imaging support for accurate diagnosis.", "Diagnostics"],
+      ["💊", "Pharmacy", "Prescription medicines and professional medication guidance.", "Medication support"]
+    ];
+
+    // Doctors Data
+    const doctors = [
+      ["HT", "Dr. Hana Tesfaye", "Internal Medicine", "MD · 12 years experience"],
+      ["DB", "Dr. Dawit Bekele", "Cardiology", "MD, Cardiology · 10 years"],
+      ["SA", "Dr. Sara Alemu", "Pediatrics", "MD, Pediatrics · 9 years"],
+      ["MG", "Dr. Michael Getachew", "Orthopedics", "MD, Orthopedics · 11 years"]
+    ];
+
+    // Populate Services Grid
+    document.querySelector("#service-grid").innerHTML = services.map(x => `
+      <article class="service-card flex flex-col justify-between">
+        <div>
+          <div class="service-icon">${x[0]}</div>
+          <h3 class="mt-4 text-xl font-extrabold text-medical-900">${x[1]}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-slate-600">${x[2]}</p>
+        </div>
+        <span class="mt-5 inline-block text-xs font-bold text-medical-600">${x[3]} →</span>
+      </article>
+    `).join("");
+
+    // Populate Doctors Grid
+    document.querySelector("#doctor-grid").innerHTML = doctors.map(x => `
+      <article class="doctor-card">
+        <div class="doctor-avatar">${x[0]}</div>
+        <div class="p-5">
+          <h3 class="font-extrabold text-medical-900 text-lg">${x[1]}</h3>
+          <p class="mt-0.5 text-sm font-semibold text-medical-600">${x[2]}</p>
+          <p class="mt-2 text-xs text-slate-500 font-medium">${x[3]}</p>
+          <a href="#appointment" class="mt-4 inline-block text-sm font-bold text-medical-700 hover:text-medical-600 transition">Request appointment →</a>
+        </div>
+      </article>
+    `).join("");
+
+    // Mobile Menu Toggle
+    document.querySelector("#menu-btn").addEventListener("click", () => {
+      document.querySelector("#mobile-menu").classList.toggle("hidden");
+    });
+    document.querySelectorAll("#mobile-menu a").forEach(a => {
+      a.addEventListener("click", () => document.querySelector("#mobile-menu").classList.add("hidden"));
+    });
+
+    // Forms handling
+    function setupForm(formId, resultId, message) {
+      const form = document.querySelector(formId);
+      const result = document.querySelector(resultId);
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        result.textContent = message;
+        result.classList.remove("hidden");
+        form.reset();
+        setTimeout(() => {
+          result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      });
+    }
+
+    setupForm("#appointment-form", "#appointment-result", "✓ Thank you! Your appointment request has been received. Our intake team in Addis Ababa will call you shortly to confirm.");
+    setupForm("#contact-form", "#contact-result", "✓ Thank you! Your message has been sent to our team. We will respond promptly.");
+
+    // Language Toggle logic
+    const translations = {
+      en: {
+        brand: "Aster Medical",
+        hero_eyebrow: "Trusted care · Addis Ababa",
+        hero_title: 'Exceptional healthcare. <span class="text-medical-600">Designed around you.</span>',
+        hero_desc: "Compassionate specialists, modern diagnostics and coordinated care for you and your family.",
+        btn_book: "Book Appointment",
+        btn_call: "Call Us",
+        stat_specialists: "Specialists",
+        stat_services: "Care services",
+        stat_emergency: "Emergency line",
+        about_title: "Healthcare built on trust, expertise and comfort.",
+        services_title: "Complete care for everyday health.",
+        doctors_title: "Meet the people behind your care."
+      },
+      am: {
+        brand: "አስቴር ሕክምና",
+        hero_eyebrow: "የታመነ የሕክምና አገልግሎት · አዲስ አበባ",
+        hero_title: 'ልዩ የህክምና አገልግሎት። <span class="text-medical-600">ለእርስዎ ተዘጋጅቶ የቀረበ።</span>',
+        hero_desc: "ርህራሄ ያላቸው ስፔሻሊስቶች፣ ዘመናዊ የላቦራቶሪና የዲያግኖስቲክ አገልግሎቶች ለእርስዎ እና ለቤተሰብዎ።",
+        btn_book: "ቀጠሮ ይያዙ",
+        btn_call: "ደውሉልን",
+        stat_specialists: "ስፔሻሊስቶች",
+        stat_services: "የህክምና አገልግሎቶች",
+        stat_emergency: "24/7 ድንገተኛ አደጋ",
+        about_title: "በእምነት፣ በልምድና በምቾት ላይ የተገነባ የህክምና ማዕከል።",
+        services_title: "ለዕለታዊ ጤንነትዎ የተሟላ ህክምና።",
+        doctors_title: "የህክምና ባለሙያዎቻችን።"
+      }
+    };
+
+    document.querySelectorAll(".lang-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const lang = btn.dataset.lang;
+        const t = translations[lang];
+        if (!t) return;
+
+        document.querySelector("#brand-name").innerHTML = t.brand;
+        document.querySelector("#hero-title").innerHTML = t.hero_title;
+        document.querySelector("#hero-desc").innerHTML = t.hero_desc;
+        document.querySelector("#about-title").innerHTML = t.about_title;
+        document.querySelector("#services-title").innerHTML = t.services_title;
+        document.querySelector("#doctors-title").innerHTML = t.doctors_title;
+        
+        document.querySelectorAll("[data-i18n='btn_book']").forEach(el => el.textContent = t.btn_book);
+        document.querySelectorAll("[data-i18n='hero_eyebrow']").forEach(el => el.textContent = t.hero_eyebrow);
+
+        document.querySelectorAll(".lang-btn").forEach(b => {
+          if (b.dataset.lang === lang) {
+            b.className = "lang-btn rounded-lg px-2.5 py-1 text-xs font-extrabold bg-white text-medical-900 shadow-sm";
+          } else {
+            b.className = "lang-btn rounded-lg px-2.5 py-1 text-xs font-bold text-slate-600 hover:text-slate-900";
+          }
+        });
+      });
+    });
+
+    // View Switching logic (Patient Site vs Admin Dashboard)
+    const toggleBtn = document.querySelector("#toggle-view-btn");
+    const exitAdminBtn = document.querySelector("#exit-admin-btn");
+    const footerAdminLink = document.querySelector("#footer-admin-link");
+    const websiteView = document.querySelector("#patient-website-view");
+    const adminView = document.querySelector("#admin-dashboard-view");
+
+    function showAdmin() {
+      websiteView.classList.add("hidden");
+      adminView.classList.remove("hidden");
+      toggleBtn.textContent = "Switch to Patient Website";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showWebsite() {
+      adminView.classList.add("hidden");
+      websiteView.classList.remove("hidden");
+      toggleBtn.textContent = "Switch to Admin Dashboard";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      if (adminView.classList.contains("hidden")) {
+        showAdmin();
+      } else {
+        showWebsite();
+      }
+    });
+
+    exitAdminBtn.addEventListener("click", showWebsite);
+    footerAdminLink.addEventListener("click", showAdmin);
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build output (committed intentionally on shared hosting - see README)
+# /public/dist/
+
+# Runtime
+/storage/logs/*
+!/storage/logs/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+/storage/uploads/proofs/*
+!/storage/uploads/proofs/.gitkeep
+/storage/uploads/media/*
+!/storage/uploads/media/.gitkeep
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Deployment bundles
+/build/

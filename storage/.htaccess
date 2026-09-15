@@ -1,0 +1,10 @@
+# Defence in depth: these directories hold payment proofs and logs and must
+# never be served. The webroot is public/ so this should be unreachable
+# anyway, but a misconfigured vhost is a common deployment mistake.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

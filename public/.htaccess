@@ -1,0 +1,132 @@
+# =====================================================================
+#  Aster Medical Center - Apache configuration for public/
+#
+#  Only needed on Apache / cPanel hosting. nginx users: see deploy/nginx.conf.
+#
+#  IMPORTANT: the document root must point at this directory (public/), not
+#  at the project root. If your host will not let you change the document
+#  root, see deploy/README-shared-hosting.md.
+# =====================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # ---- Force HTTPS ----
+    # COMMENTED OUT because the site currently runs on plain HTTP. Enabling
+    # this without a certificate produces an infinite redirect loop.
+    #
+    # Uncomment BOTH the block below and set SESSION_SECURE=true in .env at
+    # the same moment TLS goes live - the two must always agree, or the
+    # session cookie is issued Secure over http and never sent back, which
+    # looks exactly like broken authentication.
+    #
+    # RewriteCond %{HTTPS} !=on
+    # RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Authorization header is stripped by some CGI setups; restore it.
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Serve real files and directories directly.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else goes to the front controller.
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# ---------------------------------------------------------------------
+#  Block anything that is not meant to be served
+# ---------------------------------------------------------------------
+
+# Dotfiles, including .env if one is ever copied here by mistake.
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Config, source and dependency files.
+<FilesMatch "\.(env|log|sql|md|lock|json|ya?ml|ini|sh|bak|old|dist)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Directory listings reveal structure; turn them off.
+Options -Indexes -MultiViews
+
+# ---------------------------------------------------------------------
+#  Character set - Ge'ez script needs an explicit UTF-8 declaration
+# ---------------------------------------------------------------------
+AddDefaultCharset UTF-8
+
+<IfModule mod_mime.c>
+    AddType application/font-woff2 .woff2
+    AddType image/webp .webp
+    AddCharset UTF-8 .css .js .json .xml
+</IfModule>
+
+# ---------------------------------------------------------------------
+#  Caching
+# ---------------------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Built assets carry an mtime query string, so they can cache hard.
+    <FilesMatch "\.(css|js)$">
+        ExpiresDefault "access plus 1 year"
+        Header set Cache-Control "public, immutable"
+    </FilesMatch>
+
+    <FilesMatch "\.(webp|jpe?g|png|gif|svg|ico|woff2)$">
+        ExpiresDefault "access plus 30 days"
+    </FilesMatch>
+
+    # HTML must never be cached: pages differ per language and per session.
+    <FilesMatch "\.(html|php)$">
+        ExpiresDefault "access plus 0 seconds"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Baseline headers. The application sends its own CSP with a per-request
+    # nonce, so one is deliberately NOT set here - a static CSP would break it.
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Do not advertise the stack.
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+</IfModule>
+
+# ---------------------------------------------------------------------
+#  Compression
+# ---------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE application/xml image/svg+xml
+</IfModule>
+
+# ---------------------------------------------------------------------
+#  Upload limits - must exceed UPLOAD_PROOF_MAX_MB
+# ---------------------------------------------------------------------
+<IfModule mod_php.c>
+    php_value upload_max_filesize 12M
+    php_value post_max_size 14M
+    php_value max_execution_time 60
+    php_flag display_errors off
+    php_flag log_errors on
+</IfModule>

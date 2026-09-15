@@ -1,0 +1,29 @@
+{
+  "name": "aster-medical-center",
+  "version": "1.0.0",
+  "description": "Frontend build for Aster Medical Center (Addis Ababa)",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "tailwindcss -i ./resources/css/app.css -o ./public/dist/css/app.css --watch",
+    "build": "cross-env NODE_ENV=production tailwindcss -i ./resources/css/app.css -o ./public/dist/css/app.min.css --minify",
+    "build:css": "tailwindcss -i ./resources/css/app.css -o ./public/dist/css/app.min.css --minify",
+    "fonts": "node scripts/fetch-fonts.mjs",
+    "postinstall": "node scripts/fetch-fonts.mjs || echo \"Font download skipped - run 'npm run fonts' when online\""
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.9",
+    "@tailwindcss/typography": "^0.5.15",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead",
+    "Android >= 8",
+    "iOS >= 13"
+  ]
+}

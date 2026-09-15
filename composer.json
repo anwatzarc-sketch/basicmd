@@ -1,0 +1,42 @@
+{
+    "name": "aster/medical-center",
+    "description": "Aster Medical Center - public website and administration portal (Addis Ababa, Ethiopia)",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.1",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-mbstring": "*",
+        "ext-json": "*",
+        "ext-gd": "*",
+        "ext-fileinfo": "*",
+        "ext-openssl": "*",
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aster\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aster\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "install-app": "php bin/install.php",
+        "queue": "php bin/queue-worker.php",
+        "reminders": "php bin/send-reminders.php",
+        "test": "phpunit --colors=always"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

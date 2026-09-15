@@ -1,0 +1,401 @@
+/**
+ * Aster Medical Center - application stylesheet.
+ *
+ * Component classes are defined here rather than repeated as long utility
+ * strings across 40 templates. When the clinic asks to change the look of
+ * every card, this is the one file that changes.
+ *
+ * Fonts are self-hosted. Google Fonts adds a third-party DNS lookup, a TLS
+ * handshake and a render-blocking request - all of which hurt badly on a
+ * mobile connection in Addis Ababa, and the Ethiopic face is large.
+ */
+
+/* ---------------------------------------------------------------------
+   Self-hosted fonts (run `npm run fonts` to download the woff2 files)
+   font-display:swap renders text immediately in the fallback face rather
+   than leaving the page blank while the webfont loads.
+   --------------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/dist/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+
+@font-face {
+  font-family: 'Noto Sans Ethiopic';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/dist/fonts/noto-ethiopic.woff2') format('woff2');
+  /* Ge'ez block plus the Ethiopic Supplement and Extended ranges. */
+  unicode-range: U+1200-137F, U+1380-139F, U+2D80-2DDF, U+AB00-AB2F;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------- */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Keeps anchor targets clear of the sticky header. */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Honour a reader's reduced-motion preference: vestibular disorders are
+     common enough that this is an accessibility requirement, not a nicety. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased;
+  }
+
+  /* Amharic bodies get the Ethiopic stack and extra leading.
+     The family is set with theme() rather than `@apply font-ethiopic`: the
+     selector carries the same class name as the utility, so applying it to
+     itself is a circular dependency Tailwind refuses to resolve. */
+  body.font-ethiopic {
+    font-family: theme('fontFamily.ethiopic');
+    line-height: 1.8;
+  }
+
+  /* A visible focus ring on every interactive element. Removing outlines
+     makes the site unusable by keyboard, which for a booking form is a
+     genuine accessibility failure. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-medical-500 ring-offset-2 ring-offset-white;
+  }
+
+  ::selection {
+    @apply bg-medical-100 text-medical-900;
+  }
+
+  /* Only reveal the skip link when it is focused. */
+  .skip-link {
+    @apply sr-only;
+  }
+
+  .skip-link:focus {
+    @apply not-sr-only fixed left-4 top-4 z-[100] rounded-xl bg-medical-700 px-4 py-2 text-sm font-bold text-white shadow-lg;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Components
+   --------------------------------------------------------------------- */
+@layer components {
+
+  /* --- Typography ------------------------------------------------- */
+
+  .eyebrow {
+    @apply inline-block rounded-full bg-medical-100 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[0.08em] text-medical-700;
+  }
+
+  .eyebrow-invert {
+    @apply inline-block rounded-full bg-white/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[0.08em] text-medical-100;
+  }
+
+  .section-title {
+    @apply mt-3 max-w-3xl text-[clamp(1.9rem,4vw,3.1rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-medical-900;
+  }
+
+  .section-lead {
+    @apply mt-4 max-w-2xl text-lg leading-8 text-slate-600;
+  }
+
+  /* --- Buttons ---------------------------------------------------- */
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition
+           disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply btn bg-medical-700 text-white shadow-brand hover:bg-medical-600 active:bg-medical-800;
+  }
+
+  .btn-secondary {
+    @apply btn border border-slate-200 bg-white text-medical-900 shadow-sm hover:bg-slate-50;
+  }
+
+  .btn-ghost {
+    @apply btn text-medical-700 hover:bg-medical-50;
+  }
+
+  .btn-danger {
+    @apply btn bg-rose-600 text-white hover:bg-rose-700;
+  }
+
+  .btn-sm {
+    @apply px-3.5 py-2 text-xs;
+  }
+
+  .btn-lg {
+    @apply px-7 py-4 text-base;
+  }
+
+  /* --- Cards ------------------------------------------------------ */
+
+  .card {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-card;
+  }
+
+  .card-pad {
+    @apply card p-6;
+  }
+
+  .soft-card {
+    @apply rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-medical-500;
+  }
+
+  .service-card {
+    @apply flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 transition
+           hover:-translate-y-1 hover:border-medical-100 hover:shadow-lift;
+  }
+
+  .service-icon {
+    @apply grid h-12 w-12 place-items-center rounded-2xl bg-medical-50 text-2xl;
+  }
+
+  .doctor-card {
+    @apply overflow-hidden rounded-3xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:shadow-lift;
+  }
+
+  .doctor-avatar {
+    @apply grid h-48 place-items-center bg-gradient-to-br from-medical-100 to-slate-50 text-5xl font-extrabold text-medical-700;
+  }
+
+  .facility-card {
+    @apply rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur;
+  }
+
+  .article-card {
+    @apply flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 transition hover:border-medical-500;
+  }
+
+  .package-card {
+    @apply relative flex flex-col rounded-3xl border border-medical-100 bg-white p-6 shadow-sm transition hover:border-medical-500;
+  }
+
+  /* --- Forms ------------------------------------------------------ */
+
+  .field {
+    @apply grid gap-1.5;
+  }
+
+  .label {
+    @apply text-[0.82rem] font-bold text-slate-700;
+  }
+
+  .hint {
+    @apply text-xs font-medium text-slate-500;
+  }
+
+  .input,
+  .select,
+  .textarea {
+    @apply w-full rounded-xl border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm
+           transition placeholder:text-slate-400
+           focus:border-medical-500 focus:ring-2 focus:ring-medical-500/20;
+  }
+
+  .textarea {
+    @apply min-h-[96px] leading-relaxed;
+  }
+
+  /* An invalid field is marked by colour AND the message below it, never
+     by colour alone - that would be invisible to a colour-blind user. */
+  .input-error {
+    @apply border-rose-400 focus:border-rose-500 focus:ring-rose-500/20;
+  }
+
+  .field-error {
+    @apply text-xs font-semibold text-rose-600;
+  }
+
+  .checkbox {
+    @apply h-4 w-4 rounded border-slate-300 text-medical-600 focus:ring-medical-500;
+  }
+
+  .radio-card {
+    @apply relative flex cursor-pointer gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition
+           hover:border-medical-300 has-[:checked]:border-medical-500 has-[:checked]:bg-medical-50/50
+           has-[:checked]:ring-1 has-[:checked]:ring-medical-500;
+  }
+
+  /* --- Slot picker ------------------------------------------------ */
+
+  .slot {
+    @apply relative flex flex-col items-center gap-0.5 rounded-2xl border border-slate-200 bg-white px-3 py-3
+           text-center text-sm font-bold text-slate-700 transition
+           hover:border-medical-400 hover:bg-medical-50;
+  }
+
+  .slot-selected {
+    @apply border-medical-600 bg-medical-600 text-white shadow-brand hover:bg-medical-600;
+  }
+
+  .slot-full {
+    @apply cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 line-through hover:border-slate-200 hover:bg-slate-100;
+  }
+
+  /* --- Badges ----------------------------------------------------- */
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-bold;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5
+           text-xs font-bold text-slate-600 transition hover:border-medical-400 hover:text-medical-700;
+  }
+
+  .chip-active {
+    @apply border-medical-600 bg-medical-600 text-white hover:border-medical-600 hover:text-white;
+  }
+
+  /* --- Alerts ----------------------------------------------------- */
+
+  .alert {
+    @apply flex items-start gap-3 rounded-2xl border p-4 text-sm font-semibold;
+  }
+
+  .alert-success {
+    @apply alert border-emerald-200 bg-emerald-50 text-emerald-900;
+  }
+
+  .alert-error {
+    @apply alert border-rose-200 bg-rose-50 text-rose-900;
+  }
+
+  .alert-warning {
+    @apply alert border-amber-200 bg-amber-50 text-amber-900;
+  }
+
+  .alert-info {
+    @apply alert border-sky-200 bg-sky-50 text-sky-900;
+  }
+
+  /* --- Tables ----------------------------------------------------- */
+
+  .table-wrap {
+    /* Tables are the one element allowed to scroll horizontally; the page
+       body itself must never do so on a phone. */
+    @apply -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0;
+  }
+
+  .table {
+    @apply w-full min-w-[640px] border-collapse text-sm;
+  }
+
+  .table thead th {
+    @apply whitespace-nowrap border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs
+           font-extrabold uppercase tracking-wider text-slate-500;
+  }
+
+  .table tbody td {
+    @apply border-b border-slate-100 px-4 py-3 align-middle text-slate-700;
+  }
+
+  .table tbody tr:hover {
+    @apply bg-slate-50/70;
+  }
+
+  /* --- Admin shell ------------------------------------------------ */
+
+  .admin-nav-link {
+    @apply flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 text-sm font-medium
+           text-white/70 transition hover:bg-white/5 hover:text-white;
+  }
+
+  .admin-nav-active {
+    @apply bg-white/10 font-bold text-white;
+    border-left: 3px solid theme('colors.medical.300');
+  }
+
+  .stat-card {
+    @apply rounded-2xl border border-slate-200/70 bg-white p-5 shadow-card;
+  }
+
+  .stat-label {
+    @apply text-xs font-bold uppercase tracking-wider text-slate-500;
+  }
+
+  .stat-value {
+    @apply mt-2 block text-3xl font-extrabold text-medical-800;
+  }
+
+  /* --- Misc ------------------------------------------------------- */
+
+  .faq {
+    @apply rounded-2xl border border-slate-200 bg-white p-5;
+  }
+
+  .faq summary {
+    @apply cursor-pointer list-none font-bold text-medical-900 marker:hidden;
+  }
+
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .prose-article {
+    @apply prose prose-slate max-w-none
+           prose-headings:font-extrabold prose-headings:tracking-tight
+           prose-h2:mt-10 prose-h2:text-2xl
+           prose-h3:mt-8 prose-h3:text-xl
+           prose-a:font-semibold prose-a:text-medical-700 prose-a:underline-offset-2
+           prose-img:rounded-2xl
+           prose-blockquote:border-l-medical-300 prose-blockquote:bg-medical-50/50 prose-blockquote:py-1;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Print - patients print their booking confirmation to take to reception
+   --------------------------------------------------------------------- */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  .card,
+  .card-pad {
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+}
