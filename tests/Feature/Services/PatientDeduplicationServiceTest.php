@@ -67,6 +67,37 @@ final class PatientDeduplicationServiceTest extends DatabaseTestCase
         self::assertNotSame($a->id, $b->id);
     }
 
+    public function test_registering_a_new_patient_writes_an_audit_row(): void
+    {
+        $patient = $this->service->findOrRegister($this->dto(['firstName' => 'Auditable']));
+
+        $row = $this->db->fetchOne(
+            "SELECT action, target_type, target_id FROM audit_logs
+             WHERE action = 'patient.registered' AND target_type = 'patient' AND target_id = :id",
+            ['id' => $patient->id],
+        );
+
+        self::assertNotNull($row, 'patient registration must write a patient.registered audit row');
+    }
+
+    public function test_returning_an_existing_matched_patient_writes_no_additional_audit_row(): void
+    {
+        $phone = PhoneNumber::fromString('0955' . random_int(100000, 999999));
+
+        $first = $this->service->findOrRegister($this->dto(['firstName' => 'Matched', 'phoneNumber' => $phone]));
+        $this->service->findOrRegister($this->dto([
+            'firstName' => 'Different Name On File', 'lastName' => 'But Same Phone', 'phoneNumber' => $phone,
+        ]));
+
+        $count = (int) $this->db->fetchValue(
+            "SELECT COUNT(*) FROM audit_logs
+             WHERE action = 'patient.registered' AND target_type = 'patient' AND target_id = :id",
+            ['id' => $first->id],
+        );
+
+        self::assertSame(1, $count, 'a matched-existing lookup must not write a second registration audit row');
+    }
+
     // -----------------------------------------------------------------
     //  AC-MPI-01: exact national_id match returns the existing patient.
     // -----------------------------------------------------------------

@@ -8,6 +8,7 @@ use Aster\Domain\DTO\PatientDTO;
 use Aster\Domain\Entity\Patient;
 use Aster\Domain\Exception\PatientException;
 use Aster\Domain\Repository\AdvisoryLockInterface;
+use Aster\Domain\Repository\AuditLoggerInterface;
 use Aster\Domain\Repository\NumberSequenceInterface;
 use Aster\Domain\Repository\PatientRepositoryInterface;
 use Aster\Domain\ValueObject\PatientId;
@@ -43,6 +44,7 @@ final readonly class PatientDeduplicationService
         private PatientRepositoryInterface $patients,
         private NumberSequenceInterface $sequence,
         private AdvisoryLockInterface $lock,
+        private AuditLoggerInterface $audit,
     ) {
     }
 
@@ -134,6 +136,18 @@ final readonly class PatientDeduplicationService
             // one caller further away from its cause.
             throw new RuntimeException('Patient vanished immediately after creation.');
         }
+
+        // A new MPI record is a meaningful clinical-system event - who
+        // registered whom, and when. Deliberately NOT logged for a
+        // matched-existing return above: that path changes nothing, and
+        // an audit row for every lookup that finds an existing patient
+        // would bury the one event actually worth finding later.
+        $this->audit->record(
+            AuditLoggerInterface::PATIENT_REGISTERED,
+            'patient',
+            $created->id,
+            sprintf('Registered new patient %s (%s)', $created->fullName(), $created->pid->value),
+        );
 
         return $created;
     }

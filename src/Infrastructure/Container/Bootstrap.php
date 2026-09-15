@@ -274,6 +274,7 @@ final class Bootstrap
                 $c->get(PatientRepositoryInterface::class),
                 $c->get(NumberSequenceInterface::class),
                 $c->get(AdvisoryLockInterface::class),
+                $c->get(AuditLoggerInterface::class),
             ));
 
         $container->singleton(EncounterService::class, static fn (Container $c): EncounterService
