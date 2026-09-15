@@ -69,4 +69,12 @@ final class EncounterException extends RuntimeException
             'invalid_physician',
         );
     }
+
+    public static function appointmentAlreadyCheckedIn(): self
+    {
+        return new self(
+            'This appointment has already been checked in to an encounter.',
+            'already_checked_in',
+        );
+    }
 }

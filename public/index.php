@@ -17,6 +17,9 @@ use Aster\Application\Service\DashboardService;
 use Aster\Application\Service\PaymentService;
 use Aster\Application\Service\SeoService;
 use Aster\Domain\Exception\HttpException;
+use Aster\Domain\Repository\EncounterRepositoryInterface;
+use Aster\Domain\Services\EncounterService;
+use Aster\Domain\Services\PatientDeduplicationService;
 use Aster\Infrastructure\Container\Bootstrap;
 use Aster\Infrastructure\Container\Container;
 use Aster\Infrastructure\Mail\MailQueue;
@@ -215,6 +218,9 @@ $appointments = $make(AdminController\AppointmentController::class, [
     $container->get(PackageRepository::class),
     $container->get(BookingService::class),
     $container->get(AuditLogger::class),
+    $container->get(PatientDeduplicationService::class),
+    $container->get(EncounterService::class),
+    $container->get(EncounterRepositoryInterface::class),
 ]);
 
 $payments = $make(AdminController\PaymentController::class, [
@@ -371,6 +377,7 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->get('/appointments/{id:\d+}', [$appointments, 'show'], [...$adminStack, 'can:appointments.view']);
     $r->post('/appointments/{id:\d+}/status', [$appointments, 'updateStatus'], [...$adminForm, 'can:appointments.write']);
     $r->post('/appointments/{id:\d+}/notes', [$appointments, 'updateNotes'], [...$adminForm, 'can:appointments.view']);
+    $r->post('/appointments/{id:\d+}/check-in', [$appointments, 'checkIn'], [...$adminForm, 'can:appointments.write']);
 
     // Payments
     $r->get('/payments', [$payments, 'index'], [...$adminStack, 'can:payments.view']);

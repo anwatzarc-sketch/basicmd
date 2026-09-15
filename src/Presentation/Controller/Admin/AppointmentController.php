@@ -6,13 +6,22 @@ namespace Aster\Presentation\Controller\Admin;
 
 use Aster\Application\DTO\BookingRequest;
 use Aster\Application\Service\BookingService;
+use Aster\Domain\DTO\PatientDTO;
 use Aster\Domain\Enum\AppointmentStatus;
 use Aster\Domain\Enum\BookingSource;
+use Aster\Domain\Enum\Gender;
 use Aster\Domain\Enum\QueueTier;
 use Aster\Domain\Enum\TimeSlot;
+use Aster\Domain\Enum\VisitType;
 use Aster\Domain\Exception\BookingException;
+use Aster\Domain\Exception\EncounterException;
 use Aster\Domain\Exception\HttpException;
+use Aster\Domain\Exception\PatientException;
 use Aster\Domain\Exception\ValidationException;
+use Aster\Domain\Repository\EncounterRepositoryInterface;
+use Aster\Domain\Services\EncounterService;
+use Aster\Domain\Services\PatientDeduplicationService;
+use Aster\Domain\ValueObject\PhoneNumber;
 use Aster\Infrastructure\Persistence\AppointmentRepository;
 use Aster\Infrastructure\Persistence\AuditLogger;
 use Aster\Infrastructure\Persistence\DoctorRepository;
@@ -48,6 +57,9 @@ final class AppointmentController extends Controller
         private readonly PackageRepository $packages,
         private readonly BookingService $booking,
         private readonly AuditLogger $audit,
+        private readonly PatientDeduplicationService $patientDedup,
+        private readonly EncounterService $encounterService,
+        private readonly EncounterRepositoryInterface $encounters,
     ) {
         parent::__construct($view, $session, $config);
     }
@@ -121,11 +133,116 @@ final class AppointmentController extends Controller
                 : [],
             'transitions' => $appointment->status->allowedTransitions(),
             'canEdit'     => $user->can('appointments.write'),
+            // Phase II check-in bridge - null on every booking made before
+            // this shipped, and on any booking never checked in at all.
+            'encounter'   => $this->encounters->findByAppointmentId($appointment->id),
             'meta'        => [
                 'title'   => 'Appointment ' . $appointment->reference->value,
                 'noindex' => true,
             ],
         ]);
+    }
+
+    /**
+     * Check an existing booking into a clinical encounter (decision 3 of
+     * the Phase II plan: the bridge from the unchanged public booking flow
+     * to the new Master Patient Index / encounter model).
+     *
+     * The appointment itself is never written to - this only ever creates
+     * a NEW encounters row pointing back at it. Demographic fields the
+     * booking form never asked for (date of birth, gender) are collected
+     * here, at the one point a real person is standing at the front desk
+     * to answer them.
+     */
+    public function checkIn(Request $request): Response
+    {
+        $user        = $this->requireUser();
+        $id          = $request->routeInt('id');
+        $appointment = $this->appointments->findById($id);
+
+        if ($appointment === null) {
+            throw HttpException::notFound();
+        }
+
+        $this->assertVisibleTo($user, $appointment);
+
+        $formPath = $this->config->adminPath . '/appointments/' . $id;
+
+        if ($appointment->status !== AppointmentStatus::CONFIRMED) {
+            return $this->redirectWithError(
+                $formPath,
+                'Only a confirmed appointment can be checked in.',
+            );
+        }
+
+        $dateOfBirth = $request->input('date_of_birth');
+        $gender      = Gender::tryFrom($request->string('gender'));
+
+        if ($dateOfBirth === null || $dateOfBirth === '' || $gender === null) {
+            return $this->redirectWithError(
+                $formPath,
+                'Date of birth and gender are required to check in.',
+            );
+        }
+
+        try {
+            $dob = new DateTimeImmutable($dateOfBirth);
+        } catch (\Exception) {
+            return $this->redirectWithError($formPath, 'That date of birth is not valid.');
+        }
+
+        // The booking form takes one free-text name field; the MPI wants
+        // first/last separately. Split on the first space - imperfect for
+        // multi-word given names, but front-desk staff can correct it on
+        // the patient record afterwards, and getting this exactly right is
+        // not worth a second required field on every public booking.
+        [$firstName, $lastName] = $this->splitName($appointment->patientName);
+
+        $dto = new PatientDTO(
+            firstName:   $firstName,
+            lastName:    $lastName,
+            dateOfBirth: $dob,
+            gender:      $gender,
+            phoneNumber: $appointment->patientPhone,
+            email:       $appointment->patientEmail,
+        );
+
+        try {
+            $patient   = $this->patientDedup->findOrRegister($dto);
+            $encounter = $this->encounterService->startEncounter(
+                $patient->id,
+                VisitType::OPD,
+                null,
+                $appointment->id,
+            );
+        } catch (PatientException|EncounterException $e) {
+            return $this->redirectWithError($formPath, $e->getMessage());
+        }
+
+        $this->audit->record(
+            AuditLogger::APPOINTMENT_UPDATED,
+            'appointment',
+            $appointment->id,
+            sprintf('Checked in to encounter %s (patient %s)', $encounter->patientVisitNumber->value, $patient->pid->value),
+        );
+
+        return $this->redirectWithSuccess(
+            $formPath,
+            sprintf('Checked in. Visit number %s.', $encounter->patientVisitNumber->value),
+        );
+    }
+
+    /** @return array{0: string, 1: string} */
+    private function splitName(string $fullName): array
+    {
+        $trimmed = trim($fullName);
+        $spaceAt = strpos($trimmed, ' ');
+
+        if ($spaceAt === false) {
+            return [$trimmed, ''];
+        }
+
+        return [substr($trimmed, 0, $spaceAt), trim(substr($trimmed, $spaceAt + 1))];
     }
 
     /** Apply a lifecycle transition. */

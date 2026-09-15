@@ -276,4 +276,67 @@ final class EncounterServiceTest extends DatabaseTestCase
 
         self::assertFalse($this->wardLocations->find($bedId)->isOccupied, 'FIN-008-equivalent: a failed admission must not occupy the bed');
     }
+
+    // -----------------------------------------------------------------
+    //  Check-in bridge (decision 3): encounters.appointment_id links back
+    //  to the UNCHANGED public booking flow, optionally.
+    // -----------------------------------------------------------------
+
+    private function makeAppointment(): int
+    {
+        $this->db->execute(
+            "INSERT INTO appointments
+                (booking_ref, patient_name, patient_phone, service_id, appointment_date, time_slot, status, payment_status)
+             VALUES (:ref, 'Bridge Test Patient', :phone, 1, :date, '08:00-10:00', 'confirmed', 'unpaid')",
+            [
+                'ref'   => 'AMC-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 8)),
+                'phone' => '+2519' . random_int(10000000, 99999999),
+                'date'  => (new \DateTimeImmutable('+1 day'))->format('Y-m-d'),
+            ],
+        );
+
+        return $this->db->lastInsertId();
+    }
+
+    public function test_starting_an_encounter_with_an_appointment_id_links_it(): void
+    {
+        $patientId     = $this->makePatient();
+        $appointmentId = $this->makeAppointment();
+
+        $encounter = $this->service->startEncounter($patientId, VisitType::OPD, null, $appointmentId);
+
+        self::assertSame($appointmentId, $encounter->appointmentId);
+    }
+
+    public function test_starting_an_encounter_without_an_appointment_id_is_a_walk_in(): void
+    {
+        $patientId = $this->makePatient();
+
+        $encounter = $this->service->startEncounter($patientId, VisitType::OPD, null);
+
+        self::assertNull($encounter->appointmentId);
+    }
+
+    public function test_checking_in_the_same_appointment_twice_is_rejected(): void
+    {
+        $patientId     = $this->makePatient();
+        $appointmentId = $this->makeAppointment();
+
+        $this->service->startEncounter($patientId, VisitType::OPD, null, $appointmentId);
+
+        $this->expectException(EncounterException::class);
+        $this->service->startEncounter($patientId, VisitType::OPD, null, $appointmentId);
+    }
+
+    public function test_checking_in_does_not_modify_the_appointment_row_itself(): void
+    {
+        $patientId     = $this->makePatient();
+        $appointmentId = $this->makeAppointment();
+
+        $before = $this->db->fetchOne('SELECT * FROM appointments WHERE id = :id', ['id' => $appointmentId]);
+        $this->service->startEncounter($patientId, VisitType::OPD, null, $appointmentId);
+        $after = $this->db->fetchOne('SELECT * FROM appointments WHERE id = :id', ['id' => $appointmentId]);
+
+        self::assertSame($before, $after, 'the check-in bridge must never write to the appointments table');
+    }
 }

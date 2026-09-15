@@ -54,15 +54,34 @@ final readonly class EncounterService
      * unvalidated foreign key is not a business decision, it is a bug
      * waiting for a concurrent request to expose.
      */
-    public function startEncounter(int $patientId, VisitType $visitType, ?int $locationId): Encounter
-    {
+    /**
+     * @param ?int $appointmentId Links back to the existing public-booking
+     *   flow (decision 3 in the implementation plan) - set when this
+     *   encounter originates from a front-desk check-in of an existing
+     *   appointment, left null for a walk-in with no prior booking.
+     *   appointments itself is completely unchanged; this is purely an
+     *   optional pointer FROM the new encounter TO the existing booking.
+     */
+    public function startEncounter(
+        int $patientId,
+        VisitType $visitType,
+        ?int $locationId,
+        ?int $appointmentId = null,
+    ): Encounter {
         $patient = $this->patients->findById($patientId);
 
         if ($patient === null) {
             throw EncounterException::patientNotFound();
         }
 
-        return $this->transactions->transactional(function () use ($patientId, $visitType, $locationId): Encounter {
+        // appointment_id is UNIQUE (one booking is checked in at most once)
+        // - checked ahead of the insert so a double check-in click gets a
+        // clear domain error instead of a raw duplicate-key PDOException.
+        if ($appointmentId !== null && $this->encounters->findByAppointmentId($appointmentId) !== null) {
+            throw EncounterException::appointmentAlreadyCheckedIn();
+        }
+
+        return $this->transactions->transactional(function () use ($patientId, $visitType, $locationId, $appointmentId): Encounter {
             $resolvedLocationId = null;
 
             if ($locationId !== null) {
@@ -74,6 +93,7 @@ final readonly class EncounterService
             $encounterId = $this->encounters->create([
                 'patient_visit_number' => $visitNumber->value,
                 'patient_id'           => $patientId,
+                'appointment_id'       => $appointmentId,
                 'visit_type'           => $visitType->value,
                 'status'               => EncounterStatus::CHECKED_IN->value,
                 'current_location_id'  => $resolvedLocationId,
