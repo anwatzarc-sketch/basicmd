@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aster\Infrastructure\Persistence;
 
 use Aster\Domain\Entity\Encounter;
+use Aster\Domain\Enum\EncounterStatus;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
 use Aster\Domain\ValueObject\VisitNumber;
 
@@ -98,6 +99,26 @@ final class EncounterRepository implements EncounterRepositoryInterface
         $rows = $this->db->fetchAll(
             self::SELECT_BASE . ' WHERE e.patient_id = :pid ORDER BY e.created_at DESC LIMIT :limit',
             ['pid' => $patientId, 'limit' => $limit],
+        );
+
+        return array_map(Encounter::fromRow(...), $rows);
+    }
+
+    /** @return list<Encounter> */
+    public function active(int $limit = 100): array
+    {
+        // Built from the enum rather than a literal list, the same idiom
+        // AppointmentRepository::occupyingStatusList() uses - safe to
+        // interpolate because the values come from EncounterStatus cases,
+        // never from user input.
+        $terminal = implode(', ', array_map(
+            static fn (EncounterStatus $s): string => "'" . $s->value . "'",
+            array_filter(EncounterStatus::all(), static fn (EncounterStatus $s): bool => $s->isTerminal()),
+        ));
+
+        $rows = $this->db->fetchAll(
+            self::SELECT_BASE . " WHERE e.status NOT IN ({$terminal}) ORDER BY e.created_at DESC LIMIT :limit",
+            ['limit' => $limit],
         );
 
         return array_map(Encounter::fromRow(...), $rows);

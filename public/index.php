@@ -18,8 +18,13 @@ use Aster\Application\Service\PaymentService;
 use Aster\Application\Service\SeoService;
 use Aster\Domain\Exception\HttpException;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
+use Aster\Domain\Repository\LedgerRepositoryInterface;
+use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use Aster\Domain\Repository\WardLocationRepositoryInterface;
+use Aster\Domain\Services\BillingService;
 use Aster\Domain\Services\EncounterService;
 use Aster\Domain\Services\PatientDeduplicationService;
+use Aster\Domain\Services\QueueService;
 use Aster\Infrastructure\Container\Bootstrap;
 use Aster\Infrastructure\Container\Container;
 use Aster\Infrastructure\Mail\MailQueue;
@@ -279,6 +284,18 @@ $patientsAdmin = $make(AdminController\PatientController::class, [
     $container->get(EncounterRepositoryInterface::class),
 ]);
 
+$encountersAdmin = $make(AdminController\EncounterController::class, [
+    $container->get(EncounterRepositoryInterface::class),
+    $container->get(WardLocationRepositoryInterface::class),
+    $container->get(LedgerRepositoryInterface::class),
+    $container->get(ReceivablePaymentRepositoryInterface::class),
+    $container->get(PatientRepository::class),
+    $container->get(UserRepository::class),
+    $container->get(EncounterService::class),
+    $container->get(BillingService::class),
+    $container->get(QueueService::class),
+]);
+
 // ---------------------------------------------------------------------
 //  Routes
 // ---------------------------------------------------------------------
@@ -369,7 +386,7 @@ $adminPath = $config->adminPath;
 $router->group($adminPath, [], static function (Router $r) use (
     $auth, $dashboard, $appointments, $payments, $doctorsAdmin, $catalog,
     $articlesAdmin, $inquiriesAdmin, $usersAdmin, $settingsAdmin,
-    $patientsAdmin,
+    $patientsAdmin, $encountersAdmin,
     $publicStack, $publicForm, $adminStack, $adminForm
 ): void {
     // Authentication (no auth middleware, obviously)
@@ -475,6 +492,14 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->get('/patients/create', [$patientsAdmin, 'form'], [...$adminStack, 'can:patients.write']);
     $r->post('/patients', [$patientsAdmin, 'save'], [...$adminForm, 'can:patients.write']);
     $r->get('/patients/{id:\d+}', [$patientsAdmin, 'show'], [...$adminStack, 'can:patients.view']);
+
+    // Phase II - Encounter workbench
+    $r->get('/encounters/workbench', [$encountersAdmin, 'workbench'], [...$adminStack, 'can:encounters.view']);
+    $r->post('/encounters/workbench', [$encountersAdmin, 'startWalkIn'], [...$adminForm, 'can:encounters.write']);
+    $r->post('/encounters/upgrade-ipd', [$encountersAdmin, 'upgradeToIpd'], [...$adminForm, 'can:encounters.write']);
+    $r->post('/encounters/{id:\d+}/discharge', [$encountersAdmin, 'discharge'], [...$adminForm, 'can:billing.discharge']);
+    $r->post('/encounters/{id:\d+}/override', [$encountersAdmin, 'applyOverride'], [...$adminForm, 'can:billing.override']);
+    $r->post('/encounters/{id:\d+}/walk-out', [$encountersAdmin, 'walkOut'], [...$adminForm, 'can:encounters.write']);
 });
 
 // ---------------------------------------------------------------------

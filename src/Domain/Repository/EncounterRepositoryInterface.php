@@ -32,6 +32,14 @@ interface EncounterRepositoryInterface
 
     public function findByAppointmentId(int $appointmentId): ?Encounter;
 
+    /**
+     * Every encounter not yet in a terminal state, most recent first - the
+     * workbench's default working list (FRS 10.2).
+     *
+     * @return list<Encounter>
+     */
+    public function active(int $limit = 100): array;
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int;
 
