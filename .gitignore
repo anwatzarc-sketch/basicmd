@@ -1,31 +1,29 @@
+
+!.env.example
+!/storage/cache/.gitkeep
+!/storage/logs/.gitkeep
+!/storage/uploads/media/.gitkeep
+!/storage/uploads/proofs/.gitkeep
+# /public/dist/
+# Build output (committed intentionally on shared hosting - see README)
+# Dependencies
+# Deployment bundles
+# Editor / OS
 # Environment & secrets
+# PHPUnit
+# Runtime
+*.swp
+.DS_Store
 .env
 .env.*
-!.env.example
-
-# Dependencies
-/vendor/
-/node_modules/
-
-# Build output (committed intentionally on shared hosting - see README)
-# /public/dist/
-
-# Runtime
-/storage/logs/*
-!/storage/logs/.gitkeep
-/storage/cache/*
-!/storage/cache/.gitkeep
-/storage/uploads/proofs/*
-!/storage/uploads/proofs/.gitkeep
-/storage/uploads/media/*
-!/storage/uploads/media/.gitkeep
-
-# Editor / OS
-.DS_Store
-Thumbs.db
 .idea/
 .vscode/
-*.swp
-
-# Deployment bundles
+/.phpunit.cache/
 /build/
+/node_modules/
+/storage/cache/*
+/storage/logs/*
+/storage/uploads/media/*
+/storage/uploads/proofs/*
+/vendor/
+Thumbs.db

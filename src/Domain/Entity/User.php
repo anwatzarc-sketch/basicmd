@@ -37,18 +37,27 @@ final readonly class User
         public DateTimeImmutable $createdAt,
         /** Set when this user is also a clinician, for own-queue scoping. */
         public ?int $doctorId = null,
+        /**
+         * The permission set actually held, resolved once at hydration time
+         * rather than on every can() call. See the doc comment on can().
+         *
+         * @var list<string>
+         */
+        public array $permissions = [],
     ) {
     }
 
     /** @param array<string, mixed> $row */
     public static function fromRow(array $row): self
     {
+        $role = UserRole::from((string) $row['role']);
+
         return new self(
             id:                 (int) $row['id'],
             fullName:           (string) $row['full_name'],
             email:              (string) $row['email'],
             phone:              $row['phone'] !== null ? (string) $row['phone'] : null,
-            role:               UserRole::from((string) $row['role']),
+            role:               $role,
             status:             UserStatus::from((string) $row['status']),
             locale:             Locale::from((string) ($row['locale'] ?? 'en')),
             failedAttempts:     (int) ($row['failed_attempts'] ?? 0),
@@ -57,7 +66,35 @@ final readonly class User
             mustChangePassword: (bool) ($row['must_change_password'] ?? false),
             createdAt:          self::toDate($row['created_at'] ?? null) ?? new DateTimeImmutable(),
             doctorId:           isset($row['doctor_id']) ? (int) $row['doctor_id'] : null,
+            permissions:        self::resolvePermissions($row, $role),
         );
+    }
+
+    /**
+     * The DB-resolved permission set (roles -> role_permissions), falling
+     * back to the hardcoded UserRole::permissions() matrix when the
+     * relational lookup yields nothing - e.g. a role with no
+     * role_permissions rows seeded yet, or a query that never joined
+     * user_roles at all. This keeps a User usable everywhere it is
+     * constructed from a partial row (UserRepository::rawRow() and similar
+     * raw selects do not carry a resolved_permissions column), and means
+     * the relational model can only ever GRANT what the hardcoded matrix
+     * already granted, never silently revoke it through an incomplete join.
+     *
+     * @param array<string, mixed> $row
+     * @return list<string>
+     */
+    private static function resolvePermissions(array $row, UserRole $role): array
+    {
+        $raw = $row['resolved_permissions'] ?? null;
+
+        if (!is_string($raw) || $raw === '') {
+            return $role->permissions();
+        }
+
+        $permissions = array_filter(explode(',', $raw), static fn (string $p): bool => $p !== '');
+
+        return array_values(array_unique($permissions));
     }
 
     private static function toDate(mixed $value): ?DateTimeImmutable
@@ -70,9 +107,17 @@ final readonly class User
         return new DateTimeImmutable($value . ' UTC');
     }
 
+    /**
+     * Whether this user holds the given permission.
+     *
+     * Checks the resolved set computed once in fromRow() - a plain in-memory
+     * lookup, not a database call, which matters because this is invoked up
+     * to ~15 times rendering a single admin page (the sidebar nav loop plus
+     * every per-section gate).
+     */
     public function can(string $permission): bool
     {
-        return $this->role->can($permission);
+        return in_array($permission, $this->permissions, true);
     }
 
     /** True when the account is locked out right now. */

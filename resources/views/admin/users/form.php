@@ -74,7 +74,7 @@ $val = static fn (string $k, mixed $c = ''): string => (string) ($old[$k] ?? $c 
             <select class="select" id="role" name="role">
                 <?php foreach ($roles as $role): ?>
                     <option value="<?= $view->e($role->value) ?>"
-                        <?= $view->attr(($account?->role->value ?? 'receptionist') === $role->value, 'selected') ?>>
+                        <?= $view->attr(($account?->role->value ?? \Aster\Domain\Enum\UserRole::RECEPTIONIST->value) === $role->value, 'selected') ?>>
                         <?= $view->e($role->label()) ?>
                     </option>
                 <?php endforeach; ?>
@@ -104,19 +104,37 @@ $val = static fn (string $k, mixed $c = ''): string => (string) ($old[$k] ?? $c 
                 <?php endforeach; ?>
             </select>
             <span class="hint">
-                Required for the Doctor role - the link is what restricts them to their own
-                appointment queue. A doctor account without one sees nothing.
+                Required for the Physician role - the link is what restricts them to their own
+                appointment queue. A physician account without one sees nothing.
             </span>
         </div>
     </div>
 
+    <?php
+    // Short blurb per role. Kept beside the role list (rather than fully
+    // generated from permissions()) because a plain-English summary of "can
+    // verify payments, cannot alter scheduling" reads far better than a
+    // dumped permission-slug list - but every role must appear here, so a
+    // role with nothing yet to say still gets an honest line rather than
+    // silently vanishing from the summary.
+    $roleBlurbs = [
+        'super_admin'    => 'Full access to everything.',
+        'physician'      => 'Their own appointment queue and clinical notes, plus article drafting.',
+        'nurse'          => 'No dedicated screens yet - added ahead of the clinical documentation work.',
+        'receptionist'   => 'Bookings and enquiries. Can see payments but cannot verify them.',
+        'accountant'     => 'Verifies payments and reads revenue reporting. Cannot alter scheduling.',
+        'lab_technician' => 'No dedicated screens yet - added ahead of the laboratory result exchange.',
+    ];
+    ?>
     <div class="rounded-2xl bg-slate-50 p-4">
         <b class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Role permissions</b>
         <div class="mt-3 grid gap-3 text-xs text-slate-600">
-            <p><b class="text-slate-800">Super Administrator</b> - full access to everything.</p>
-            <p><b class="text-slate-800">Receptionist</b> - bookings and enquiries. Can see payments but cannot verify them.</p>
-            <p><b class="text-slate-800">Finance Officer</b> - verifies payments and reads revenue reporting. Cannot alter scheduling.</p>
-            <p><b class="text-slate-800">Doctor</b> - their own appointment queue and clinical notes, plus article drafting.</p>
+            <?php foreach ($roles as $role): ?>
+                <p>
+                    <b class="text-slate-800"><?= $view->e($role->label()) ?></b>
+                    - <?= $view->e($roleBlurbs[$role->value] ?? 'See the permission matrix.') ?>
+                </p>
+            <?php endforeach; ?>
         </div>
     </div>
 

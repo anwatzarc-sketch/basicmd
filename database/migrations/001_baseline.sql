@@ -1,57 +1,42 @@
 -- =====================================================================
---  ASTER MEDICAL CENTER - PRODUCTION SCHEMA
---  Target:   MariaDB 10.4+  (InnoDB, utf8mb4)
---  Charset:  utf8mb4 / utf8mb4_unicode_ci  - required for Ge'ez (Amharic)
---  Note:     matches every table already live in aster_medical. MySQL 8's
---            utf8mb4_0900_ai_ci collation is not available on MariaDB, so
---            this schema targets MariaDB explicitly rather than MySQL 8.
---  Timezone: all timestamps stored UTC; rendered in Africa/Addis_Ababa
---
---  Load order:  schema.sql  ->  seed.sql
---  Re-runnable: drops are ordered child-first to satisfy FK constraints.
+--  001 - Baseline
 -- =====================================================================
-CREATE DATABASE IF NOT EXISTS `aster_medical` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `aster_medical`;
-SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
-SET time_zone = '+00:00';
-SET FOREIGN_KEY_CHECKS = 0;
+--  Marks the pre-existing 16-table schema as the migration-tracked
+--  starting point. Every statement here is CREATE TABLE IF NOT EXISTS,
+--  so:
+--
+--   - On a database that already has these tables (every install that
+--     predates the migration runner), this migration is a fast no-op per
+--     statement and simply gets recorded - nothing is altered.
+--   - On a brand-new database with nothing in it, this migration builds
+--     the full schema from scratch, so `php bin/migrate.php` alone is
+--     enough to provision a database with no separate schema.sql step.
+--
+--  schema.sql remains authoritative for what a fresh install looks like
+--  and is what bin/install.php still applies directly for a first-time
+--  setup (cheaper than running every migration in sequence). This file
+--  is a byte-for-byte extraction of schema.sql's sixteen CREATE TABLE
+--  statements, generated once, then hand-verified against it - the two
+--  must be kept in agreement if schema.sql's baseline tables ever change,
+--  though from this point on new columns belong in a NEW migration, not
+--  edited into schema.sql or into this file.
+--
+--  Deliberately excluded: CREATE DATABASE, SET NAMES/time_zone, and every
+--  DROP TABLE IF EXISTS from schema.sql - a migration must never contain a
+--  destructive statement that could run against a database already
+--  holding real bookings.
+-- =====================================================================
 
-DROP TABLE IF EXISTS `audit_logs`;
-DROP TABLE IF EXISTS `email_outbox`;
-DROP TABLE IF EXISTS `rate_limits`;
-DROP TABLE IF EXISTS `password_resets`;
-DROP TABLE IF EXISTS `payments`;
-DROP TABLE IF EXISTS `appointments`;
-DROP TABLE IF EXISTS `doctor_time_off`;
-DROP TABLE IF EXISTS `articles`;
-DROP TABLE IF EXISTS `contact_inquiries`;
-DROP TABLE IF EXISTS `health_packages`;
-DROP TABLE IF EXISTS `facilities`;
-DROP TABLE IF EXISTS `services`;
-DROP TABLE IF EXISTS `doctors`;
-DROP TABLE IF EXISTS `payment_methods`;
-DROP TABLE IF EXISTS `system_settings`;
-DROP TABLE IF EXISTS `users`;
-
-SET FOREIGN_KEY_CHECKS = 1;
-
--- ---------------------------------------------------------------------
---  users - staff accounts only. Patients are NOT accounts; they book
---  anonymously by phone/email, which keeps PHI surface area minimal.
--- ---------------------------------------------------------------------
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id`              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `full_name`       VARCHAR(160)    NOT NULL,
   `email`           VARCHAR(190)    NOT NULL,
   `phone`           VARCHAR(32)     NULL,
-  -- Argon2id digests are ~96-100 chars; 255 leaves room for algorithm upgrades.
-  `password_hash`   VARCHAR(255)    NOT NULL,
+    `password_hash`   VARCHAR(255)    NOT NULL,
   `role`            ENUM('super_admin','doctor','receptionist','finance') NOT NULL DEFAULT 'receptionist',
   `status`          ENUM('active','suspended','invited')                  NOT NULL DEFAULT 'invited',
   `locale`          ENUM('en','am')  NOT NULL DEFAULT 'en',
-  -- Brute-force throttling state, kept on the row so a lockout survives
-  -- session loss and cannot be bypassed by clearing cookies.
-  `failed_attempts` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+      `failed_attempts` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `locked_until`    DATETIME        NULL,
   `last_login_at`   DATETIME        NULL,
   `last_login_ip`   VARBINARY(16)   NULL,
@@ -65,11 +50,7 @@ CREATE TABLE `users` (
   KEY `ix_users_deleted` (`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  doctors - optionally linked to a `users` row so a doctor can log in
---  and see only their own appointment queue (RBAC role = 'doctor').
--- ---------------------------------------------------------------------
-CREATE TABLE `doctors` (
+CREATE TABLE IF NOT EXISTS `doctors` (
   `id`               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id`          BIGINT UNSIGNED NULL,
   `full_name`        VARCHAR(160)    NOT NULL,
@@ -84,9 +65,7 @@ CREATE TABLE `doctors` (
   `photo_path`       VARCHAR(255)    NULL,
   `initials`         VARCHAR(4)      NOT NULL DEFAULT '',
   `phone`            VARCHAR(32)     NULL,
-  -- Hard ceiling on appointments per calendar day; the booking service
-  -- enforces it inside a locking transaction (see PdoAppointmentRepository).
-  `daily_capacity`   SMALLINT UNSIGNED NOT NULL DEFAULT 16,
+      `daily_capacity`   SMALLINT UNSIGNED NOT NULL DEFAULT 16,
   `slot_capacity`    SMALLINT UNSIGNED NOT NULL DEFAULT 4,
   `consultation_fee` DECIMAL(10,2)   NOT NULL DEFAULT 0.00,
   `status`           ENUM('active','inactive','on_leave') NOT NULL DEFAULT 'active',
@@ -104,10 +83,7 @@ CREATE TABLE `doctors` (
     ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  services - the clinical catalogue rendered on the public site.
--- ---------------------------------------------------------------------
-CREATE TABLE `services` (
+CREATE TABLE IF NOT EXISTS `services` (
   `id`             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `icon`           VARCHAR(16)     NOT NULL DEFAULT '',
   `name`           VARCHAR(140)    NOT NULL,
@@ -133,11 +109,7 @@ CREATE TABLE `services` (
   CONSTRAINT `ck_services_price` CHECK (`price` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  facilities - rooms / wings surfaced on the public site and managed
---  in the admin portal (carried over from the prototype).
--- ---------------------------------------------------------------------
-CREATE TABLE `facilities` (
+CREATE TABLE IF NOT EXISTS `facilities` (
   `id`             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name`           VARCHAR(160)    NOT NULL,
   `name_am`        VARCHAR(160)    NULL,
@@ -158,23 +130,16 @@ CREATE TABLE `facilities` (
   KEY `ix_facilities_public` (`is_public`, `sort_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  health_packages - the prepaid screening products (Essential Check
---  ETB 2,500 / Executive Health ETB 6,500). `items_json` holds the
---  bullet list per locale so marketing can edit it without a migration.
--- ---------------------------------------------------------------------
-CREATE TABLE `health_packages` (
+CREATE TABLE IF NOT EXISTS `health_packages` (
   `id`             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `title`          VARCHAR(140)    NOT NULL,
   `title_am`       VARCHAR(140)    NULL,
   `slug`           VARCHAR(160)    NOT NULL,
   `price_etb`      DECIMAL(10,2)   NOT NULL,
-  -- Fraction of price_etb required up-front to hold the slot (0.00-1.00).
-  `deposit_rate`   DECIMAL(4,3)    NOT NULL DEFAULT 0.300,
+    `deposit_rate`   DECIMAL(4,3)    NOT NULL DEFAULT 0.300,
   `description`    TEXT            NULL,
   `description_am` TEXT            NULL,
-  -- Shape: {"en":["Full blood count","ECG"],"am":["...","..."]}
-  `items_json`     JSON            NULL,
+    `items_json`     JSON            NULL,
   `badge`          VARCHAR(40)     NULL,
   `is_featured`    TINYINT(1)      NOT NULL DEFAULT 0,
   `status`         ENUM('active','inactive') NOT NULL DEFAULT 'active',
@@ -189,12 +154,7 @@ CREATE TABLE `health_packages` (
   CONSTRAINT `ck_packages_deposit` CHECK (`deposit_rate` BETWEEN 0 AND 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  payment_methods - admin-editable transfer instructions shown to the
---  patient at checkout. Replaces gateway drivers: the patient transfers
---  manually, then uploads proof against the booking reference.
--- ---------------------------------------------------------------------
-CREATE TABLE `payment_methods` (
+CREATE TABLE IF NOT EXISTS `payment_methods` (
   `id`                BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `channel`           ENUM('bank_transfer','mobile_money','cash_on_arrival') NOT NULL DEFAULT 'bank_transfer',
   `provider`          VARCHAR(80)     NOT NULL,
@@ -215,10 +175,7 @@ CREATE TABLE `payment_methods` (
   KEY `ix_paymethods_status` (`status`, `sort_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  doctor_time_off - blackout windows removed from availability.
--- ---------------------------------------------------------------------
-CREATE TABLE `doctor_time_off` (
+CREATE TABLE IF NOT EXISTS `doctor_time_off` (
   `id`         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `doctor_id`  BIGINT UNSIGNED NOT NULL,
   `starts_on`  DATE            NOT NULL,
@@ -235,16 +192,7 @@ CREATE TABLE `doctor_time_off` (
   CONSTRAINT `ck_timeoff_range` CHECK (`ends_on` >= `starts_on`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  appointments - the core transactional table.
---
---  Overbooking control is two-layered:
---   1. `uq_appointments_slot_guard` makes an identical (doctor, date,
---      slot, phone) booking impossible - kills double-submit at the DB.
---   2. BookingService counts live rows FOR UPDATE against the doctor's
---      daily_capacity / slot_capacity inside the same transaction.
--- ---------------------------------------------------------------------
-CREATE TABLE `appointments` (
+CREATE TABLE IF NOT EXISTS `appointments` (
   `id`               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `booking_ref`      CHAR(12)        NOT NULL,
   `patient_name`     VARCHAR(160)    NOT NULL,
@@ -279,8 +227,7 @@ CREATE TABLE `appointments` (
   `deleted_at`       DATETIME        NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_appointments_ref` (`booking_ref`),
-  -- Idempotency guard: same patient cannot hold the same slot twice.
-  UNIQUE KEY `uq_appointments_slot_guard` (`doctor_id`, `appointment_date`, `time_slot`, `patient_phone`),
+    UNIQUE KEY `uq_appointments_slot_guard` (`doctor_id`, `appointment_date`, `time_slot`, `patient_phone`),
   KEY `ix_appointments_date_status`   (`appointment_date`, `status`),
   KEY `ix_appointments_doctor_date`   (`doctor_id`, `appointment_date`, `status`),
   KEY `ix_appointments_capacity`      (`doctor_id`, `appointment_date`, `time_slot`, `status`),
@@ -300,17 +247,10 @@ CREATE TABLE `appointments` (
     `base_amount` >= 0 AND `surcharge_amount` >= 0
     AND `total_amount` >= 0 AND `amount_paid` >= 0
   ),
-  -- A booking must reference either a service or a package (or both).
-  CONSTRAINT `ck_appt_subject` CHECK (`service_id` IS NOT NULL OR `package_id` IS NOT NULL)
+    CONSTRAINT `ck_appt_subject` CHECK (`service_id` IS NOT NULL OR `package_id` IS NOT NULL)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  payments - one row per proof-of-payment submission. Multiple rows per
---  appointment are expected (deposit, then balance; or a rejected slip
---  followed by a corrected one). `proof_path` points OUTSIDE the webroot;
---  files are streamed only through an authenticated admin controller.
--- ---------------------------------------------------------------------
-CREATE TABLE `payments` (
+CREATE TABLE IF NOT EXISTS `payments` (
   `id`                BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `appointment_id`    BIGINT UNSIGNED NOT NULL,
   `payment_method_id` BIGINT UNSIGNED NULL,
@@ -320,9 +260,7 @@ CREATE TABLE `payments` (
   `payer_name`        VARCHAR(160)    NULL,
   `transfer_ref`      VARCHAR(120)    NULL,
   `transferred_at`    DATE            NULL,
-  -- Proof file metadata. sha256 de-duplicates re-uploads of the same slip
-  -- and flags a slip being reused across two different bookings.
-  `proof_path`        VARCHAR(255)    NULL,
+      `proof_path`        VARCHAR(255)    NULL,
   `proof_original`    VARCHAR(255)    NULL,
   `proof_mime`        VARCHAR(80)     NULL,
   `proof_size`        INT UNSIGNED    NULL,
@@ -347,15 +285,10 @@ CREATE TABLE `payments` (
   CONSTRAINT `fk_pay_verifier` FOREIGN KEY (`verified_by`) REFERENCES `users` (`id`)
     ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `ck_pay_amount` CHECK (`amount` > 0),
-  -- A rejection must always carry a reason the patient can act on.
-  CONSTRAINT `ck_pay_rejection` CHECK (`status` <> 'rejected' OR `rejection_reason` IS NOT NULL)
+    CONSTRAINT `ck_pay_rejection` CHECK (`status` <> 'rejected' OR `rejection_reason` IS NOT NULL)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  articles - the SEO Knowledge Hub. `schema_type` drives the JSON-LD
---  block emitted per article (MedicalWebPage / MedicalCondition ...).
--- ---------------------------------------------------------------------
-CREATE TABLE `articles` (
+CREATE TABLE IF NOT EXISTS `articles` (
   `id`               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `title`            VARCHAR(220)    NOT NULL,
   `title_am`         VARCHAR(220)    NULL,
@@ -391,14 +324,10 @@ CREATE TABLE `articles` (
     ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_articles_reviewer` FOREIGN KEY (`reviewer_id`) REFERENCES `doctors` (`id`)
     ON DELETE SET NULL ON UPDATE CASCADE,
-  -- Published rows must carry a date, or sitemap/JSON-LD output breaks.
-  CONSTRAINT `ck_articles_published` CHECK (`status` <> 'published' OR `published_at` IS NOT NULL)
+    CONSTRAINT `ck_articles_published` CHECK (`status` <> 'published' OR `published_at` IS NOT NULL)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  contact_inquiries - public contact form submissions.
--- ---------------------------------------------------------------------
-CREATE TABLE `contact_inquiries` (
+CREATE TABLE IF NOT EXISTS `contact_inquiries` (
   `id`           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name`         VARCHAR(160)    NOT NULL,
   `phone`        VARCHAR(32)     NOT NULL,
@@ -421,11 +350,7 @@ CREATE TABLE `contact_inquiries` (
     ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  email_outbox - durable queue. Requests never block on SMTP; the cron
---  worker (bin/queue-worker.php) drains this table with retry/backoff.
--- ---------------------------------------------------------------------
-CREATE TABLE `email_outbox` (
+CREATE TABLE IF NOT EXISTS `email_outbox` (
   `id`            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `mailable`      VARCHAR(80)     NOT NULL,
   `to_email`      VARCHAR(190)    NOT NULL,
@@ -449,11 +374,7 @@ CREATE TABLE `email_outbox` (
   KEY `ix_outbox_related` (`related_type`, `related_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  audit_logs - append-only trail. Never UPDATE or DELETE these rows;
---  prune by date only, via a retention job.
--- ---------------------------------------------------------------------
-CREATE TABLE `audit_logs` (
+CREATE TABLE IF NOT EXISTS `audit_logs` (
   `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id`     BIGINT UNSIGNED NULL,
   `actor_label` VARCHAR(160)    NULL,
@@ -474,11 +395,7 @@ CREATE TABLE `audit_logs` (
     ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  rate_limits - fixed-window counters for login, booking and contact.
---  DB-backed so limits hold across PHP-FPM workers and deploys.
--- ---------------------------------------------------------------------
-CREATE TABLE `rate_limits` (
+CREATE TABLE IF NOT EXISTS `rate_limits` (
   `id`           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `bucket_key`   VARCHAR(190)    NOT NULL,
   `hits`         INT UNSIGNED    NOT NULL DEFAULT 0,
@@ -489,10 +406,7 @@ CREATE TABLE `rate_limits` (
   KEY `ix_rate_expiry` (`expires_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  password_resets - single-use, hashed, short-lived tokens.
--- ---------------------------------------------------------------------
-CREATE TABLE `password_resets` (
+CREATE TABLE IF NOT EXISTS `password_resets` (
   `id`         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id`    BIGINT UNSIGNED NOT NULL,
   `token_hash` CHAR(64)        NOT NULL,
@@ -507,11 +421,7 @@ CREATE TABLE `password_resets` (
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ---------------------------------------------------------------------
---  system_settings - runtime configuration editable by SuperAdmin.
---  Secrets belong in .env, never here.
--- ---------------------------------------------------------------------
-CREATE TABLE `system_settings` (
+CREATE TABLE IF NOT EXISTS `system_settings` (
   `setting_key`  VARCHAR(80)  NOT NULL,
   `value`        TEXT         NULL,
   `group_name`   VARCHAR(40)  NOT NULL DEFAULT 'general',

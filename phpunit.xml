@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    PHPUnit configuration.
+
+    Tests run against the REAL MariaDB instance configured in .env, wrapped in
+    a transaction per test that is always rolled back (see
+    tests/Support/DatabaseTestCase.php). This is deliberate: the properties
+    under test here - row locking, unique-index collisions, SAVEPOINT nesting,
+    generated columns - are exactly the properties a mocked PDO cannot verify.
+    ATTR_EMULATE_PREPARES=false alone has caused production bugs a mock would
+    never catch (see bin/check-sql.php).
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="Characterisation">
+            <directory>tests/Characterisation</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+</phpunit>

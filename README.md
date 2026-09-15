@@ -2,7 +2,7 @@
 
 Public website and administration portal for Aster Medical Center, Bole Sub-city, Addis Ababa.
 
-Bilingual (English / አማርኛ), PHP 8.3, MySQL 8.0, Tailwind CSS 3. No framework.
+Bilingual (English / አማርኛ), PHP 8.3, MariaDB 10.4+, Tailwind CSS 3. No framework.
 
 ---
 
