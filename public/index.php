@@ -19,6 +19,7 @@ use Aster\Application\Service\SeoService;
 use Aster\Domain\Exception\HttpException;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
 use Aster\Domain\Repository\LedgerRepositoryInterface;
+use Aster\Domain\Repository\NumberSequenceInterface;
 use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
 use Aster\Domain\Repository\WardLocationRepositoryInterface;
 use Aster\Domain\Services\BillingService;
@@ -296,6 +297,15 @@ $encountersAdmin = $make(AdminController\EncounterController::class, [
     $container->get(QueueService::class),
 ]);
 
+$billingAdmin = $make(AdminController\BillingController::class, [
+    $container->get(EncounterRepositoryInterface::class),
+    $container->get(LedgerRepositoryInterface::class),
+    $container->get(ReceivablePaymentRepositoryInterface::class),
+    $container->get(NumberSequenceInterface::class),
+    $container->get(BillingService::class),
+    $container->get(AuditLogger::class),
+]);
+
 // ---------------------------------------------------------------------
 //  Routes
 // ---------------------------------------------------------------------
@@ -386,7 +396,7 @@ $adminPath = $config->adminPath;
 $router->group($adminPath, [], static function (Router $r) use (
     $auth, $dashboard, $appointments, $payments, $doctorsAdmin, $catalog,
     $articlesAdmin, $inquiriesAdmin, $usersAdmin, $settingsAdmin,
-    $patientsAdmin, $encountersAdmin,
+    $patientsAdmin, $encountersAdmin, $billingAdmin,
     $publicStack, $publicForm, $adminStack, $adminForm
 ): void {
     // Authentication (no auth middleware, obviously)
@@ -500,6 +510,11 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->post('/encounters/{id:\d+}/discharge', [$encountersAdmin, 'discharge'], [...$adminForm, 'can:billing.discharge']);
     $r->post('/encounters/{id:\d+}/override', [$encountersAdmin, 'applyOverride'], [...$adminForm, 'can:billing.override']);
     $r->post('/encounters/{id:\d+}/walk-out', [$encountersAdmin, 'walkOut'], [...$adminForm, 'can:encounters.write']);
+
+    // Phase II - Consumption ledger & payments
+    $r->get('/billing/ledger', [$billingAdmin, 'ledger'], [...$adminStack, 'can:billing.view']);
+    $r->post('/billing/ledger', [$billingAdmin, 'postLedgerEntry'], [...$adminForm, 'can:billing.write']);
+    $r->post('/billing/payments', [$billingAdmin, 'postPayment'], [...$adminForm, 'can:billing.write']);
 });
 
 // ---------------------------------------------------------------------
