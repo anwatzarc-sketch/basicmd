@@ -176,7 +176,17 @@ final class AuditLogger implements AuditLoggerInterface
      */
     private function encodeChanges(array $changes): string
     {
-        $sensitive = ['password', 'password_hash', 'token', 'token_hash', 'patient_notes', 'notes'];
+        $sensitive = [
+            'password', 'password_hash', 'token', 'token_hash', 'patient_notes', 'notes',
+            // Phase II: clinical text and structured results, in whatever
+            // form they appear in a diff payload - ciphertext included,
+            // since the field NAME being visible in an audit row is
+            // already more than an audit trail needs to show, encrypted or
+            // not. See Encryptor's docblock and Patient's
+            // allergies_encrypted for the same boundary.
+            'content_encrypted', 'results_payload_encrypted', 'allergies_encrypted',
+            'vitals_json',
+        ];
 
         array_walk_recursive($changes, static function (mixed &$value, string|int $key) use ($sensitive): void {
             if (is_string($key) && in_array(strtolower($key), $sensitive, true)) {

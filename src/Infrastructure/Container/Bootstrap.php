@@ -13,9 +13,12 @@ use Aster\Application\Service\PricingService;
 use Aster\Application\Service\SeoService;
 use Aster\Domain\Repository\AdvisoryLockInterface;
 use Aster\Domain\Repository\AuditLoggerInterface;
+use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
+use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
 use Aster\Domain\Repository\NumberSequenceInterface;
 use Aster\Domain\Repository\PatientRepositoryInterface;
+use Aster\Domain\Repository\PrescriptionRepositoryInterface;
 use Aster\Domain\Repository\StaffDirectoryInterface;
 use Aster\Domain\Repository\TransactionManagerInterface;
 use Aster\Domain\Repository\WardLocationRepositoryInterface;
@@ -27,7 +30,9 @@ use Aster\Infrastructure\Mail\MailRenderer;
 use Aster\Infrastructure\Persistence\AppointmentRepository;
 use Aster\Infrastructure\Persistence\ArticleRepository;
 use Aster\Infrastructure\Persistence\AuditLogger;
+use Aster\Infrastructure\Persistence\ClinicalNoteRepository;
 use Aster\Infrastructure\Persistence\Database;
+use Aster\Infrastructure\Persistence\DiagnosticOrderRepository;
 use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Persistence\EncounterRepository;
 use Aster\Infrastructure\Persistence\FacilityRepository;
@@ -38,6 +43,7 @@ use Aster\Infrastructure\Persistence\PaymentRepository;
 use Aster\Infrastructure\Persistence\PdoAdvisoryLock;
 use Aster\Infrastructure\Persistence\PdoNumberSequence;
 use Aster\Infrastructure\Persistence\PdoTransactionManager;
+use Aster\Infrastructure\Persistence\PrescriptionRepository;
 use Aster\Infrastructure\Persistence\ServiceRepository;
 use Aster\Infrastructure\Persistence\SettingsRepository;
 use Aster\Infrastructure\Persistence\StaffDirectory;
@@ -124,6 +130,7 @@ final class Bootstrap
             PdoTransactionManager::class,
             PdoAdvisoryLock::class,
             StaffDirectory::class,
+            PrescriptionRepository::class,
         ] as $repository) {
             $container->singleton(
                 $repository,
@@ -133,6 +140,12 @@ final class Bootstrap
 
         $container->singleton(PatientRepository::class, static fn (Container $c): PatientRepository
             => new PatientRepository($c->get(Database::class), $c->get(Encryptor::class)));
+
+        $container->singleton(ClinicalNoteRepository::class, static fn (Container $c): ClinicalNoteRepository
+            => new ClinicalNoteRepository($c->get(Database::class), $c->get(Encryptor::class)));
+
+        $container->singleton(DiagnosticOrderRepository::class, static fn (Container $c): DiagnosticOrderRepository
+            => new DiagnosticOrderRepository($c->get(Database::class), $c->get(Encryptor::class)));
 
         // Domain services depend on the interface (ports-in-Domain,
         // PDO-in-Infrastructure), so each resolves to the same singleton
@@ -164,6 +177,18 @@ final class Bootstrap
         $container->singleton(
             StaffDirectoryInterface::class,
             static fn (Container $c): StaffDirectoryInterface => $c->get(StaffDirectory::class),
+        );
+        $container->singleton(
+            ClinicalNoteRepositoryInterface::class,
+            static fn (Container $c): ClinicalNoteRepositoryInterface => $c->get(ClinicalNoteRepository::class),
+        );
+        $container->singleton(
+            DiagnosticOrderRepositoryInterface::class,
+            static fn (Container $c): DiagnosticOrderRepositoryInterface => $c->get(DiagnosticOrderRepository::class),
+        );
+        $container->singleton(
+            PrescriptionRepositoryInterface::class,
+            static fn (Container $c): PrescriptionRepositoryInterface => $c->get(PrescriptionRepository::class),
         );
         // AuditLogger already implements AuditLoggerInterface directly -
         // no separate concrete-vs-interface pair needed, unlike the
