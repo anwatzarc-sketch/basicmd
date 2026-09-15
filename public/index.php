@@ -31,6 +31,7 @@ use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Persistence\FacilityRepository;
 use Aster\Infrastructure\Persistence\InquiryRepository;
 use Aster\Infrastructure\Persistence\PackageRepository;
+use Aster\Infrastructure\Persistence\PatientRepository;
 use Aster\Infrastructure\Persistence\PaymentRepository;
 use Aster\Infrastructure\Persistence\ServiceRepository;
 use Aster\Infrastructure\Persistence\SettingsRepository;
@@ -270,6 +271,14 @@ $settingsAdmin = $make(AdminController\SettingsController::class, [
     $container->get(AuditLogger::class),
 ]);
 
+// --- Phase II -----------------------------------------------------------
+
+$patientsAdmin = $make(AdminController\PatientController::class, [
+    $container->get(PatientRepository::class),
+    $container->get(PatientDeduplicationService::class),
+    $container->get(EncounterRepositoryInterface::class),
+]);
+
 // ---------------------------------------------------------------------
 //  Routes
 // ---------------------------------------------------------------------
@@ -301,6 +310,10 @@ foreach ([
     'settings.view', 'settings.write',
     'payment_methods.write',
     'audit.view',
+    // Phase II (migration 006_phase2_permissions.sql)
+    'patients.view', 'patients.write',
+    'encounters.view', 'encounters.write',
+    'billing.view', 'billing.write', 'billing.discharge', 'billing.override',
 ] as $permission) {
     $router->registerMiddleware('can:' . $permission, new Authorize($permission, $logger));
 }
@@ -356,6 +369,7 @@ $adminPath = $config->adminPath;
 $router->group($adminPath, [], static function (Router $r) use (
     $auth, $dashboard, $appointments, $payments, $doctorsAdmin, $catalog,
     $articlesAdmin, $inquiriesAdmin, $usersAdmin, $settingsAdmin,
+    $patientsAdmin,
     $publicStack, $publicForm, $adminStack, $adminForm
 ): void {
     // Authentication (no auth middleware, obviously)
@@ -455,6 +469,12 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->get('/settings/mail', [$settingsAdmin, 'mail'], [...$adminStack, 'can:settings.view']);
     $r->post('/settings/mail/test', [$settingsAdmin, 'testMail'], [...$adminForm, 'can:settings.write']);
     $r->post('/settings/mail/{id:\d+}/retry', [$settingsAdmin, 'retryMail'], [...$adminForm, 'can:settings.write']);
+
+    // Phase II - Master Patient Index
+    $r->get('/patients', [$patientsAdmin, 'index'], [...$adminStack, 'can:patients.view']);
+    $r->get('/patients/create', [$patientsAdmin, 'form'], [...$adminStack, 'can:patients.write']);
+    $r->post('/patients', [$patientsAdmin, 'save'], [...$adminForm, 'can:patients.write']);
+    $r->get('/patients/{id:\d+}', [$patientsAdmin, 'show'], [...$adminStack, 'can:patients.view']);
 });
 
 // ---------------------------------------------------------------------

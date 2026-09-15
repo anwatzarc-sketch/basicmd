@@ -508,6 +508,32 @@
            bg-slate-50/80 dark:bg-slate-800/80 px-2.5 py-1 text-xs font-bold tracking-tight text-slate-700 dark:text-slate-300;
   }
 
+  /*
+   * Phase II encounter-status indicators (FRS section 3.3's own required
+   * class names: chip--built / chip--partial / chip--absent, mapped to
+   * Forest Green / Ochre / Clay Red respectively). Aliased onto the
+   * existing .badge shape - same pill, same sizing, same border-plus-fill
+   * pattern every other status badge in this app already uses - rather
+   * than introducing a second visual language for "a coloured status
+   * pill", which is what .badge already is. Named exactly as the FRS
+   * specifies since EncounterStatus::chipClass() emits these literal
+   * strings.
+   */
+  .chip--built {
+    @apply badge border-emerald-200 bg-emerald-50 text-emerald-700
+           dark:border-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300;
+  }
+
+  .chip--partial {
+    @apply badge border-amber-200 bg-amber-50 text-amber-700
+           dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300;
+  }
+
+  .chip--absent {
+    @apply badge border-rose-200 bg-rose-50 text-rose-700
+           dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-300;
+  }
+
   .chip {
     @apply glass-panel inline-flex select-none items-center gap-1.5 rounded-full px-3.5 py-1.5
            text-xs font-bold text-slate-600 dark:text-slate-300 transition-all duration-200 

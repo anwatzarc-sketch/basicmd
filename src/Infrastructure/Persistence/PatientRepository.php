@@ -6,6 +6,7 @@ namespace Aster\Infrastructure\Persistence;
 
 use Aster\Domain\Entity\Patient;
 use Aster\Domain\Repository\PatientRepositoryInterface;
+use Aster\Domain\ValueObject\PhoneNumber;
 use Aster\Infrastructure\Security\Encryptor;
 use DateTimeImmutable;
 
@@ -151,6 +152,15 @@ final class PatientRepository implements PatientRepositoryInterface
             return [];
         }
 
+        // phone_number is always stored E.164-normalised (the same
+        // PhoneNumber value object PatientDeduplicationService matches
+        // with), but a staff member searching types it the way a patient
+        // said it out loud - "0911 998 877", not "+251911998877". An
+        // exact match against the raw term would silently never find
+        // anyone by phone; normalise first and fall back to the raw term
+        // only when it does not parse as a phone number at all.
+        $phoneTerm = PhoneNumber::tryFrom($term)?->e164 ?? $term;
+
         [$nameClause, $nameParams] = Database::searchClause(['first_name', 'last_name'], $term, 'name');
 
         $rows = $this->db->fetchAll(
@@ -166,10 +176,10 @@ final class PatientRepository implements PatientRepositoryInterface
              LIMIT :limit",
             [
                 'exact'  => $term,
-                'phone'  => $term,
+                'phone'  => $phoneTerm,
                 'pid'    => mb_strtoupper($term),
                 'exact2' => $term,
-                'phone2' => $term,
+                'phone2' => $phoneTerm,
                 'pid2'   => mb_strtoupper($term),
                 'limit'  => $limit,
                 ...$nameParams,

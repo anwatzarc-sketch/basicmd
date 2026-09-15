@@ -86,15 +86,22 @@ enum UserRole: string
                 'payment_methods.view', 'payment_methods.write',
                 'audit.view',
                 'reports.view',
+                'patients.view', 'patients.write',
+                'encounters.view', 'encounters.write',
+                'billing.view', 'billing.write', 'billing.discharge', 'billing.override',
             ],
 
             // Clinical staff: their own queue plus the articles they author.
-            // No financial verification, no user administration.
+            // No financial verification, no user administration. Sees the
+            // MPI and the encounter workbench read-write, per migration
+            // 006 - upgradeOpdToIpd() names a physician directly.
             self::PHYSICIAN => [
                 'dashboard.view',
                 'appointments.view', 'appointments.write',
                 'articles.view', 'articles.write',
                 'patients.notes',
+                'patients.view',
+                'encounters.view', 'encounters.write',
             ],
 
             // No screens exist for this role yet - Phase II stages 2+ grant
@@ -116,10 +123,15 @@ enum UserRole: string
                 'packages.view',
                 'facilities.view',
                 'inquiries.view', 'inquiries.write',
+                'patients.view', 'patients.write',
+                'encounters.view', 'encounters.write',
             ],
 
             // Finance: verifies proof-of-payment and reads revenue reporting.
-            // Cannot alter clinical scheduling.
+            // Cannot alter clinical scheduling. Owns the consumption ledger
+            // and payment posting (BillingService's own accountant_id
+            // columns), and the financial clearance gate - discharge and
+            // override are FIN-003/004's whole point.
             self::ACCOUNTANT => [
                 'dashboard.view', 'dashboard.finance',
                 'appointments.view', 'appointments.view_all',
@@ -127,6 +139,9 @@ enum UserRole: string
                 'payment_methods.view', 'payment_methods.write',
                 'packages.view',
                 'reports.view',
+                'patients.view',
+                'encounters.view',
+                'billing.view', 'billing.write', 'billing.discharge', 'billing.override',
             ],
 
             // Same deliberate empty set as NURSE - see that case's comment.
