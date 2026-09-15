@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aster\Presentation\Controller\Admin;
 
+use Aster\Application\Service\PatientAuthService;
 use Aster\Domain\DTO\PatientDTO;
 use Aster\Domain\Enum\BloodGroup;
 use Aster\Domain\Enum\Gender;
@@ -39,6 +40,7 @@ final class PatientController extends Controller
         private readonly PatientRepository $patients,
         private readonly PatientDeduplicationService $dedup,
         private readonly EncounterRepositoryInterface $encounters,
+        private readonly PatientAuthService $portalAuth,
     ) {
         parent::__construct($view, $session, $config);
     }
@@ -136,6 +138,39 @@ final class PatientController extends Controller
             'encounters' => $this->encounters->forPatient($patient->id),
             'meta'      => ['title' => $patient->fullName(), 'noindex' => true],
         ]);
+    }
+
+    /**
+     * Give a patient portal access, or reset it if they already have some
+     * (FRS 5.3/10.6). The FRS defines no patient self-registration flow
+     * for the portal - only staff can provision it, the same way a staff
+     * account itself only ever comes from an administrator invite.
+     */
+    public function provisionPortalAccess(Request $request): Response
+    {
+        $id      = $request->routeInt('id');
+        $patient = $this->patients->findById($id);
+
+        if ($patient === null) {
+            throw HttpException::notFound();
+        }
+
+        $temporary = $this->portalAuth->provisionAccess($patient->id);
+
+        // Shown once, on screen only - see UserController's identical
+        // temporary-credential handling for why this is never logged or
+        // emailed.
+        $this->session->flash(
+            'success',
+            sprintf(
+                'Portal access ready for %s. Patient ID: %s - Temporary password: %s. Share both securely.',
+                $patient->fullName(),
+                $patient->pid->value,
+                $temporary,
+            ),
+        );
+
+        return $this->redirectToAdmin('patients/' . $patient->id);
     }
 
     private function blankToNull(?string $value): ?string

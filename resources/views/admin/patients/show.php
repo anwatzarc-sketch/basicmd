@@ -67,6 +67,20 @@ use Aster\Domain\Enum\EncounterStatus;
     </div>
 
     <aside class="grid gap-6">
+        <div class="card-pad">
+            <h2 class="text-base font-extrabold text-medical-900">Patient portal access</h2>
+            <p class="mt-2 text-xs text-slate-500">
+                Generates a temporary password for <?= $view->e($patient->fullName()) ?> to sign in at
+                the patient portal with their Patient ID. Resets any existing portal password.
+            </p>
+            <form method="post" action="<?= $view->adminUrl('patients/' . $patient->id . '/portal-access') ?>" class="mt-4"
+                  data-confirm="Give this patient portal access? This resets any existing portal password."
+                  data-confirm-title="Confirm portal access" data-confirm-action="Provision access" data-confirm-variant="primary">
+                <?= $view->csrfField() ?>
+                <button type="submit" class="btn-secondary btn-sm w-full">Provision / reset portal access</button>
+            </form>
+        </div>
+
         <a href="<?= $view->adminUrl('patients') ?>" class="btn-secondary btn-sm">&larr; Back to search</a>
     </aside>
 </div>

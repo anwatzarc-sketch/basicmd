@@ -40,6 +40,15 @@ interface EncounterRepositoryInterface
      */
     public function active(int $limit = 100): array;
 
+    /**
+     * A patient's full encounter history, most recent first - the admin
+     * patient-detail screen and the portal dashboard's own view of "my
+     * visits" (FRS 10.1/10.6).
+     *
+     * @return list<Encounter>
+     */
+    public function forPatient(int $patientId, int $limit = 50): array;
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int;
 

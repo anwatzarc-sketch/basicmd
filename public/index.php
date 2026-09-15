@@ -14,9 +14,11 @@ declare(strict_types=1);
 use Aster\Application\Service\AuthService;
 use Aster\Application\Service\BookingService;
 use Aster\Application\Service\DashboardService;
+use Aster\Application\Service\PatientAuthService;
 use Aster\Application\Service\PaymentService;
 use Aster\Application\Service\SeoService;
 use Aster\Domain\Exception\HttpException;
+use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
 use Aster\Domain\Repository\LedgerRepositoryInterface;
 use Aster\Domain\Repository\NumberSequenceInterface;
@@ -50,12 +52,14 @@ use Aster\Infrastructure\Storage\FileUploader;
 use Aster\Infrastructure\Support\Config;
 use Aster\Infrastructure\Support\Logger;
 use Aster\Presentation\Controller\Admin as AdminController;
+use Aster\Presentation\Controller\Patient as PatientPortalController;
 use Aster\Presentation\Controller\Web as WebController;
 use Aster\Presentation\Http\ErrorHandler;
 use Aster\Presentation\Http\Request;
 use Aster\Presentation\Http\Response;
 use Aster\Presentation\Http\Router;
 use Aster\Presentation\Middleware\Authenticate;
+use Aster\Presentation\Middleware\AuthenticatePatient;
 use Aster\Presentation\Middleware\Authorize;
 use Aster\Presentation\Middleware\SecurityHeaders;
 use Aster\Presentation\Middleware\SetLocale;
@@ -283,6 +287,7 @@ $patientsAdmin = $make(AdminController\PatientController::class, [
     $container->get(PatientRepository::class),
     $container->get(PatientDeduplicationService::class),
     $container->get(EncounterRepositoryInterface::class),
+    $container->get(PatientAuthService::class),
 ]);
 
 $encountersAdmin = $make(AdminController\EncounterController::class, [
@@ -306,6 +311,13 @@ $billingAdmin = $make(AdminController\BillingController::class, [
     $container->get(AuditLogger::class),
 ]);
 
+$patientPortal = $make(PatientPortalController\PortalController::class, [
+    $container->get(PatientAuthService::class),
+    $container->get(EncounterRepositoryInterface::class),
+    $container->get(DiagnosticOrderRepositoryInterface::class),
+    $container->get(BillingService::class),
+]);
+
 // ---------------------------------------------------------------------
 //  Routes
 // ---------------------------------------------------------------------
@@ -320,6 +332,11 @@ $router->registerMiddleware('auth', new Authenticate(
     $session,
     $config,
     $container->get(AuditLogger::class),
+));
+$router->registerMiddleware('auth_patient', new AuthenticatePatient(
+    $container->get(PatientAuthService::class),
+    $session,
+    $config,
 ));
 
 // One Authorize instance per permission, named so the route table reads as
@@ -345,10 +362,12 @@ foreach ([
     $router->registerMiddleware('can:' . $permission, new Authorize($permission, $logger));
 }
 
-$publicStack = ['headers', 'locale'];
-$publicForm  = ['headers', 'locale', 'csrf'];
-$adminStack  = ['headers', 'locale', 'auth'];
-$adminForm   = ['headers', 'locale', 'csrf', 'auth'];
+$publicStack  = ['headers', 'locale'];
+$publicForm   = ['headers', 'locale', 'csrf'];
+$adminStack   = ['headers', 'locale', 'auth'];
+$adminForm    = ['headers', 'locale', 'csrf', 'auth'];
+$portalStack  = ['headers', 'locale', 'auth_patient'];
+$portalForm   = ['headers', 'locale', 'csrf', 'auth_patient'];
 
 // --- Public site ------------------------------------------------------
 
@@ -388,6 +407,13 @@ $router->post('/booking/{reference}/cancel', [$booking, 'cancel'], $publicForm);
 $router->get('/sitemap.xml', [$sitemap, 'sitemap'], ['headers']);
 $router->get('/robots.txt', [$sitemap, 'robots'], ['headers']);
 $router->get('/media/{path:.+}', [$sitemap, 'media'], ['headers']);
+
+// --- Patient portal (FRS 10.6) -----------------------------------------
+
+$router->get('/patient/portal/login', [$patientPortal, 'loginForm'], $publicStack);
+$router->post('/patient/portal/login', [$patientPortal, 'login'], $publicForm);
+$router->post('/patient/portal/logout', [$patientPortal, 'logout'], $portalForm);
+$router->get('/patient/portal/dashboard', [$patientPortal, 'dashboard'], $portalStack);
 
 // --- Admin portal -----------------------------------------------------
 
@@ -502,6 +528,7 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->get('/patients/create', [$patientsAdmin, 'form'], [...$adminStack, 'can:patients.write']);
     $r->post('/patients', [$patientsAdmin, 'save'], [...$adminForm, 'can:patients.write']);
     $r->get('/patients/{id:\d+}', [$patientsAdmin, 'show'], [...$adminStack, 'can:patients.view']);
+    $r->post('/patients/{id:\d+}/portal-access', [$patientsAdmin, 'provisionPortalAccess'], [...$adminForm, 'can:patients.write']);
 
     // Phase II - Encounter workbench
     $r->get('/encounters/workbench', [$encountersAdmin, 'workbench'], [...$adminStack, 'can:encounters.view']);

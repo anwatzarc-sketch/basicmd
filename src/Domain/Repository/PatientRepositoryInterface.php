@@ -20,6 +20,14 @@ interface PatientRepositoryInterface
     public function findById(int $id): ?Patient;
 
     /**
+     * Exact PID match - the identifier the MPI itself issued, and the one
+     * a patient is expected to know and quote back (FRS 10.6 portal
+     * login). Unlike phone or demographic matching, this carries a UNIQUE
+     * database constraint, so a single nullable result is unambiguous.
+     */
+    public function findByPid(string $pid): ?Patient;
+
+    /**
      * Level 1a: exact national_id match.
      *
      * A single nullable result is safe here specifically because

@@ -8,6 +8,7 @@ use Aster\Application\Service\AuthService;
 use Aster\Application\Service\BookingService;
 use Aster\Application\Service\DashboardService;
 use Aster\Application\Service\NotificationService;
+use Aster\Application\Service\PatientAuthService;
 use Aster\Application\Service\PaymentService;
 use Aster\Application\Service\PricingService;
 use Aster\Application\Service\SeoService;
@@ -18,6 +19,7 @@ use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
 use Aster\Domain\Repository\LedgerRepositoryInterface;
 use Aster\Domain\Repository\NumberSequenceInterface;
+use Aster\Domain\Repository\PatientAccountRepositoryInterface;
 use Aster\Domain\Repository\PatientRepositoryInterface;
 use Aster\Domain\Repository\PrescriptionRepositoryInterface;
 use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
@@ -43,6 +45,7 @@ use Aster\Infrastructure\Persistence\FacilityRepository;
 use Aster\Infrastructure\Persistence\InquiryRepository;
 use Aster\Infrastructure\Persistence\LedgerRepository;
 use Aster\Infrastructure\Persistence\PackageRepository;
+use Aster\Infrastructure\Persistence\PatientAccountRepository;
 use Aster\Infrastructure\Persistence\PatientRepository;
 use Aster\Infrastructure\Persistence\PaymentRepository;
 use Aster\Infrastructure\Persistence\PdoAdvisoryLock;
@@ -149,6 +152,9 @@ final class Bootstrap
         $container->singleton(PatientRepository::class, static fn (Container $c): PatientRepository
             => new PatientRepository($c->get(Database::class), $c->get(Encryptor::class)));
 
+        $container->singleton(PatientAccountRepository::class, static fn (Container $c): PatientAccountRepository
+            => new PatientAccountRepository($c->get(Database::class)));
+
         $container->singleton(ClinicalNoteRepository::class, static fn (Container $c): ClinicalNoteRepository
             => new ClinicalNoteRepository($c->get(Database::class), $c->get(Encryptor::class)));
 
@@ -165,6 +171,10 @@ final class Bootstrap
         $container->singleton(
             PatientRepositoryInterface::class,
             static fn (Container $c): PatientRepositoryInterface => $c->get(PatientRepository::class),
+        );
+        $container->singleton(
+            PatientAccountRepositoryInterface::class,
+            static fn (Container $c): PatientAccountRepositoryInterface => $c->get(PatientAccountRepository::class),
         );
         $container->singleton(
             WardLocationRepositoryInterface::class,
@@ -360,6 +370,17 @@ final class Bootstrap
             audit:   $c->get(AuditLogger::class),
             config:  $config,
             logger:  $c->get(Logger::class),
+        ));
+
+        $container->singleton(PatientAuthService::class, static fn (Container $c): PatientAuthService => new PatientAuthService(
+            patients: $c->get(PatientRepositoryInterface::class),
+            accounts: $c->get(PatientAccountRepositoryInterface::class),
+            hasher:   $c->get(PasswordHasher::class),
+            session:  $c->get(SessionManager::class),
+            limiter:  $c->get(RateLimiter::class),
+            audit:    $c->get(AuditLogger::class),
+            config:   $config,
+            logger:   $c->get(Logger::class),
         ));
 
         $container->singleton(DashboardService::class, static fn (Container $c): DashboardService => new DashboardService(

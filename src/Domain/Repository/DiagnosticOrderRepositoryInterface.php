@@ -13,6 +13,19 @@ interface DiagnosticOrderRepositoryInterface
     /** @return list<DiagnosticOrder> */
     public function forEncounter(int $encounterId): array;
 
+    /**
+     * Every diagnostic order across a patient's whole encounter history,
+     * most recent first - the portal dashboard's "diagnostic summaries"
+     * (FRS 10.6). Joins through encounters rather than the caller fetching
+     * per-encounter and merging in PHP: the dashboard scopes strictly to
+     * one patient_id, so the join is both simpler and the only way to
+     * enforce that scope in SQL rather than trust every caller to filter
+     * correctly afterwards.
+     *
+     * @return list<DiagnosticOrder>
+     */
+    public function forPatient(int $patientId, int $limit = 50): array;
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int;
 

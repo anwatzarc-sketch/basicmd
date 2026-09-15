@@ -53,6 +53,11 @@ final class AuditLogger implements AuditLoggerInterface
     public const string USER_UPDATED  = 'user.updated';
     public const string SETTINGS_SAVED = 'settings.saved';
 
+    public const string PORTAL_ACCESS_PROVISIONED = 'portal.access_provisioned';
+    public const string PORTAL_LOGIN               = 'portal.login';
+    public const string PORTAL_LOGIN_FAILED        = 'portal.login_failed';
+    public const string PORTAL_LOGOUT              = 'portal.logout';
+
     private ?int $userId = null;
 
     private ?string $actorLabel = null;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aster\Presentation\Controller;
 
+use Aster\Domain\Entity\Patient;
 use Aster\Domain\Entity\User;
 use Aster\Domain\Enum\Locale;
 use Aster\Domain\Exception\ValidationException;
@@ -56,6 +57,12 @@ abstract class Controller
     protected function renderAdmin(string $template, array $data = []): Response
     {
         return $this->render($template, $data, 'layouts/admin');
+    }
+
+    /** @param array<string, mixed> $data */
+    protected function renderPortal(string $template, array $data = []): Response
+    {
+        return $this->render($template, $data, 'layouts/portal');
     }
 
     protected function redirect(string $path): Response
@@ -142,6 +149,27 @@ abstract class Controller
         }
 
         return $user;
+    }
+
+    protected function currentPatient(): ?Patient
+    {
+        $patient = $GLOBALS['aster_current_patient'] ?? null;
+
+        return $patient instanceof Patient ? $patient : null;
+    }
+
+    /** The authenticated patient, for routes behind the AuthenticatePatient middleware. */
+    protected function requirePatient(): Patient
+    {
+        $patient = $this->currentPatient();
+
+        if ($patient === null) {
+            // Unreachable behind AuthenticatePatient; failing loudly beats a
+            // null-dereference further down.
+            throw \Aster\Domain\Exception\HttpException::unauthorized();
+        }
+
+        return $patient;
     }
 
     protected function currentLocale(): Locale

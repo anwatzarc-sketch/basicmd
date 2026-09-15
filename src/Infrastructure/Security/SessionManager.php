@@ -28,6 +28,16 @@ final class SessionManager
     private const string KEY_FLASH      = '_flash';
     private const string KEY_FLASH_NEXT = '_flash_next';
 
+    // Patient portal identity - a completely separate slot from staff
+    // identity above, storage-level as well as name-level. A patient must
+    // never be able to satisfy a staff `can:` gate, and the reverse: this
+    // is what keeps a patient session from ever being mistaken for one by
+    // code that only ever checks the KEY_USER_ID family.
+    private const string KEY_PATIENT_ID          = '_portal_patient_id';
+    private const string KEY_PATIENT_LAST_SEEN   = '_portal_last_seen';
+    private const string KEY_PATIENT_STARTED_AT  = '_portal_started_at';
+    private const string KEY_PATIENT_FINGERPRINT = '_portal_fingerprint';
+
     private bool $started = false;
 
     public function __construct(private readonly Config $config)
@@ -76,13 +86,35 @@ final class SessionManager
      */
     public function validate(string $fingerprint): bool
     {
-        if (!$this->has(self::KEY_USER_ID)) {
+        return $this->validateIdentity(
+            self::KEY_USER_ID, self::KEY_LAST_SEEN, self::KEY_STARTED_AT, self::KEY_FINGERPRINT,
+            $fingerprint,
+        );
+    }
+
+    /** Same contract as validate(), scoped to the patient portal's own identity slot. */
+    public function validatePatientSession(string $fingerprint): bool
+    {
+        return $this->validateIdentity(
+            self::KEY_PATIENT_ID, self::KEY_PATIENT_LAST_SEEN, self::KEY_PATIENT_STARTED_AT, self::KEY_PATIENT_FINGERPRINT,
+            $fingerprint,
+        );
+    }
+
+    private function validateIdentity(
+        string $idKey,
+        string $lastSeenKey,
+        string $startedAtKey,
+        string $fingerprintKey,
+        string $fingerprint,
+    ): bool {
+        if (!$this->has($idKey)) {
             return true; // Anonymous sessions have nothing to expire.
         }
 
         $now       = time();
-        $lastSeen  = (int) $this->get(self::KEY_LAST_SEEN, 0);
-        $startedAt = (int) $this->get(self::KEY_STARTED_AT, 0);
+        $lastSeen  = (int) $this->get($lastSeenKey, 0);
+        $startedAt = (int) $this->get($startedAtKey, 0);
 
         $idleExpired     = $lastSeen > 0
             && ($now - $lastSeen) > $this->config->sessionIdleSeconds();
@@ -91,7 +123,7 @@ final class SessionManager
 
         // A changed fingerprint means the cookie is being replayed from a
         // different browser or network - treat it as theft, not as drift.
-        $stored = $this->get(self::KEY_FINGERPRINT);
+        $stored = $this->get($fingerprintKey);
         $hijacked = is_string($stored) && !hash_equals($stored, $fingerprint);
 
         if ($idleExpired || $absoluteExpired || $hijacked) {
@@ -100,7 +132,7 @@ final class SessionManager
             return false;
         }
 
-        $this->set(self::KEY_LAST_SEEN, $now);
+        $this->set($lastSeenKey, $now);
 
         return true;
     }
@@ -127,6 +159,29 @@ final class SessionManager
     public function isAuthenticated(): bool
     {
         return $this->userId() !== null;
+    }
+
+    /** Bind a freshly authenticated patient to this session - see the KEY_PATIENT_* docblock above. */
+    public function loginPatient(int $patientId, string $fingerprint): void
+    {
+        $this->regenerate();
+
+        $this->set(self::KEY_PATIENT_ID, $patientId);
+        $this->set(self::KEY_PATIENT_STARTED_AT, time());
+        $this->set(self::KEY_PATIENT_LAST_SEEN, time());
+        $this->set(self::KEY_PATIENT_FINGERPRINT, $fingerprint);
+    }
+
+    public function patientId(): ?int
+    {
+        $id = $this->get(self::KEY_PATIENT_ID);
+
+        return is_int($id) ? $id : null;
+    }
+
+    public function isPatientAuthenticated(): bool
+    {
+        return $this->patientId() !== null;
     }
 
     public function regenerate(): void

@@ -40,6 +40,21 @@ final class DiagnosticOrderRepository implements DiagnosticOrderRepositoryInterf
         return array_map(DiagnosticOrder::fromRow(...), $rows);
     }
 
+    /** @return list<DiagnosticOrder> */
+    public function forPatient(int $patientId, int $limit = 50): array
+    {
+        $rows = $this->db->fetchAll(
+            self::SELECT_BASE . '
+             JOIN encounters e ON e.id = o.encounter_id
+             WHERE e.patient_id = :pid
+             ORDER BY o.created_at DESC
+             LIMIT :limit',
+            ['pid' => $patientId, 'limit' => $limit],
+        );
+
+        return array_map(DiagnosticOrder::fromRow(...), $rows);
+    }
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int
     {

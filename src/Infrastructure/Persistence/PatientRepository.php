@@ -36,6 +36,16 @@ final class PatientRepository implements PatientRepositoryInterface
         return $row === null ? null : Patient::fromRow($row);
     }
 
+    public function findByPid(string $pid): ?Patient
+    {
+        $row = $this->db->fetchOne(
+            'SELECT * FROM patients WHERE pid = :pid AND deleted_at IS NULL',
+            ['pid' => $pid],
+        );
+
+        return $row === null ? null : Patient::fromRow($row);
+    }
+
     public function findByNationalId(string $nationalId): ?Patient
     {
         $row = $this->db->fetchOne(
