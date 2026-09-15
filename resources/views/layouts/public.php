@@ -93,8 +93,39 @@ if ($locale->value === 'am' && $settings !== null) {
     <?php if (!empty($structuredData)): ?>
         <script type="application/ld+json" nonce="<?= $view->e($cspNonce) ?>"><?= $structuredData ?></script>
     <?php endif; ?>
+    <?php /*
+      Theme bootstrap. Must stay INLINE and stay in <head>, before any
+      stylesheet is applied: run it later and the page paints light for a
+      frame before flipping to dark, which is the classic flash-of-wrong-theme.
+
+      The nonce is required - the CSP sets script-src 'self' 'nonce-...', so an
+      inline script without it is blocked outright and the theme never applies.
+    */ ?>
+    <script nonce="<?= $view->e($cspNonce) ?>">
+      // Saved choice wins; otherwise follow the operating system.
+      try {
+        var stored = localStorage.getItem('aster-theme');
+        if (stored === 'dark' || (stored === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {
+        // localStorage throws in private mode on some browsers. Fall back to
+        // the OS preference rather than leaving the page unstyled.
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+        }
+      }
+    </script>
 </head>
-<body class="<?= $view->e($locale->fontClass()) ?> bg-slate-50 text-slate-800 antialiased">
+<?php /*
+  No bg-* or text-* utility here on purpose. app.css drives the body via
+  --bg-gradient / --text-main, which are what switch between day and night.
+  A `bg-slate-50` class would out-specify that base rule (class beats element)
+  and pin the page light no matter what the toggle does.
+*/ ?>
+<body class="<?= $view->e($locale->fontClass()) ?> antialiased">
 
 <a class="skip-link" href="#main"><?= $view->t('common.skip_to_content') ?></a>
 
@@ -106,6 +137,8 @@ if ($locale->value === 'am' && $settings !== null) {
 </main>
 
 <?= $view->partial('partials/footer', ['view' => $view, 'locale' => $locale, 'settings' => $settings]) ?>
+
+<?= $view->partial('partials/confirm-dialog', ['view' => $view]) ?>
 
 <script nonce="<?= $view->e($cspNonce) ?>" src="<?= $view->asset('assets/js/app.js') ?>" defer></script>
 </body>

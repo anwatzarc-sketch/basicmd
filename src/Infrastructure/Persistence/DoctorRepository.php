@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aster\Infrastructure\Persistence;
 
 use Aster\Domain\Entity\Doctor;
+use Aster\Infrastructure\Support\Slug;
 
 final class DoctorRepository
 {
@@ -205,9 +206,17 @@ final class DoctorRepository
         return $this->db->fetchOne('SELECT * FROM doctors WHERE id = :id', ['id' => $id]);
     }
 
-    /** Ensure a slug is unique, appending -2, -3 ... when needed. */
-    public function uniqueSlug(string $base, ?int $ignoreId = null): string
+    /**
+     * Slugify a name and make it unique, appending -2, -3 ... when needed.
+     *
+     * Takes the RAW name and slugifies here, matching CrudOperations so every
+     * repository behaves the same way. Previously this expected a
+     * pre-slugified string while the trait version did its own slugifying,
+     * which is what pushed callers into invoking the slugifier themselves.
+     */
+    public function uniqueSlug(string $source, ?int $ignoreId = null): string
     {
+        $base   = Slug::make($source);
         $slug   = $base;
         $suffix = 1;
 

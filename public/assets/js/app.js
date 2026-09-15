@@ -354,16 +354,176 @@
        Admin: confirm destructive actions
        ================================================================= */
     const initConfirms = () => {
-        $$('[data-confirm]').forEach((element) => {
-            element.addEventListener('submit', (event) => {
-                if (!window.confirm(element.dataset.confirm)) event.preventDefault();
-            });
+        const backdrop = $('[data-confirm-dialog]');
 
-            if (element.tagName === 'BUTTON' || element.tagName === 'A') {
-                element.addEventListener('click', (event) => {
-                    if (!window.confirm(element.dataset.confirm)) event.preventDefault();
-                });
+        // No dialog markup on this page (or an old cached layout): fall back to
+        // the native prompt rather than letting a destructive action through
+        // unconfirmed.
+        if (!backdrop) {
+            $$('[data-confirm]').forEach((el) => {
+                const handler = (event) => {
+                    if (!window.confirm(el.dataset.confirm)) event.preventDefault();
+                };
+                el.addEventListener('submit', handler);
+                if (el.tagName === 'BUTTON' || el.tagName === 'A') {
+                    el.addEventListener('click', handler);
+                }
+            });
+            return;
+        }
+
+        const panel     = $('[data-confirm-panel]', backdrop);
+        const titleEl   = $('[data-confirm-title]', backdrop);
+        const messageEl = $('[data-confirm-message]', backdrop);
+        const acceptBtn = $('[data-confirm-accept]', backdrop);
+        const cancelBtn = $('[data-confirm-cancel]', backdrop);
+        const iconAsk   = $('[data-confirm-icon-ask]', backdrop);
+        const iconWarn  = $('[data-confirm-icon-warn]', backdrop);
+
+        let onAccept    = null;   // what to run if the user says yes
+        let lastFocused = null;   // so focus can go back where it came from
+
+        /**
+         * Destructive or not?
+         *
+         * An explicit data-confirm-variant wins. Otherwise it is inferred from
+         * the trigger's own styling - the delete buttons already carry
+         * btn-danger or text-rose-600 - so existing call sites get the right
+         * treatment without being touched.
+         */
+        const variantOf = (trigger) => {
+            if (trigger.dataset.confirmVariant) return trigger.dataset.confirmVariant;
+
+            const probe = trigger.tagName === 'FORM'
+                ? (trigger.querySelector('button[type="submit"]') || trigger)
+                : trigger;
+
+            return /btn-danger|text-rose|text-red/.test(probe.className) ? 'danger' : 'primary';
+        };
+
+        const close = () => {
+            backdrop.hidden = true;
+            document.body.style.removeProperty('overflow');
+            onAccept = null;
+
+            // Returning focus is what makes this usable by keyboard: without
+            // it, focus falls back to <body> and tabbing restarts at the top
+            // of the page.
+            if (lastFocused && document.contains(lastFocused)) lastFocused.focus();
+            lastFocused = null;
+        };
+
+        const open = (trigger, proceed) => {
+            const variant = variantOf(trigger);
+
+            messageEl.textContent = trigger.dataset.confirm || 'Are you sure?';
+            titleEl.textContent   = trigger.dataset.confirmTitle
+                || (variant === 'danger' ? 'Please confirm' : 'Please confirm');
+
+            acceptBtn.textContent = trigger.dataset.confirmAction
+                || (variant === 'danger' ? 'Delete' : 'Confirm');
+
+            acceptBtn.className = (variant === 'danger' ? 'btn-danger' : 'btn-primary') + ' flex-1';
+            backdrop.dataset.variant = variant;
+
+            if (iconAsk)  iconAsk.hidden  = variant === 'danger';
+            if (iconWarn) iconWarn.hidden = variant !== 'danger';
+
+            onAccept    = proceed;
+            lastFocused = document.activeElement;
+
+            backdrop.hidden = false;
+            // Stop the page scrolling behind the dialog.
+            document.body.style.overflow = 'hidden';
+
+            // Cancel takes focus, not Accept: a reflexive Enter should do the
+            // harmless thing.
+            cancelBtn.focus();
+        };
+
+        acceptBtn.addEventListener('click', () => {
+            const run = onAccept;
+            close();
+            if (run) run();
+        });
+
+        cancelBtn.addEventListener('click', close);
+
+        // Clicking the dimmed area cancels; clicking inside the panel does not.
+        backdrop.addEventListener('mousedown', (event) => {
+            if (event.target === backdrop) close();
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (backdrop.hidden) return;
+
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                close();
+                return;
             }
+
+            // Focus trap: Tab must not wander into the page behind the dialog.
+            if (event.key === 'Tab') {
+                const focusable = panel.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+                );
+
+                if (!focusable.length) return;
+
+                const first = focusable[0];
+                const last  = focusable[focusable.length - 1];
+
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                }
+            }
+        });
+
+        // --- Wire the triggers ---
+        $$('[data-confirm]').forEach((element) => {
+            if (element.tagName === 'FORM') {
+                element.addEventListener('submit', (event) => {
+                    // Second pass, after the user accepted: let it through.
+                    if (element.dataset.confirmed === '1') {
+                        delete element.dataset.confirmed;
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    open(element, () => {
+                        element.dataset.confirmed = '1';
+
+                        // requestSubmit keeps HTML5 validation working (the
+                        // rejection form has a required reason); plain submit()
+                        // would skip it silently.
+                        if (typeof element.requestSubmit === 'function') {
+                            element.requestSubmit();
+                        } else {
+                            element.submit();
+                        }
+                    });
+                });
+
+                return;
+            }
+
+            element.addEventListener('click', (event) => {
+                event.preventDefault();
+
+                open(element, () => {
+                    if (element.tagName === 'A' && element.href) {
+                        window.location.href = element.href;
+                    } else {
+                        element.closest('form')?.requestSubmit?.();
+                    }
+                });
+            });
         });
     };
 

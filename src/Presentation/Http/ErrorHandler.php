@@ -192,18 +192,54 @@ final readonly class ErrorHandler
     }
 
     /**
+     * Severities that are reported but never thrown.
+     *
+     * A deprecation says a construct will break in a FUTURE PHP release; it
+     * says nothing about whether the current request is correct. Throwing on
+     * one means any notice raised by PHP itself or by a vendor package takes
+     * the whole site down on an upgrade, which is a far worse outcome than the
+     * warning it was meant to surface. They are logged instead, so the signal
+     * survives without being fatal.
+     *
+     * @var list<int>
+     */
+    private const array NON_FATAL_SEVERITIES = [E_DEPRECATED, E_USER_DEPRECATED];
+
+    /**
      * Register global handlers.
      *
      * Converts PHP notices and warnings into exceptions so they cannot
-     * silently corrupt a booking, and catches fatals that bypass the normal
-     * try/catch path.
+     * silently corrupt a booking, logs deprecations without throwing, and
+     * catches fatals that bypass the normal try/catch path.
      */
     public function register(): void
     {
-        set_error_handler(static function (int $severity, string $message, string $file, int $line): bool {
+        $logger = $this->logger;
+
+        set_error_handler(static function (int $severity, string $message, string $file, int $line) use ($logger): bool {
             // Respect any @-suppression and the configured error_reporting.
             if ((error_reporting() & $severity) === 0) {
                 return false;
+            }
+
+            if (in_array($severity, self::NON_FATAL_SEVERITIES, true)) {
+                // A deprecation inside a loop would otherwise write the same
+                // line thousands of times and bury everything else in the log.
+                static $seen = [];
+
+                $key = $file . ':' . $line . ':' . $message;
+
+                if (!isset($seen[$key])) {
+                    $seen[$key] = true;
+
+                    // warning, not notice: the shipped LOG_LEVEL is `warning`,
+                    // so a notice here would be dropped and the deprecation
+                    // would vanish entirely rather than merely stop being fatal.
+                    $logger->warning('Deprecated: ' . $message, ['file' => $file . ':' . $line]);
+                }
+
+                // Handled - returning true stops PHP printing it into the page.
+                return true;
             }
 
             throw new \ErrorException($message, 0, $severity, $file, $line);

@@ -1,19 +1,13 @@
 /**
- * Aster Medical Center - application stylesheet.
+ * Aster Medical Center - Premium Glassmorphic Application Stylesheet
  *
- * Component classes are defined here rather than repeated as long utility
- * strings across 40 templates. When the clinic asks to change the look of
- * every card, this is the one file that changes.
- *
- * Fonts are self-hosted. Google Fonts adds a third-party DNS lookup, a TLS
- * handshake and a render-blocking request - all of which hurt badly on a
- * mobile connection in Addis Ababa, and the Ethiopic face is large.
+ * Merges the Aster component class signatures with a glassmorphism design system.
+ * Supports light/dark mode via the `.dark` class on <html> or <body>, and includes
+ * animated ambient background bubbles.
  */
 
 /* ---------------------------------------------------------------------
-   Self-hosted fonts (run `npm run fonts` to download the woff2 files)
-   font-display:swap renders text immediately in the fallback face rather
-   than leaving the page blank while the webfont loads.
+   Self-hosted fonts
    --------------------------------------------------------------------- */
 
 @font-face {
@@ -31,7 +25,6 @@
   font-weight: 400 700;
   font-display: swap;
   src: url('/dist/fonts/noto-ethiopic.woff2') format('woff2');
-  /* Ge'ez block plus the Ethiopic Supplement and Extended ranges. */
   unicode-range: U+1200-137F, U+1380-139F, U+2D80-2DDF, U+AB00-AB2F;
 }
 
@@ -40,22 +33,79 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------
-   Base
+   Base & Theme Variables
    --------------------------------------------------------------------- */
 @layer base {
+  /* --- Light / Day Mode Variables --- */
   :root {
     color-scheme: light;
+    --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #f1f5f9 50%, #e2e8f0 100%);
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-bg-hover: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --glass-border-subtle: rgba(226, 232, 240, 0.8);
+    --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
+    --glass-glow: 0 0 22px rgba(14, 116, 144, 0.25);
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --bubble-color-1: rgba(56, 189, 248, 0.35);
+    --bubble-color-2: rgba(168, 85, 247, 0.22);
+    --bubble-color-3: rgba(236, 72, 153, 0.22);
+  }
+
+  /* --- Night / Dark Mode Variables --- */
+  .dark {
+    color-scheme: dark;
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 50%, #1e1b4b 100%);
+    --glass-bg: rgba(15, 23, 42, 0.65);
+    --glass-bg-hover: rgba(30, 41, 59, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-border-subtle: rgba(255, 255, 255, 0.07);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    --glass-glow: 0 0 25px rgba(129, 140, 248, 0.3);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --bubble-color-1: rgba(56, 189, 248, 0.2);
+    --bubble-color-2: rgba(147, 51, 234, 0.25);
+    --bubble-color-3: rgba(219, 39, 119, 0.2);
   }
 
   html {
     scroll-behavior: smooth;
-    /* Keeps anchor targets clear of the sticky header. */
     scroll-padding-top: 6rem;
     -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Honour a reader's reduced-motion preference: vestibular disorders are
-     common enough that this is an accessibility requirement, not a nicety. */
+  body {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    transition: background 0.5s ease, color 0.5s ease;
+    @apply antialiased selection:bg-medical-500/20 selection:text-medical-900 dark:selection:text-medical-200;
+  }
+
+  body.font-ethiopic {
+    font-family: theme('fontFamily.ethiopic');
+    line-height: 1.85;
+  }
+
+  /* --- Focus Rings & Accessibility --- */
+  :focus-visible {
+    @apply outline-none ring-2 ring-medical-500 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-900 transition-all;
+  }
+
+  .skip-link {
+    @apply sr-only;
+  }
+
+  .skip-link:focus {
+    @apply not-sr-only fixed left-4 top-4 z-[100] rounded-xl bg-medical-800 px-5 py-2.5 text-sm font-bold text-white shadow-xl ring-2 ring-white;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -68,137 +118,320 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+
+    .bubble {
+      animation: none !important;
+    }
   }
 
-  body {
-    @apply bg-slate-50 text-slate-800 antialiased;
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
   }
-
-  /* Amharic bodies get the Ethiopic stack and extra leading.
-     The family is set with theme() rather than `@apply font-ethiopic`: the
-     selector carries the same class name as the utility, so applying it to
-     itself is a circular dependency Tailwind refuses to resolve. */
-  body.font-ethiopic {
-    font-family: theme('fontFamily.ethiopic');
-    line-height: 1.8;
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
-
-  /* A visible focus ring on every interactive element. Removing outlines
-     makes the site unusable by keyboard, which for a booking form is a
-     genuine accessibility failure. */
-  :focus-visible {
-    @apply outline-none ring-2 ring-medical-500 ring-offset-2 ring-offset-white;
-  }
-
-  ::selection {
-    @apply bg-medical-100 text-medical-900;
-  }
-
-  /* Only reveal the skip link when it is focused. */
-  .skip-link {
-    @apply sr-only;
-  }
-
-  .skip-link:focus {
-    @apply not-sr-only fixed left-4 top-4 z-[100] rounded-xl bg-medical-700 px-4 py-2 text-sm font-bold text-white shadow-lg;
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-slate-300/60 dark:bg-slate-700/60 hover:bg-slate-400 dark:hover:bg-slate-600 transition-colors;
   }
 }
 
 /* ---------------------------------------------------------------------
-   Components
+   The `hidden` attribute must always win
+   ---------------------------------------------------------------------
+   Tailwind's preflight ships `[hidden] { display: none }` in @layer base,
+   which any later `display` declaration outranks — and both the components
+   and utilities layers come after base. So an element written as
+
+       <div class="flex ..." hidden>          (utility  -> display:flex)
+       <div class="confirm-backdrop" hidden>  (@apply grid -> display:grid)
+
+   stays on screen. That is why the confirmation dialog rendered itself on
+   every page load, and it silently affected the live-quote rows, the
+   receipt preview and the payment-method reset button too.
+
+   `hidden` means "not rendered", so this is one of the few places
+   !important is the honest answer rather than a workaround.
+   --------------------------------------------------------------------- */
+[hidden] {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+   Bubbly Background System
+   --------------------------------------------------------------------- */
+.bubble-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(48px);
+  animation: floatBubble 18s infinite ease-in-out alternate;
+}
+
+.bubble-1 {
+  width: 360px;
+  height: 360px;
+  background: var(--bubble-color-1);
+  top: 8%;
+  left: 10%;
+  animation-duration: 22s;
+}
+
+.bubble-2 {
+  width: 440px;
+  height: 440px;
+  background: var(--bubble-color-2);
+  bottom: 8%;
+  right: 8%;
+  animation-duration: 28s;
+  animation-delay: -5s;
+}
+
+.bubble-3 {
+  width: 280px;
+  height: 280px;
+  background: var(--bubble-color-3);
+  top: 42%;
+  left: 48%;
+  animation-duration: 18s;
+  animation-delay: -9s;
+}
+
+@keyframes floatBubble {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(65px, -55px) scale(1.15);
+  }
+  100% {
+    transform: translate(-45px, 45px) scale(0.9);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Glassy Components Layer
    --------------------------------------------------------------------- */
 @layer components {
+
+  /* Core Glass Utilities */
+  .glass-panel {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .glass-card {
+    @apply glass-panel rounded-3xl p-6 transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    box-shadow: var(--glass-glow), var(--glass-shadow);
+    transform: translateY(-3px);
+  }
+
+  .glass-btn {
+    @apply glass-panel inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 
+           text-sm font-bold transition-all duration-200 active:scale-95 hover:bg-white/80 dark:hover:bg-slate-800/80;
+  }
+
+  .glass-btn-primary {
+    @apply glass-btn bg-medical-600/90 text-white border-medical-400/40 
+           hover:bg-medical-600 hover:shadow-[0_0_20px_rgba(14,116,144,0.45)];
+  }
+
+  .glass-input {
+    @apply glass-panel w-full rounded-xl px-4 py-3 text-sm transition-all duration-200
+           placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-medical-400/50;
+  }
 
   /* --- Typography ------------------------------------------------- */
 
   .eyebrow {
-    @apply inline-block rounded-full bg-medical-100 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[0.08em] text-medical-700;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-medical-200/60 dark:border-medical-500/30 
+           bg-medical-50/80 dark:bg-medical-950/40 px-3 py-1 
+           text-[0.72rem] font-extrabold uppercase tracking-[0.1em] text-medical-700 dark:text-medical-300 
+           shadow-sm backdrop-blur-md;
   }
 
   .eyebrow-invert {
-    @apply inline-block rounded-full bg-white/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[0.08em] text-medical-100;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 
+           text-[0.72rem] font-extrabold uppercase tracking-[0.1em] text-medical-100 backdrop-blur-md;
   }
 
   .section-title {
-    @apply mt-3 max-w-3xl text-[clamp(1.9rem,4vw,3.1rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-medical-900;
+    @apply mt-3 max-w-3xl text-[clamp(2rem,4.2vw,3.25rem)] font-extrabold leading-[1.08] tracking-[-0.035em] 
+           text-slate-900 dark:text-slate-100;
   }
 
   .section-lead {
-    @apply mt-4 max-w-2xl text-lg leading-8 text-slate-600;
+    @apply mt-4 max-w-2xl text-lg leading-relaxed font-normal text-slate-600 dark:text-slate-300;
   }
 
   /* --- Buttons ---------------------------------------------------- */
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold transition
-           disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold 
+           transition-all duration-200 ease-out active:scale-[0.98] 
+           disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply btn bg-medical-700 text-white shadow-brand hover:bg-medical-600 active:bg-medical-800;
+    @apply btn bg-gradient-to-r from-medical-700 via-medical-600 to-medical-700 bg-[length:200%_auto] text-white 
+           shadow-[0_4px_14px_0_rgba(14,116,144,0.35)] hover:bg-[position:right_center] 
+           hover:shadow-[0_6px_20px_0_rgba(14,116,144,0.45)] active:bg-medical-800;
   }
 
   .btn-secondary {
-    @apply btn border border-slate-200 bg-white text-medical-900 shadow-sm hover:bg-slate-50;
+    @apply btn glass-panel text-slate-800 dark:text-slate-200 
+           hover:border-slate-300 dark:hover:border-slate-600 hover:text-medical-900 dark:hover:text-white hover:shadow;
   }
 
   .btn-ghost {
-    @apply btn text-medical-700 hover:bg-medical-50;
+    @apply btn text-medical-700 dark:text-medical-300 hover:bg-medical-50/80 dark:hover:bg-medical-950/40 active:bg-medical-100/60;
   }
 
   .btn-danger {
-    @apply btn bg-rose-600 text-white hover:bg-rose-700;
+    @apply btn bg-gradient-to-r from-rose-600 to-rose-700 text-white shadow-[0_4px_14px_0_rgba(225,29,72,0.3)] 
+           hover:from-rose-500 hover:to-rose-600 hover:shadow-[0_6px_20px_0_rgba(225,29,72,0.4)];
   }
 
   .btn-sm {
-    @apply px-3.5 py-2 text-xs;
+    @apply rounded-xl px-3.5 py-2 text-xs font-semibold;
   }
 
   .btn-lg {
-    @apply px-7 py-4 text-base;
+    @apply rounded-2xl px-8 py-4 text-base font-bold;
   }
 
   /* --- Cards ------------------------------------------------------ */
 
   .card {
-    @apply rounded-2xl border border-slate-200/80 bg-white shadow-card;
+    @apply glass-panel rounded-2xl p-6 transition-all duration-300;
   }
 
   .card-pad {
-    @apply card p-6;
+    @apply card p-6 sm:p-7;
   }
 
   .soft-card {
-    @apply rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-medical-500;
+    @apply glass-panel rounded-2xl p-5 transition-all duration-200 
+           hover:border-medical-400 dark:hover:border-medical-500 hover:shadow-md;
   }
 
   .service-card {
-    @apply flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 transition
-           hover:-translate-y-1 hover:border-medical-100 hover:shadow-lift;
+    @apply glass-panel flex flex-col justify-between rounded-3xl p-7 transition-all duration-300 
+           hover:-translate-y-1.5 hover:border-medical-300 dark:hover:border-medical-500 
+           hover:shadow-[0_20px_35px_-10px_rgba(14,116,144,0.2)];
   }
 
   .service-icon {
-    @apply grid h-12 w-12 place-items-center rounded-2xl bg-medical-50 text-2xl;
+    @apply grid h-13 w-13 place-items-center rounded-2xl bg-gradient-to-br from-medical-50 to-medical-100/60 
+           dark:from-medical-950/80 dark:to-medical-900/40 text-medical-700 dark:text-medical-300 text-2xl 
+           shadow-inner border border-medical-200/40 dark:border-medical-700/40;
+  }
+
+  /* --- Specialist cards -------------------------------------------
+     Ported from the Al Mehdi Terbiya team-member card: a circular
+     portrait in a gold-to-teal gradient ring that overhangs the top of
+     the card, then a badge, name, role pill and bio.
+
+     The overhang is why this card cannot use `overflow-hidden` — the
+     avatar sits outside its own bounds. The grid below reserves the
+     matching clearance so the first row is not clipped by the section.
+     ---------------------------------------------------------------- */
+
+  .doctor-grid {
+    /* Top padding clears the overhanging avatar on the first row;
+       the row gap clears it on every row after. */
+    @apply grid gap-x-5 gap-y-20 pt-16 sm:grid-cols-2 lg:grid-cols-4;
   }
 
   .doctor-card {
-    @apply overflow-hidden rounded-3xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:shadow-lift;
+    @apply glass-panel relative rounded-3xl px-6 pb-7 text-center transition-all duration-300
+           hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-12px_rgba(15,23,42,0.25)];
+    /* Room for the portrait that overhangs the top edge. */
+    padding-top: 4.125rem;
+    overflow: visible;
   }
 
+  .doctor-card__photo-wrap {
+    @apply absolute left-1/2 grid place-items-center rounded-full p-1;
+    top: -3.375rem;
+    transform: translateX(-50%);
+    width: 6.75rem;
+    height: 6.75rem;
+    /* The signature detail: a gradient rim rather than a flat border. */
+    background: linear-gradient(135deg, theme('colors.gold'), theme('colors.medical.600'));
+    box-shadow: 0 10px 24px -8px rgba(15, 23, 42, 0.45);
+  }
+
+  .doctor-card__photo {
+    @apply h-full w-full rounded-full object-cover;
+    border: 3px solid theme('colors.white');
+    background: theme('colors.medical.50');
+  }
+
+  /* Initials stand in until a photo is uploaded, so the card never
+     shows a broken image. */
+  .doctor-card__photo--fallback {
+    @apply grid h-full w-full place-items-center rounded-full text-2xl font-extrabold tracking-tight
+           text-medical-800 dark:text-medical-100;
+    border: 3px solid theme('colors.white');
+    background: linear-gradient(135deg, theme('colors.medical.50'), theme('colors.medical.100'));
+  }
+
+  .doctor-card__badge {
+    @apply mt-3.5 inline-block rounded-full bg-medical-800 px-3.5 py-1 text-[0.7rem] font-extrabold
+           uppercase tracking-[0.04em] text-gold dark:bg-medical-950;
+  }
+
+  .doctor-card__name {
+    @apply mb-1 mt-3 text-lg font-extrabold leading-snug text-medical-900 dark:text-medical-100;
+  }
+
+  .doctor-card__role {
+    @apply mb-3.5 inline-block rounded-full bg-medical-50 px-3 py-1 text-[0.78rem] font-bold
+           text-medical-800 dark:bg-medical-950/60 dark:text-medical-300;
+  }
+
+  /* Left-aligned on purpose: centred body copy is hard to read once it
+     runs past a line or two. */
+  .doctor-card__bio {
+    @apply text-left text-[0.92rem] leading-relaxed text-slate-600 dark:text-slate-300;
+  }
+
+  /* Kept for the compact card on the service-detail page, which has no
+     room for the overhanging treatment. */
   .doctor-avatar {
-    @apply grid h-48 place-items-center bg-gradient-to-br from-medical-100 to-slate-50 text-5xl font-extrabold text-medical-700;
+    @apply relative grid h-52 place-items-center bg-gradient-to-br from-medical-100/90 via-slate-50 to-medical-50/40
+           dark:from-slate-800 dark:via-slate-900 dark:to-medical-950/80
+           text-5xl font-extrabold text-medical-800 dark:text-medical-200 tracking-tight;
   }
 
   .facility-card {
-    @apply rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur;
+    @apply rounded-3xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-slate-900/40 p-6 
+           backdrop-blur-md shadow-lg transition-all duration-300 hover:border-white/30 hover:bg-white/20;
   }
 
   .article-card {
-    @apply flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 transition hover:border-medical-500;
+    @apply glass-panel flex flex-col justify-between rounded-3xl p-7 transition-all duration-300 
+           hover:-translate-y-1 hover:border-medical-400 hover:shadow-lg;
   }
 
   .package-card {
-    @apply relative flex flex-col rounded-3xl border border-medical-100 bg-white p-6 shadow-sm transition hover:border-medical-500;
+    @apply glass-panel relative flex flex-col rounded-3xl p-7 transition-all duration-300 
+           hover:-translate-y-1 hover:border-medical-500 hover:shadow-[0_20px_40px_-10px_rgba(14,116,144,0.25)];
   }
 
   /* --- Forms ------------------------------------------------------ */
@@ -208,155 +441,223 @@
   }
 
   .label {
-    @apply text-[0.82rem] font-bold text-slate-700;
+    @apply text-[0.82rem] font-bold tracking-tight text-slate-700 dark:text-slate-300;
   }
 
   .hint {
-    @apply text-xs font-medium text-slate-500;
+    @apply text-xs font-medium text-slate-500 dark:text-slate-400;
   }
 
   .input,
   .select,
   .textarea {
-    @apply w-full rounded-xl border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm
-           transition placeholder:text-slate-400
-           focus:border-medical-500 focus:ring-2 focus:ring-medical-500/20;
+    @apply glass-panel w-full rounded-xl px-3.5 py-2.5 text-sm text-slate-900 dark:text-slate-100 
+           transition-all duration-150 placeholder:text-slate-400 dark:placeholder:text-slate-500
+           hover:border-slate-400 dark:hover:border-slate-600
+           focus:border-medical-500 focus:outline-none focus:ring-4 focus:ring-medical-500/20;
   }
 
   .textarea {
-    @apply min-h-[96px] leading-relaxed;
+    @apply min-h-[104px] leading-relaxed;
   }
 
-  /* An invalid field is marked by colour AND the message below it, never
-     by colour alone - that would be invisible to a colour-blind user. */
   .input-error {
-    @apply border-rose-400 focus:border-rose-500 focus:ring-rose-500/20;
+    @apply border-rose-300 dark:border-rose-700/80 bg-rose-50/30 dark:bg-rose-950/30 text-rose-900 dark:text-rose-200 
+           focus:border-rose-500 focus:ring-4 focus:ring-rose-500/20;
   }
 
   .field-error {
-    @apply text-xs font-semibold text-rose-600;
+    @apply flex items-center gap-1 text-xs font-semibold text-rose-600 dark:text-rose-400;
   }
 
   .checkbox {
-    @apply h-4 w-4 rounded border-slate-300 text-medical-600 focus:ring-medical-500;
+    @apply h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-medical-600 transition-all 
+           focus:ring-medical-500 focus:ring-offset-0 dark:bg-slate-800;
   }
 
   .radio-card {
-    @apply relative flex cursor-pointer gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition
-           hover:border-medical-300 has-[:checked]:border-medical-500 has-[:checked]:bg-medical-50/50
-           has-[:checked]:ring-1 has-[:checked]:ring-medical-500;
+    @apply glass-panel relative flex cursor-pointer gap-3.5 rounded-2xl p-4.5 
+           transition-all duration-200 hover:border-medical-300 dark:hover:border-medical-500
+           has-[:checked]:border-medical-500 has-[:checked]:bg-medical-50/40 dark:has-[:checked]:bg-medical-950/40
+           has-[:checked]:ring-2 has-[:checked]:ring-medical-500/20 has-[:checked]:shadow-md;
   }
 
   /* --- Slot picker ------------------------------------------------ */
 
   .slot {
-    @apply relative flex flex-col items-center gap-0.5 rounded-2xl border border-slate-200 bg-white px-3 py-3
-           text-center text-sm font-bold text-slate-700 transition
-           hover:border-medical-400 hover:bg-medical-50;
+    @apply glass-panel relative flex flex-col items-center gap-0.5 rounded-2xl px-3 py-3.5
+           text-center text-sm font-bold text-slate-700 dark:text-slate-200 transition-all duration-200 select-none
+           hover:border-medical-400 hover:bg-medical-50/60 dark:hover:bg-medical-950/40 hover:shadow;
   }
 
   .slot-selected {
-    @apply border-medical-600 bg-medical-600 text-white shadow-brand hover:bg-medical-600;
+    @apply border-medical-600 bg-medical-600 text-white shadow-[0_4px_14px_0_rgba(14,116,144,0.35)] 
+           hover:border-medical-600 hover:bg-medical-600 hover:text-white dark:bg-medical-600;
   }
 
   .slot-full {
-    @apply cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 line-through hover:border-slate-200 hover:bg-slate-100;
+    @apply cursor-not-allowed border-slate-200/60 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-900/80 
+           text-slate-400 dark:text-slate-600 line-through opacity-70 
+           hover:border-slate-200 hover:bg-slate-100 hover:shadow-none;
   }
 
-  /* --- Badges ----------------------------------------------------- */
+  /* --- Badges & Chips --------------------------------------------- */
 
   .badge {
-    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-bold;
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-slate-200/80 dark:border-slate-700/80
+           bg-slate-50/80 dark:bg-slate-800/80 px-2.5 py-1 text-xs font-bold tracking-tight text-slate-700 dark:text-slate-300;
   }
 
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5
-           text-xs font-bold text-slate-600 transition hover:border-medical-400 hover:text-medical-700;
+    @apply glass-panel inline-flex select-none items-center gap-1.5 rounded-full px-3.5 py-1.5
+           text-xs font-bold text-slate-600 dark:text-slate-300 transition-all duration-200 
+           hover:border-medical-400 hover:text-medical-700 dark:hover:text-medical-300 hover:shadow;
   }
 
   .chip-active {
-    @apply border-medical-600 bg-medical-600 text-white hover:border-medical-600 hover:text-white;
+    @apply border-medical-600 bg-medical-600 text-white shadow-sm hover:border-medical-600 hover:bg-medical-700 hover:text-white;
   }
 
   /* --- Alerts ----------------------------------------------------- */
 
   .alert {
-    @apply flex items-start gap-3 rounded-2xl border p-4 text-sm font-semibold;
+    @apply flex items-start gap-3.5 rounded-2xl border p-4.5 text-sm font-semibold shadow-sm backdrop-blur-md;
   }
 
   .alert-success {
-    @apply alert border-emerald-200 bg-emerald-50 text-emerald-900;
+    @apply alert border-emerald-200/80 dark:border-emerald-800/80 bg-emerald-50/90 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-100;
   }
 
   .alert-error {
-    @apply alert border-rose-200 bg-rose-50 text-rose-900;
+    @apply alert border-rose-200/80 dark:border-rose-800/80 bg-rose-50/90 dark:bg-rose-950/80 text-rose-900 dark:text-rose-100;
   }
 
   .alert-warning {
-    @apply alert border-amber-200 bg-amber-50 text-amber-900;
+    @apply alert border-amber-200/80 dark:border-amber-800/80 bg-amber-50/90 dark:bg-amber-950/80 text-amber-950 dark:text-amber-100;
   }
 
   .alert-info {
-    @apply alert border-sky-200 bg-sky-50 text-sky-900;
+    @apply alert border-sky-200/80 dark:border-sky-800/80 bg-sky-50/90 dark:bg-sky-950/80 text-sky-950 dark:text-sky-100;
   }
 
   /* --- Tables ----------------------------------------------------- */
 
   .table-wrap {
-    /* Tables are the one element allowed to scroll horizontally; the page
-       body itself must never do so on a phone. */
-    @apply -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0;
+    @apply glass-panel -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0 rounded-2xl;
   }
 
   .table {
-    @apply w-full min-w-[640px] border-collapse text-sm;
+    @apply w-full min-w-[640px] border-collapse text-sm text-left;
   }
 
   .table thead th {
-    @apply whitespace-nowrap border-b border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs
-           font-extrabold uppercase tracking-wider text-slate-500;
+    @apply whitespace-nowrap border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 
+           px-4 py-3.5 text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400;
   }
 
   .table tbody td {
-    @apply border-b border-slate-100 px-4 py-3 align-middle text-slate-700;
+    @apply border-b border-slate-100 dark:border-slate-800/60 px-4 py-3.5 align-middle text-slate-700 dark:text-slate-300 transition-colors;
   }
 
-  .table tbody tr:hover {
-    @apply bg-slate-50/70;
+  .table tbody tr:last-child td {
+    @apply border-b-0;
   }
 
-  /* --- Admin shell ------------------------------------------------ */
+  .table tbody tr:hover td {
+    @apply bg-slate-50/80 dark:bg-slate-800/50;
+  }
+
+  /* --- Admin Shell ------------------------------------------------ */
 
   .admin-nav-link {
     @apply flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 text-sm font-medium
-           text-white/70 transition hover:bg-white/5 hover:text-white;
+           text-white/70 transition-all duration-200 hover:bg-white/10 hover:text-white active:scale-[0.99];
   }
 
   .admin-nav-active {
-    @apply bg-white/10 font-bold text-white;
+    @apply bg-white/15 font-bold text-white shadow-inner;
     border-left: 3px solid theme('colors.medical.300');
   }
 
   .stat-card {
-    @apply rounded-2xl border border-slate-200/70 bg-white p-5 shadow-card;
+    @apply glass-panel rounded-2xl p-5.5;
   }
 
   .stat-label {
-    @apply text-xs font-bold uppercase tracking-wider text-slate-500;
+    @apply text-[0.7rem] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400;
   }
 
   .stat-value {
-    @apply mt-2 block text-3xl font-extrabold text-medical-800;
+    @apply mt-2 block text-3.5xl font-extrabold tracking-tight text-medical-900 dark:text-medical-200;
   }
 
   /* --- Misc ------------------------------------------------------- */
 
+  /* --- Confirmation dialog ----------------------------------------
+     Replaces window.confirm(), which cannot be styled and announces the
+     host name to the user ("localhost:9000 says").
+     ---------------------------------------------------------------- */
+
+  .confirm-backdrop {
+    @apply fixed inset-0 z-[90] grid place-items-center p-4;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: confirmFade 0.15s ease-out;
+  }
+
+  .confirm-panel {
+    @apply glass-panel w-full max-w-md rounded-3xl p-7 text-center;
+    /* Opaque rather than translucent: body text behind a semi-transparent
+       panel makes the question genuinely hard to read. */
+    background: theme('colors.white');
+    animation: confirmRise 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  :is(.dark *) .confirm-panel {
+    background: theme('colors.slate.900');
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .confirm-icon {
+    @apply mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full
+           bg-medical-50 text-medical-700 dark:bg-medical-950/70 dark:text-medical-300;
+  }
+
+  /* Destructive actions get the warning palette, so "Delete" never looks
+     like "Confirm". */
+  .confirm-backdrop[data-variant='danger'] .confirm-icon {
+    @apply bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400;
+  }
+
+  .confirm-title {
+    @apply text-lg font-extrabold text-medical-900 dark:text-slate-100;
+  }
+
+  .confirm-message {
+    @apply mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300;
+  }
+
+  .confirm-actions {
+    @apply mt-6 flex flex-col-reverse gap-3 sm:flex-row;
+  }
+
+  @keyframes confirmFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes confirmRise {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
   .faq {
-    @apply rounded-2xl border border-slate-200 bg-white p-5;
+    @apply glass-panel rounded-2xl p-5 transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-700;
   }
 
   .faq summary {
-    @apply cursor-pointer list-none font-bold text-medical-900 marker:hidden;
+    @apply cursor-pointer select-none font-bold text-slate-900 dark:text-slate-100 marker:hidden;
   }
 
   .faq summary::-webkit-details-marker {
@@ -364,38 +665,44 @@
   }
 
   .prose-article {
-    @apply prose prose-slate max-w-none
-           prose-headings:font-extrabold prose-headings:tracking-tight
+    @apply prose prose-slate dark:prose-invert max-w-none
+           prose-headings:font-extrabold prose-headings:tracking-tight prose-headings:text-slate-900 dark:prose-headings:text-slate-100
            prose-h2:mt-10 prose-h2:text-2xl
            prose-h3:mt-8 prose-h3:text-xl
-           prose-a:font-semibold prose-a:text-medical-700 prose-a:underline-offset-2
-           prose-img:rounded-2xl
-           prose-blockquote:border-l-medical-300 prose-blockquote:bg-medical-50/50 prose-blockquote:py-1;
+           prose-a:font-semibold prose-a:text-medical-700 dark:prose-a:text-medical-400 prose-a:underline-offset-4
+           prose-img:rounded-3xl prose-img:shadow-md
+           prose-blockquote:border-l-medical-400 prose-blockquote:bg-medical-50/40 dark:prose-blockquote:bg-medical-950/40 prose-blockquote:py-2 prose-blockquote:rounded-r-2xl;
   }
 }
 
 /* ---------------------------------------------------------------------
-   Print - patients print their booking confirmation to take to reception
+   Print - Print Media Clear Overrides
    --------------------------------------------------------------------- */
 @media print {
-  .no-print {
+  .no-print,
+  .bubble-bg {
     display: none !important;
   }
 
   body {
     background: #fff !important;
+    color: #000 !important;
   }
 
   .card,
-  .card-pad {
+  .card-pad,
+  .glass-panel,
+  .glass-card {
     border: 1px solid #cbd5e1 !important;
     box-shadow: none !important;
+    backdrop-filter: none !important;
     break-inside: avoid;
+    background: transparent !important;
   }
 
   a[href]::after {
     content: ' (' attr(href) ')';
     font-size: 0.75rem;
-    color: #64748b;
+    color: #475569;
   }
 }

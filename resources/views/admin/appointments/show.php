@@ -162,9 +162,32 @@ $ethiopian = $appointment->ethiopianDate();
 
                 <div class="mt-4 grid gap-3">
                     <?php foreach ($transitions as $target): ?>
+                        <?php
+                        // Cancelling opens no dialog: the form below already
+                        // demands a reason, which is a deliberate enough step.
+                        $confirmAttrs = '';
+
+                        if ($target !== AppointmentStatus::CANCELLED) {
+                            $isConfirming = $target === AppointmentStatus::CONFIRMED;
+
+                            $confirmAttrs = sprintf(
+                                ' data-confirm="%s" data-confirm-title="%s" data-confirm-action="%s" data-confirm-variant="%s"',
+                                $view->e($isConfirming
+                                    ? sprintf(
+                                        'The patient will be emailed to say their appointment on %s at %s is confirmed.',
+                                        $t->date($appointment->date),
+                                        $appointment->timeSlot->label(),
+                                    )
+                                    : sprintf('Mark this appointment as %s? This cannot be undone.', $target->label())),
+                                $view->e($isConfirming ? 'Confirm appointment' : $target->label()),
+                                $view->e($isConfirming ? 'Confirm & notify' : 'Mark ' . $target->label()),
+                                $target === AppointmentStatus::NO_SHOW ? 'danger' : 'primary',
+                            );
+                        }
+                        ?>
                         <form method="post"
                               action="<?= $view->adminUrl('appointments/' . $appointment->id . '/status') ?>"
-                              <?= $target === AppointmentStatus::CANCELLED ? '' : 'data-confirm="Mark this appointment as ' . $view->e($target->label()) . '?"' ?>>
+                              <?= $confirmAttrs ?>>
                             <?= $view->csrfField() ?>
                             <input type="hidden" name="status" value="<?= $view->e($target->value) ?>">
 

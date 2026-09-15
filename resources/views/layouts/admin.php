@@ -174,6 +174,8 @@ $isActive = static function (string $path) use ($current, $base): bool {
     </main>
 </div>
 
+<?= $view->partial('partials/confirm-dialog', ['view' => $view]) ?>
+
 <script nonce="<?= $view->e($cspNonce) ?>" src="<?= $view->asset('assets/js/app.js') ?>" defer></script>
 </body>
 </html>

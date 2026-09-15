@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aster\Infrastructure\Persistence;
 
+use Aster\Infrastructure\Support\Slug;
+
 /**
  * Shared INSERT/UPDATE/soft-delete/slug plumbing for the content repositories.
  *
@@ -119,7 +121,7 @@ trait CrudOperations
      */
     public function uniqueSlug(string $source, ?int $ignoreId = null): string
     {
-        $base = self::slugify($source);
+        $base = Slug::make($source);
         $slug = $base;
         $n    = 1;
 
@@ -140,21 +142,4 @@ trait CrudOperations
         }
     }
 
-    public static function slugify(string $value): string
-    {
-        $slug = mb_strtolower(trim($value));
-        $slug = preg_replace('/[^\p{L}\p{N}]+/u', '-', $slug) ?? '';
-        $slug = trim($slug, '-');
-
-        // Keep only ASCII; a Ge'ez slug is unreadable in a URL bar and gets
-        // percent-encoded into noise when shared.
-        $ascii = preg_replace('/[^a-z0-9\-]/', '', $slug) ?? '';
-        $ascii = trim(preg_replace('/-+/', '-', $ascii) ?? '', '-');
-
-        if ($ascii === '') {
-            $ascii = 'item-' . substr(bin2hex(random_bytes(4)), 0, 6);
-        }
-
-        return mb_substr($ascii, 0, 150);
-    }
 }

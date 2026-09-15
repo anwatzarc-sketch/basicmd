@@ -9,7 +9,6 @@ use Aster\Domain\Enum\SchemaType;
 use Aster\Domain\Exception\HttpException;
 use Aster\Infrastructure\Persistence\ArticleRepository;
 use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\CrudOperations;
 use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Security\SessionManager;
 use Aster\Infrastructure\Storage\FileUploader;
@@ -164,7 +163,7 @@ final class ArticleController extends Controller
             }
 
             if ((string) $before['title'] !== $title) {
-                $data['slug'] = $this->articles->uniqueSlug(CrudOperations::slugify($title), $id);
+                $data['slug'] = $this->articles->uniqueSlug($title, $id);
             }
 
             $this->articles->update($id, $data);
@@ -190,7 +189,7 @@ final class ArticleController extends Controller
             );
         }
 
-        $data['slug'] = $this->articles->uniqueSlug(CrudOperations::slugify($title));
+        $data['slug'] = $this->articles->uniqueSlug($title);
 
         $newId = $this->articles->create($data);
 

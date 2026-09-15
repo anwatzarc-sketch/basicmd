@@ -7,7 +7,6 @@ namespace Aster\Presentation\Controller\Admin;
 use Aster\Domain\Enum\DoctorStatus;
 use Aster\Domain\Exception\HttpException;
 use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\CrudOperations;
 use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Security\SessionManager;
 use Aster\Infrastructure\Storage\FileUploader;
@@ -118,7 +117,7 @@ final class DoctorController extends Controller
             // an existing profile URL is not silently broken by an edit to an
             // unrelated field.
             if ((string) $before['full_name'] !== $name) {
-                $data['slug'] = $this->doctors->uniqueSlug(CrudOperations::slugify($name), $id);
+                $data['slug'] = $this->doctors->uniqueSlug($name, $id);
             }
 
             $this->doctors->update($id, $data);
@@ -135,7 +134,7 @@ final class DoctorController extends Controller
             return $this->redirectWithSuccess($this->config->adminPath . '/doctors', 'Doctor updated.');
         }
 
-        $data['slug'] = $this->doctors->uniqueSlug(CrudOperations::slugify($name));
+        $data['slug'] = $this->doctors->uniqueSlug($name);
 
         $newId = $this->doctors->create($data);
 

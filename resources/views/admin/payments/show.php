@@ -157,8 +157,30 @@ $amountMatches = $appointment !== null
             <div class="card-pad">
                 <h2 class="text-base font-extrabold text-medical-900">Decision</h2>
 
+                <?php
+                // Spell out the amount and the booking: verification credits
+                // real money against a real appointment, and a duplicate
+                // receipt is exactly the case a rushed click would wave through.
+                $verifyMessage = sprintf(
+                    'This credits %s to booking %s and emails the patient to say their payment is confirmed.',
+                    $t->money($payment->amount),
+                    $payment->bookingRef ?? '',
+                );
+
+                if ($duplicates !== []) {
+                    $verifyMessage .= sprintf(
+                        ' Warning: this receipt has already been submitted on %d other booking%s.',
+                        count($duplicates),
+                        count($duplicates) === 1 ? '' : 's',
+                    );
+                }
+                ?>
                 <form method="post" action="<?= $view->adminUrl('payments/' . $payment->id . '/verify') ?>"
-                      class="mt-4" data-confirm="Verify this payment and notify the patient?">
+                      class="mt-4"
+                      data-confirm="<?= $view->e($verifyMessage) ?>"
+                      data-confirm-title="Verify payment"
+                      data-confirm-action="Verify &amp; notify"
+                      data-confirm-variant="<?= $duplicates !== [] ? 'danger' : 'primary' ?>">
                     <?= $view->csrfField() ?>
                     <label class="label" for="admin_note">Internal note (optional)</label>
                     <input class="input" type="text" id="admin_note" name="admin_note"

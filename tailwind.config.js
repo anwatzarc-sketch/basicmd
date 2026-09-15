@@ -9,6 +9,19 @@
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // THE day/night enabler.
+  //
+  // Tailwind defaults to darkMode: 'media', where every `dark:` utility keys
+  // off the operating system's prefers-color-scheme and nothing else. Under
+  // that default the theme toggle flips the `.dark` class on <html> and the
+  // page does not change - only the hand-written `:root` / `.dark` CSS
+  // variables respond, so the background shifts while every `dark:` utility
+  // in the templates stays stubbornly light.
+  //
+  // 'class' makes `dark:` respond to the `.dark` class instead, which is what
+  // the toggle actually sets.
+  darkMode: 'class',
+
   // Every file that can emit a class name. Missing one here means the class
   // is purged out of the production bundle and the page silently loses its
   // styling, so the PHP sources are included alongside the templates.
@@ -76,6 +89,24 @@ module.exports = {
         // more leading than Latin text to avoid collision.
         'ethiopic-base': ['1rem', { lineHeight: '1.85' }],
         'ethiopic-lg':   ['1.125rem', { lineHeight: '1.8' }],
+
+        // Sits between text-3xl and text-4xl. Used by .stat-value for the big
+        // dashboard figures; without it the build fails on an unknown class.
+        '3.5xl': ['2.0625rem', { lineHeight: '2.375rem' }],
+      },
+
+      spacing: {
+        // Steps app.css uses that are not in Tailwind's default scale. Without
+        // these the build fails outright (`The h-13 class does not exist`), so
+        // they are added rather than rounding the design to the nearest
+        // existing step.
+        //
+        //   4.5  -> .glass-input / .field padding
+        //   5.5  -> .package-card padding
+        //   13   -> .service-icon box
+        '4.5': '1.125rem',
+        '5.5': '1.375rem',
+        '13': '3.25rem',
       },
 
       borderRadius: {

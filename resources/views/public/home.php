@@ -194,42 +194,54 @@ $emergency = $settings->string('phone_emergency', $phone);
         </a>
     </div>
 
-    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="doctor-grid">
         <?php foreach (array_slice($doctors, 0, 4) as $doctor): ?>
+            <?php $photo = $view->media($doctor->photoPath); ?>
             <article class="doctor-card">
-                <?php $photo = $view->media($doctor->photoPath); ?>
-                <?php if ($photo !== null): ?>
-                    <img src="<?= $photo ?>" alt="<?= $view->e($doctor->name($locale)) ?>"
-                         class="h-48 w-full object-cover" loading="lazy" width="320" height="192">
-                <?php else: ?>
-                    <div class="doctor-avatar" aria-hidden="true"><?= $view->e($doctor->displayInitials()) ?></div>
-                <?php endif; ?>
-
-                <div class="p-5">
-                    <h3 class="text-lg font-extrabold text-medical-900">
-                        <a href="<?= $view->url('doctors/' . $doctor->slug) ?>" class="hover:text-medical-600">
-                            <?= $view->e($doctor->name($locale)) ?>
-                        </a>
-                    </h3>
-                    <p class="mt-0.5 text-sm font-semibold text-medical-600"><?= $view->e($doctor->specialtyLabel($locale)) ?></p>
-                    <p class="mt-2 text-xs font-medium text-slate-500">
-                        <?= $view->e($doctor->credentials ?? '') ?>
-                        <?php if ($doctor->experienceYears > 0): ?>
-                            &middot; <?= $view->t($doctor->experienceYears === 1 ? 'doctors.experience_one' : 'doctors.experience', ['years' => $doctor->experienceYears]) ?>
-                        <?php endif; ?>
-                    </p>
-
-                    <?php if ($doctor->isBookable()): ?>
-                        <a href="<?= $view->url('book?doctor=' . $doctor->id) ?>"
-                           class="mt-4 inline-block text-sm font-bold text-medical-700 transition hover:text-medical-600">
-                            <?= $view->t('services.cta') ?> &rarr;
-                        </a>
+                <div class="doctor-card__photo-wrap">
+                    <?php if ($photo !== null): ?>
+                        <img class="doctor-card__photo" src="<?= $photo ?>"
+                             alt="<?= $view->e($doctor->name($locale)) ?>"
+                             loading="lazy" width="108" height="108">
                     <?php else: ?>
-                        <span class="badge <?= $view->e($doctor->status->badgeClass()) ?> mt-4">
-                            <?= $view->t($doctor->status->translationKey()) ?>
+                        <span class="doctor-card__photo--fallback" aria-hidden="true">
+                            <?= $view->e($doctor->displayInitials()) ?>
                         </span>
                     <?php endif; ?>
                 </div>
+
+                <span class="doctor-card__badge"><?= $view->e($doctor->specialtyLabel($locale)) ?></span>
+
+                <h3 class="doctor-card__name">
+                    <a href="<?= $view->url('doctors/' . $doctor->slug) ?>" class="hover:text-medical-600 dark:hover:text-medical-300">
+                        <?= $view->e($doctor->name($locale)) ?>
+                    </a>
+                </h3>
+
+                <?php if ($doctor->credentials !== null || $doctor->experienceYears > 0): ?>
+                    <span class="doctor-card__role">
+                        <?= $view->e($doctor->credentials ?? '') ?>
+                        <?php if ($doctor->credentials !== null && $doctor->experienceYears > 0): ?>&middot;<?php endif; ?>
+                        <?php if ($doctor->experienceYears > 0): ?>
+                            <?= $view->t($doctor->experienceYears === 1 ? 'doctors.experience_one' : 'doctors.experience', ['years' => $doctor->experienceYears]) ?>
+                        <?php endif; ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if ($doctor->biography($locale) !== null): ?>
+                    <p class="doctor-card__bio"><?= $view->excerpt($doctor->biography($locale), 130) ?></p>
+                <?php endif; ?>
+
+                <?php if ($doctor->isBookable()): ?>
+                    <a href="<?= $view->url('book?doctor=' . $doctor->id) ?>"
+                       class="mt-5 inline-block text-sm font-bold text-medical-700 transition hover:text-medical-600 dark:text-medical-300 dark:hover:text-medical-200">
+                        <?= $view->t('services.cta') ?> &rarr;
+                    </a>
+                <?php else: ?>
+                    <span class="badge <?= $view->e($doctor->status->badgeClass()) ?> mt-5">
+                        <?= $view->t($doctor->status->translationKey()) ?>
+                    </span>
+                <?php endif; ?>
             </article>
         <?php endforeach; ?>
     </div>

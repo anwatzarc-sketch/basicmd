@@ -8,7 +8,6 @@ use Aster\Domain\Enum\FacilityStatus;
 use Aster\Domain\Enum\ServiceCategory;
 use Aster\Domain\Exception\HttpException;
 use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\CrudOperations;
 use Aster\Infrastructure\Persistence\FacilityRepository;
 use Aster\Infrastructure\Persistence\PackageRepository;
 use Aster\Infrastructure\Persistence\ServiceRepository;
@@ -353,7 +352,7 @@ final class CatalogController extends Controller
             // Only re-slug when the public-facing name changed, so existing
             // URLs survive routine edits.
             if ((string) ($before[$titleColumn] ?? '') !== $displayName) {
-                $data['slug'] = $slugger(CrudOperations::slugify($displayName), $id);
+                $data['slug'] = $slugger($displayName, $id);
             }
 
             $update($id, $data);
@@ -373,7 +372,7 @@ final class CatalogController extends Controller
             );
         }
 
-        $data['slug'] = $slugger(CrudOperations::slugify($displayName), null);
+        $data['slug'] = $slugger($displayName, null);
 
         $newId = $create($data);
 
