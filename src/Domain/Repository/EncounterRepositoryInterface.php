@@ -11,6 +11,14 @@ interface EncounterRepositoryInterface
 {
     public function findById(int $id): ?Encounter;
 
+    /**
+     * Same as findById(), but takes a row lock held until the enclosing
+     * transaction ends - used by BillingService::processDischargeOrClosure()
+     * so the balance read and the status write are atomic with respect to
+     * a concurrent ledger or payment insert against the same encounter.
+     */
+    public function findByIdForUpdate(int $id): ?Encounter;
+
     public function findByVisitNumber(VisitNumber $visitNumber): ?Encounter;
 
     /**

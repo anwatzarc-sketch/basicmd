@@ -77,4 +77,19 @@ final class EncounterException extends RuntimeException
             'already_checked_in',
         );
     }
+
+    /** BillingService's basic actor sanity check - see StaffDirectoryInterface::isActiveStaffUser(). */
+    public static function invalidActor(): self
+    {
+        return new self(
+            'The acting user is not a valid, active staff account.',
+            'invalid_actor',
+        );
+    }
+
+    /** QueueService::markWalkOut() - FRS 8.4: "Require a reason." */
+    public static function walkOutReasonRequired(): self
+    {
+        return new self('A reason is required to mark a walk-out.', 'reason_required');
+    }
 }

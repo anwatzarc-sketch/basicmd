@@ -25,4 +25,12 @@ final readonly class StaffDirectory implements StaffDirectoryInterface
 
         return $count > 0;
     }
+
+    public function isActiveStaffUser(int $userId): bool
+    {
+        return $this->db->fetchInt(
+            "SELECT COUNT(*) FROM users WHERE id = :id AND status = 'active' AND deleted_at IS NULL",
+            ['id' => $userId],
+        ) > 0;
+    }
 }

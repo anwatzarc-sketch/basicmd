@@ -35,6 +35,19 @@ final class EncounterRepository implements EncounterRepositoryInterface
         return $row === null ? null : Encounter::fromRow($row);
     }
 
+    /** See EncounterRepositoryInterface::findByIdForUpdate() for the locking contract. */
+    public function findByIdForUpdate(int $id): ?Encounter
+    {
+        // Unjoined, same reasoning as findByVisitNumberForUpdate(): MariaDB
+        // has no `FOR UPDATE OF <alias>` (confirmed a hard syntax error on
+        // this server), so a plain FOR UPDATE here would also lock the
+        // joined patients/users/ward_locations rows, which nothing about a
+        // discharge needs to hold.
+        $row = $this->db->fetchOne('SELECT * FROM encounters WHERE id = :id FOR UPDATE', ['id' => $id]);
+
+        return $row === null ? null : Encounter::fromRow($row);
+    }
+
     public function findByVisitNumber(VisitNumber $visitNumber): ?Encounter
     {
         $row = $this->db->fetchOne(

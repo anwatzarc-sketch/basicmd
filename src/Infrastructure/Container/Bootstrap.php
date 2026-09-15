@@ -16,14 +16,18 @@ use Aster\Domain\Repository\AuditLoggerInterface;
 use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
 use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
+use Aster\Domain\Repository\LedgerRepositoryInterface;
 use Aster\Domain\Repository\NumberSequenceInterface;
 use Aster\Domain\Repository\PatientRepositoryInterface;
 use Aster\Domain\Repository\PrescriptionRepositoryInterface;
+use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
 use Aster\Domain\Repository\StaffDirectoryInterface;
 use Aster\Domain\Repository\TransactionManagerInterface;
 use Aster\Domain\Repository\WardLocationRepositoryInterface;
+use Aster\Domain\Services\BillingService;
 use Aster\Domain\Services\EncounterService;
 use Aster\Domain\Services\PatientDeduplicationService;
+use Aster\Domain\Services\QueueService;
 use Aster\Infrastructure\Mail\Mailer;
 use Aster\Infrastructure\Mail\MailQueue;
 use Aster\Infrastructure\Mail\MailRenderer;
@@ -37,6 +41,7 @@ use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Persistence\EncounterRepository;
 use Aster\Infrastructure\Persistence\FacilityRepository;
 use Aster\Infrastructure\Persistence\InquiryRepository;
+use Aster\Infrastructure\Persistence\LedgerRepository;
 use Aster\Infrastructure\Persistence\PackageRepository;
 use Aster\Infrastructure\Persistence\PatientRepository;
 use Aster\Infrastructure\Persistence\PaymentRepository;
@@ -44,6 +49,7 @@ use Aster\Infrastructure\Persistence\PdoAdvisoryLock;
 use Aster\Infrastructure\Persistence\PdoNumberSequence;
 use Aster\Infrastructure\Persistence\PdoTransactionManager;
 use Aster\Infrastructure\Persistence\PrescriptionRepository;
+use Aster\Infrastructure\Persistence\ReceivablePaymentRepository;
 use Aster\Infrastructure\Persistence\ServiceRepository;
 use Aster\Infrastructure\Persistence\SettingsRepository;
 use Aster\Infrastructure\Persistence\StaffDirectory;
@@ -131,6 +137,8 @@ final class Bootstrap
             PdoAdvisoryLock::class,
             StaffDirectory::class,
             PrescriptionRepository::class,
+            LedgerRepository::class,
+            ReceivablePaymentRepository::class,
         ] as $repository) {
             $container->singleton(
                 $repository,
@@ -189,6 +197,14 @@ final class Bootstrap
         $container->singleton(
             PrescriptionRepositoryInterface::class,
             static fn (Container $c): PrescriptionRepositoryInterface => $c->get(PrescriptionRepository::class),
+        );
+        $container->singleton(
+            LedgerRepositoryInterface::class,
+            static fn (Container $c): LedgerRepositoryInterface => $c->get(LedgerRepository::class),
+        );
+        $container->singleton(
+            ReceivablePaymentRepositoryInterface::class,
+            static fn (Container $c): ReceivablePaymentRepositoryInterface => $c->get(ReceivablePaymentRepository::class),
         );
         // AuditLogger already implements AuditLoggerInterface directly -
         // no separate concrete-vs-interface pair needed, unlike the
@@ -268,6 +284,23 @@ final class Bootstrap
                 $c->get(StaffDirectoryInterface::class),
                 $c->get(NumberSequenceInterface::class),
                 $c->get(TransactionManagerInterface::class),
+                $c->get(AuditLoggerInterface::class),
+            ));
+
+        $container->singleton(BillingService::class, static fn (Container $c): BillingService
+            => new BillingService(
+                $c->get(LedgerRepositoryInterface::class),
+                $c->get(ReceivablePaymentRepositoryInterface::class),
+                $c->get(EncounterRepositoryInterface::class),
+                $c->get(WardLocationRepositoryInterface::class),
+                $c->get(StaffDirectoryInterface::class),
+                $c->get(TransactionManagerInterface::class),
+                $c->get(AuditLoggerInterface::class),
+            ));
+
+        $container->singleton(QueueService::class, static fn (Container $c): QueueService
+            => new QueueService(
+                $c->get(EncounterRepositoryInterface::class),
                 $c->get(AuditLoggerInterface::class),
             ));
 

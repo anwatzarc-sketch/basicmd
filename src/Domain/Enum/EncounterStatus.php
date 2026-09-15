@@ -58,7 +58,7 @@ enum EncounterStatus: string
     {
         return match ($this) {
             self::CHECKED_IN => [
-                self::IN_CONSULTATION, self::ADMITTED,
+                self::IN_CONSULTATION, self::ADMITTED, self::DISCHARGED,
                 self::WALK_OUT, self::LEFT_WITHOUT_BEING_SEEN,
             ],
             self::IN_CONSULTATION => [self::ADMITTED, self::DISCHARGED, self::WALK_OUT],
