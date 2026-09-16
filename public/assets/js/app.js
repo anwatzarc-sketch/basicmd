@@ -595,6 +595,24 @@
     };
 
     /* =================================================================
+       PWA - service worker registration
+       ================================================================= */
+    const initServiceWorker = () => {
+        if (!('serviceWorker' in navigator)) return;
+
+        // Registered from every page (this file loads everywhere), but the
+        // worker itself never caches a page - see sw.js's own docblock for
+        // why that boundary matters here specifically.
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(() => {
+                // Offline support is an enhancement, not a requirement -
+                // a registration failure (unsupported browser, blocked by
+                // a policy) should never surface as an error to the user.
+            });
+        });
+    };
+
+    /* =================================================================
        Boot
        ================================================================= */
     const boot = () => {
@@ -607,6 +625,7 @@
         initConfirms();
         initFilters();
         initMethodEditor();
+        initServiceWorker();
     };
 
     if (document.readyState === 'loading') {

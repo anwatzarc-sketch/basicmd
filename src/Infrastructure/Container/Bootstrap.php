@@ -389,6 +389,7 @@ final class Bootstrap
             payments:     $c->get(PaymentRepository::class),
             doctors:      $c->get(DoctorRepository::class),
             inquiries:    $c->get(InquiryRepository::class),
+            encounters:   $c->get(EncounterRepository::class),
             config:       $config,
         ));
 

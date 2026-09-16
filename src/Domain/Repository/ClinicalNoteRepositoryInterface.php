@@ -25,6 +25,19 @@ interface ClinicalNoteRepositoryInterface
     /** @return list<ClinicalNote> */
     public function forEncounter(int $encounterId): array;
 
+    /**
+     * Every clinical note across a patient's whole encounter history,
+     * most recent first - the Patient Detail page's Clinical Notes tab.
+     * Joins through encounters, the same reasoning
+     * DiagnosticOrderRepositoryInterface::forPatient() documents: the
+     * scope is strictly one patient_id, so enforcing that in SQL is
+     * simpler and safer than the caller filtering per-encounter results
+     * in PHP.
+     *
+     * @return list<ClinicalNote>
+     */
+    public function forPatient(int $patientId, int $limit = 100): array;
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int;
 

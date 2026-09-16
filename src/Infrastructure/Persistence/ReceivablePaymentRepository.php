@@ -59,6 +59,34 @@ final class ReceivablePaymentRepository implements ReceivablePaymentRepositoryIn
         return Balance::fromDatabase($sum);
     }
 
+    public function sumForPatient(int $patientId): Balance
+    {
+        $sum = $this->db->fetchValue(
+            'SELECT COALESCE(SUM(p.amount_paid), 0)
+             FROM receivable_payments p
+             JOIN encounters e ON e.id = p.encounter_id
+             WHERE e.patient_id = :pid',
+            ['pid' => $patientId],
+        );
+
+        return Balance::fromDatabase($sum);
+    }
+
+    /** @return list<ReceivablePayment> */
+    public function forPatient(int $patientId, int $limit = 200): array
+    {
+        $rows = $this->db->fetchAll(
+            self::SELECT_BASE . '
+             JOIN encounters e ON e.id = p.encounter_id
+             WHERE e.patient_id = :pid
+             ORDER BY p.created_at DESC, p.id DESC
+             LIMIT :limit',
+            ['pid' => $patientId, 'limit' => $limit],
+        );
+
+        return array_map(ReceivablePayment::fromRow(...), $rows);
+    }
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int
     {

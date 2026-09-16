@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aster\Infrastructure\Persistence;
 
 use Aster\Domain\Entity\DiagnosticOrder;
+use Aster\Domain\Enum\DiagnosticCategory;
 use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
 use Aster\Infrastructure\Security\Encryptor;
 
@@ -41,15 +42,23 @@ final class DiagnosticOrderRepository implements DiagnosticOrderRepositoryInterf
     }
 
     /** @return list<DiagnosticOrder> */
-    public function forPatient(int $patientId, int $limit = 50): array
+    public function forPatient(int $patientId, int $limit = 50, ?DiagnosticCategory $category = null): array
     {
+        $categoryClause = $category !== null ? ' AND o.category = :category' : '';
+
+        $params = ['pid' => $patientId, 'limit' => $limit];
+
+        if ($category !== null) {
+            $params['category'] = $category->value;
+        }
+
         $rows = $this->db->fetchAll(
             self::SELECT_BASE . '
              JOIN encounters e ON e.id = o.encounter_id
-             WHERE e.patient_id = :pid
+             WHERE e.patient_id = :pid' . $categoryClause . '
              ORDER BY o.created_at DESC
              LIMIT :limit',
-            ['pid' => $patientId, 'limit' => $limit],
+            $params,
         );
 
         return array_map(DiagnosticOrder::fromRow(...), $rows);

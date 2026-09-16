@@ -37,6 +37,21 @@ final class PrescriptionRepository implements PrescriptionRepositoryInterface
         return array_map(EPrescription::fromRow(...), $rows);
     }
 
+    /** @return list<EPrescription> */
+    public function forPatient(int $patientId, int $limit = 100): array
+    {
+        $rows = $this->db->fetchAll(
+            self::SELECT_BASE . '
+             JOIN encounters e ON e.id = p.encounter_id
+             WHERE e.patient_id = :pid
+             ORDER BY p.created_at DESC
+             LIMIT :limit',
+            ['pid' => $patientId, 'limit' => $limit],
+        );
+
+        return array_map(EPrescription::fromRow(...), $rows);
+    }
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int
     {

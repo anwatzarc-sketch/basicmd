@@ -48,6 +48,34 @@ final class LedgerRepository implements LedgerRepositoryInterface
         return Balance::fromDatabase($sum);
     }
 
+    public function sumForPatient(int $patientId): Balance
+    {
+        $sum = $this->db->fetchValue(
+            'SELECT COALESCE(SUM(l.total_cost), 0)
+             FROM consumption_ledger l
+             JOIN encounters e ON e.id = l.encounter_id
+             WHERE e.patient_id = :pid',
+            ['pid' => $patientId],
+        );
+
+        return Balance::fromDatabase($sum);
+    }
+
+    /** @return list<LedgerEntry> */
+    public function forPatient(int $patientId, int $limit = 200): array
+    {
+        $rows = $this->db->fetchAll(
+            self::SELECT_BASE . '
+             JOIN encounters e ON e.id = l.encounter_id
+             WHERE e.patient_id = :pid
+             ORDER BY l.created_at DESC, l.id DESC
+             LIMIT :limit',
+            ['pid' => $patientId, 'limit' => $limit],
+        );
+
+        return array_map(LedgerEntry::fromRow(...), $rows);
+    }
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int
     {

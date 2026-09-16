@@ -29,6 +29,17 @@ interface LedgerRepositoryInterface
      */
     public function sumForEncounter(int $encounterId): Balance;
 
+    /**
+     * SUM(total_cost) across every encounter a patient has ever had - the
+     * Patient Detail Financial panel's "Charges" figure (spec §5), joined
+     * through encounters rather than summed per-encounter in PHP for the
+     * same reason sumForEncounter() itself is computed in SQL.
+     */
+    public function sumForPatient(int $patientId): Balance;
+
+    /** @return list<LedgerEntry> */
+    public function forPatient(int $patientId, int $limit = 200): array;
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int;
 }

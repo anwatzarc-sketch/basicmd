@@ -13,6 +13,15 @@ interface PrescriptionRepositoryInterface
     /** @return list<EPrescription> */
     public function forEncounter(int $encounterId): array;
 
+    /**
+     * Every prescription across a patient's whole encounter history, most
+     * recent first - the Patient Detail page's Prescriptions tab. Same
+     * join-through-encounters reasoning as the other forPatient() ports.
+     *
+     * @return list<EPrescription>
+     */
+    public function forPatient(int $patientId, int $limit = 100): array;
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int;
 

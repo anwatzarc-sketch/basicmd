@@ -40,6 +40,21 @@ final class ClinicalNoteRepository implements ClinicalNoteRepositoryInterface
         return array_map(ClinicalNote::fromRow(...), $rows);
     }
 
+    /** @return list<ClinicalNote> */
+    public function forPatient(int $patientId, int $limit = 100): array
+    {
+        $rows = $this->db->fetchAll(
+            self::SELECT_BASE . '
+             JOIN encounters e ON e.id = n.encounter_id
+             WHERE e.patient_id = :pid
+             ORDER BY n.created_at DESC
+             LIMIT :limit',
+            ['pid' => $patientId, 'limit' => $limit],
+        );
+
+        return array_map(ClinicalNote::fromRow(...), $rows);
+    }
+
     /**
      * @param array<string, mixed> $data 'vitals' may be a PHP array (encoded
      *   to JSON here) or omitted entirely; every other key binds as-is.

@@ -65,6 +65,10 @@ if ($locale->value === 'am' && $settings !== null) {
     <?= $view->csrfToken() !== '' ? '<meta name="csrf-token" content="' . $view->e($view->csrfToken()) . '">' : '' ?>
 
     <link rel="icon" href="<?= $view->asset('assets/img/favicon.svg') ?>" type="image/svg+xml">
+    <link rel="manifest" href="<?= $view->url('manifest.webmanifest') ?>">
+    <link rel="apple-touch-icon" href="<?= $view->asset('assets/img/icons/apple-touch-icon.png') ?>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <?php if ($view->config->assetsBuilt()): ?>
         <?php /* Preloading the stylesheet removes a round trip from first paint. */ ?>

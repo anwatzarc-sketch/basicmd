@@ -8,17 +8,21 @@ use Aster\Domain\Exception\HttpException;
 use Aster\Infrastructure\Persistence\ArticleRepository;
 use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Persistence\ServiceRepository;
+use Aster\Infrastructure\Persistence\SettingsRepository;
 use Aster\Infrastructure\Support\Config;
 use Aster\Infrastructure\Storage\FileUploader;
 use Aster\Presentation\Http\Request;
 use Aster\Presentation\Http\Response;
 
 /**
- * sitemap.xml, robots.txt, and media file serving.
+ * sitemap.xml, robots.txt, the PWA manifest, and media file serving.
  *
  * The sitemap is generated live rather than written to disk: the article and
  * doctor sets change from the CMS, and a stale file would leave new content
- * uncrawled until someone remembered to regenerate it.
+ * uncrawled until someone remembered to regenerate it. The manifest is
+ * generated live for the same reason applied to branding: clinic_name is a
+ * setting, not a constant (see layouts/public.php), so the installed app's
+ * name must follow it rather than freeze whatever it was at deploy time.
  *
  * Every URL carries xhtml:link alternates so Google treats the English and
  * Amharic versions as translations rather than duplicate content.
@@ -31,6 +35,7 @@ final class SitemapController
         private readonly ServiceRepository $services,
         private readonly DoctorRepository $doctors,
         private readonly FileUploader $uploader,
+        private readonly SettingsRepository $settings,
     ) {
     }
 
@@ -142,6 +147,47 @@ final class SitemapController
         ];
 
         return Response::text(implode("\n", $lines))->withCache(86400);
+    }
+
+    /**
+     * The PWA manifest (FRS-independent - this is a platform feature, not a
+     * Phase II one). name/short_name follow the same clinic_name setting
+     * every page's <title> already does, so a clinic that renames itself in
+     * Settings gets a correctly-named installed app without a redeploy.
+     */
+    public function manifest(Request $request): Response
+    {
+        $clinicName = $this->settings->string('clinic_name', 'Aster Medical Center');
+        $tagline    = $this->settings->string('tagline', '');
+
+        // Home-screen labels are cramped - truncate on a word boundary
+        // rather than mid-word, and only when the full name would not fit.
+        $shortName = mb_strlen($clinicName) > 15
+            ? rtrim(mb_substr($clinicName, 0, 15)) . '…'
+            : $clinicName;
+
+        $manifest = [
+            'id'               => '/',
+            'name'             => $clinicName,
+            'short_name'       => $shortName,
+            'description'      => $tagline !== '' ? $tagline : $clinicName . ' - online booking and patient services',
+            'start_url'        => '/?source=pwa',
+            'scope'            => '/',
+            'display'          => 'standalone',
+            'orientation'      => 'portrait-primary',
+            'background_color' => '#ffffff',
+            'theme_color'      => '#056460',
+            'categories'       => ['health', 'medical'],
+            'icons'            => [
+                ['src' => '/assets/img/icons/icon-192.png', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any'],
+                ['src' => '/assets/img/icons/icon-512.png', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any'],
+                ['src' => '/assets/img/icons/icon-maskable-512.png', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'maskable'],
+            ],
+        ];
+
+        return Response::json($manifest)
+            ->withHeader('Content-Type', 'application/manifest+json; charset=UTF-8')
+            ->withCache(3600);
     }
 
     /**

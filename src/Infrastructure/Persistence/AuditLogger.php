@@ -58,6 +58,12 @@ final class AuditLogger implements AuditLoggerInterface
     public const string PORTAL_LOGIN_FAILED        = 'portal.login_failed';
     public const string PORTAL_LOGOUT              = 'portal.logout';
 
+    public const string CLINICAL_NOTE_CREATED      = 'clinical_note.created';
+    public const string DIAGNOSTIC_ORDER_CREATED   = 'diagnostic_order.created';
+    public const string DIAGNOSTIC_RESULT_RECORDED = 'diagnostic_order.result_recorded';
+    public const string PRESCRIPTION_CREATED       = 'prescription.created';
+    public const string PRESCRIPTION_DISPENSED     = 'prescription.dispensed';
+
     private ?int $userId = null;
 
     private ?string $actorLabel = null;
@@ -208,26 +214,90 @@ final class AuditLogger implements AuditLoggerInterface
     }
 
     /**
-     * Paginated trail for the audit screen.
+     * Build the shared WHERE clause for recent()/countAll() once, so the two
+     * queries can never silently drift apart on what "matching filters"
+     * means. $columnPrefix is 'a.' for the joined recent() query and '' for
+     * countAll()'s unjoined one.
      *
-     * @return list<array<string, mixed>>
+     * @return array{clause: string, params: array<string, mixed>}
      */
-    public function recent(int $limit = 50, int $offset = 0, ?string $action = null, ?int $userId = null): array
-    {
+    private function filterClause(
+        string $columnPrefix,
+        ?string $action,
+        ?int $userId,
+        ?string $targetType,
+        ?string $search,
+        ?string $dateFrom,
+        ?string $dateTo,
+    ): array {
         $where  = [];
         $params = [];
 
         if ($action !== null && $action !== '') {
-            $where[]          = 'a.action = :action';
+            $where[]          = "{$columnPrefix}action = :action";
             $params['action'] = $action;
         }
 
         if ($userId !== null) {
-            $where[]        = 'a.user_id = :uid';
-            $params['uid']  = $userId;
+            $where[]       = "{$columnPrefix}user_id = :uid";
+            $params['uid'] = $userId;
         }
 
-        $clause = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
+        if ($targetType !== null && $targetType !== '') {
+            $where[]              = "{$columnPrefix}target_type = :ttype";
+            $params['ttype']      = $targetType;
+        }
+
+        if ($search !== null && $search !== '') {
+            // Three separate placeholders bound to the same value - PDO
+            // with ATTR_EMULATE_PREPARES off (see bin/check-sql.php) allows
+            // a named placeholder only once per statement, so :search
+            // itself cannot be reused across the OR'd columns.
+            $where[] = "({$columnPrefix}summary LIKE :search1"
+                . " OR {$columnPrefix}actor_label LIKE :search2"
+                . " OR {$columnPrefix}target_id = :search3)";
+            $needle             = '%' . $search . '%';
+            $params['search1']  = $needle;
+            $params['search2']  = $needle;
+            // target_id is numeric; a non-numeric search term simply never
+            // matches this branch rather than throwing.
+            $params['search3']  = ctype_digit($search) ? (int) $search : -1;
+        }
+
+        if ($dateFrom !== null && $dateFrom !== '') {
+            $where[]              = "{$columnPrefix}created_at >= :dfrom";
+            $params['dfrom']      = $dateFrom . ' 00:00:00';
+        }
+
+        if ($dateTo !== null && $dateTo !== '') {
+            $where[]            = "{$columnPrefix}created_at <= :dto";
+            $params['dto']      = $dateTo . ' 23:59:59';
+        }
+
+        return [
+            'clause' => $where === [] ? '' : ' WHERE ' . implode(' AND ', $where),
+            'params' => $params,
+        ];
+    }
+
+    /**
+     * Paginated trail for the audit screen.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function recent(
+        int $limit = 50,
+        int $offset = 0,
+        ?string $action = null,
+        ?int $userId = null,
+        ?string $targetType = null,
+        ?string $search = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+    ): array {
+        ['clause' => $clause, 'params' => $params] = $this->filterClause(
+            'a.', $action, $userId, $targetType, $search, $dateFrom, $dateTo,
+        );
 
         $params['limit']  = $limit;
         $params['offset'] = $offset;
@@ -243,37 +313,107 @@ final class AuditLogger implements AuditLoggerInterface
         );
     }
 
-    public function countAll(?string $action = null, ?int $userId = null): int
-    {
-        $where  = [];
-        $params = [];
-
-        if ($action !== null && $action !== '') {
-            $where[]          = 'action = :action';
-            $params['action'] = $action;
-        }
-
-        if ($userId !== null) {
-            $where[]       = 'user_id = :uid';
-            $params['uid'] = $userId;
-        }
-
-        $clause = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
+    public function countAll(
+        ?string $action = null,
+        ?int $userId = null,
+        ?string $targetType = null,
+        ?string $search = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null,
+    ): int {
+        ['clause' => $clause, 'params' => $params] = $this->filterClause(
+            '', $action, $userId, $targetType, $search, $dateFrom, $dateTo,
+        );
 
         return $this->db->fetchInt('SELECT COUNT(*) FROM audit_logs' . $clause, $params);
     }
 
-    /** History for one record, shown on its detail page. */
-    public function forTarget(string $targetType, int $targetId, int $limit = 30): array
+    /**
+     * Distinct target_type values on record, for the filter dropdown.
+     *
+     * @return list<string>
+     */
+    public function distinctTargetTypes(): array
     {
+        return array_column($this->db->fetchAll(
+            'SELECT DISTINCT target_type FROM audit_logs WHERE target_type IS NOT NULL ORDER BY target_type ASC',
+        ), 'target_type');
+    }
+
+    /**
+     * The audit trail relevant to one patient, for the Patient Detail
+     * page's Audit tab - not just target_type='patient' rows (which would
+     * only ever be MPI registration and portal-access events), but every
+     * encounter-scoped event belonging to one of THIS patient's
+     * encounters too: encounter admit/discharge/override
+     * (target_type='encounter') and charge/payment posting
+     * (target_type='consumption_ledger'/'receivable_payment') are all
+     * logged keyed by encounter_id, not patient_id, because that is what
+     * BillingService/EncounterService/BillingController actually hold at
+     * the point they call record(). Missing those would make this tab
+     * materially incomplete, not just narrower.
+     *
+     * $actorUserId scopes to one actor's own entries, exactly like
+     * forTarget()'s own parameter - how audit.view_own is enforced here.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function forPatient(int $patientId, int $limit = 50, ?int $actorUserId = null): array
+    {
+        // Two placeholders bound to the same patient id, not one reused:
+        // PDO with ATTR_EMULATE_PREPARES off (see bin/check-sql.php)
+        // allows a named placeholder only once per statement, and :pid
+        // appears in both the direct target check and the subquery below.
+        $actorClause = $actorUserId !== null ? ' AND a.user_id = :uid' : '';
+        $params = ['pid1' => $patientId, 'pid2' => $patientId, 'limit' => $limit];
+
+        if ($actorUserId !== null) {
+            $params['uid'] = $actorUserId;
+        }
+
+        return $this->db->fetchAll(
+            "SELECT a.*, INET6_NTOA(a.ip_address) AS ip_text, u.full_name AS user_name
+             FROM audit_logs a
+             LEFT JOIN users u ON u.id = a.user_id
+             WHERE (
+                 (a.target_type = 'patient' AND a.target_id = :pid1)
+                 OR (
+                     a.target_type IN ('encounter', 'consumption_ledger', 'receivable_payment')
+                     AND a.target_id IN (SELECT id FROM encounters WHERE patient_id = :pid2)
+                 )
+             ){$actorClause}
+             ORDER BY a.id DESC
+             LIMIT :limit",
+            $params,
+        );
+    }
+
+    /** History for one record, shown on its detail page. */
+    /**
+     * $actorUserId, when given, scopes to that one actor's own entries -
+     * how audit.view_own (migration 007) is enforced: a role holding
+     * that permission instead of audit.view passes the signed-in user's
+     * own id here, never trusting a caller-supplied filter, so "own
+     * entries only" is true at the query itself rather than a display
+     * choice layered on top of the full trail.
+     */
+    public function forTarget(string $targetType, int $targetId, int $limit = 30, ?int $actorUserId = null): array
+    {
+        $clause = $actorUserId !== null ? ' AND a.user_id = :uid' : '';
+        $params = ['t' => $targetType, 'id' => $targetId, 'limit' => $limit];
+
+        if ($actorUserId !== null) {
+            $params['uid'] = $actorUserId;
+        }
+
         return $this->db->fetchAll(
             'SELECT a.*, INET6_NTOA(a.ip_address) AS ip_text, u.full_name AS user_name
              FROM audit_logs a
              LEFT JOIN users u ON u.id = a.user_id
-             WHERE a.target_type = :t AND a.target_id = :id
+             WHERE a.target_type = :t AND a.target_id = :id' . $clause . '
              ORDER BY a.id DESC
              LIMIT :limit',
-            ['t' => $targetType, 'id' => $targetId, 'limit' => $limit],
+            $params,
         );
     }
 

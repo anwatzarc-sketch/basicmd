@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Aster\Application\Service;
 
+use Aster\Domain\Enum\EncounterStatus;
 use Aster\Domain\ValueObject\Money;
 use Aster\Infrastructure\Persistence\AppointmentRepository;
 use Aster\Infrastructure\Persistence\Database;
 use Aster\Infrastructure\Persistence\DoctorRepository;
+use Aster\Infrastructure\Persistence\EncounterRepository;
 use Aster\Infrastructure\Persistence\InquiryRepository;
 use Aster\Infrastructure\Persistence\PaymentRepository;
 use Aster\Infrastructure\Support\Config;
@@ -34,8 +36,18 @@ final readonly class DashboardService
         private PaymentRepository $payments,
         private DoctorRepository $doctors,
         private InquiryRepository $inquiries,
+        private EncounterRepository $encounters,
         private Config $config,
     ) {
+    }
+
+    /** Every non-terminal EncounterStatus, as a SQL IN() list - see EncounterRepository::active(). */
+    private function activeStatusList(): string
+    {
+        return implode(', ', array_map(
+            static fn (EncounterStatus $s): string => "'" . $s->value . "'",
+            array_filter(EncounterStatus::all(), static fn (EncounterStatus $s): bool => !$s->isTerminal()),
+        ));
     }
 
     private function today(): string
@@ -348,5 +360,140 @@ final readonly class DashboardService
     public function doctorDayQueue(int $doctorId, ?string $date = null): array
     {
         return $this->appointments->dayQueueForDoctor($doctorId, $date ?? $this->today());
+    }
+
+    // -----------------------------------------------------------------
+    //  Phase II - clinical operations, MPI, and the financial ledger.
+    //
+    //  Same rule as the panels above: every figure answers a question
+    //  someone actually asks at a glance - "how full are we right now",
+    //  "is anyone stuck waiting on financial clearance", "how much is
+    //  currently owed across the building" - not a dump of table counts.
+    // -----------------------------------------------------------------
+
+    /**
+     * Right-now snapshot of who is in the building and where.
+     *
+     * @return array{active_encounters:int, admitted_today:int, discharged_today:int, beds_occupied:int, beds_total:int, pending_clearance:int}
+     */
+    public function clinicalHeadline(): array
+    {
+        $today = $this->today();
+        $active = $this->activeStatusList();
+
+        $beds = $this->db->fetchOne(
+            'SELECT COUNT(*) AS total, SUM(is_occupied) AS occupied
+             FROM ward_locations WHERE is_transient = 0',
+        ) ?? [];
+
+        return [
+            'active_encounters'  => $this->db->fetchInt("SELECT COUNT(*) FROM encounters WHERE status IN ({$active})"),
+            'admitted_today'     => $this->db->fetchInt(
+                'SELECT COUNT(*) FROM encounters WHERE DATE(admitted_at) = :d',
+                ['d' => $today],
+            ),
+            'discharged_today'   => $this->db->fetchInt(
+                'SELECT COUNT(*) FROM encounters WHERE DATE(discharged_at) = :d',
+                ['d' => $today],
+            ),
+            'beds_occupied'      => (int) ($beds['occupied'] ?? 0),
+            'beds_total'         => (int) ($beds['total'] ?? 0),
+            // A financially PENDING encounter that is still open is one
+            // discharge is currently blocked on (BillingService's gate) -
+            // the figure the front desk and accounts both watch.
+            'pending_clearance'  => $this->db->fetchInt(
+                "SELECT COUNT(*) FROM encounters
+                 WHERE status IN ({$active}) AND financial_clearance_status = 'PENDING'",
+            ),
+        ];
+    }
+
+    /**
+     * Active-encounter mix by visit type, for the same reason
+     * acquisitionMix() breaks bookings down by channel.
+     *
+     * @return array<string,int>
+     */
+    public function encountersByVisitType(): array
+    {
+        $active = $this->activeStatusList();
+
+        return array_map('intval', $this->db->fetchPairs(
+            "SELECT visit_type, COUNT(*) FROM encounters WHERE status IN ({$active}) GROUP BY visit_type",
+        ));
+    }
+
+    /**
+     * Master Patient Index growth and portal adoption.
+     *
+     * @return array{total_patients:int, new_this_period:int, portal_accounts:int}
+     */
+    public function mpiHeadline(string $from, string $to): array
+    {
+        return [
+            'total_patients'   => $this->db->fetchInt('SELECT COUNT(*) FROM patients WHERE deleted_at IS NULL'),
+            'new_this_period'  => $this->db->fetchInt(
+                'SELECT COUNT(*) FROM patients WHERE deleted_at IS NULL AND DATE(created_at) BETWEEN :from AND :to',
+                ['from' => $from, 'to' => $to],
+            ),
+            'portal_accounts'  => $this->db->fetchInt('SELECT COUNT(*) FROM patient_accounts WHERE is_active = 1'),
+        ];
+    }
+
+    /**
+     * Consumption-ledger and receivable-payment activity for a period,
+     * plus the system-wide unsettled balance right now.
+     *
+     * Charges and payments are summed directly rather than through
+     * BillingService::calculateReceivableBalance(), which is scoped to
+     * one encounter at a time - a dashboard total needs one aggregate
+     * query across every open encounter, not N calls to that service.
+     *
+     * @return array{charges_posted:Money, payments_posted:Money, outstanding:Money, open_balances:int}
+     */
+    public function ledgerSnapshot(string $from, string $to): array
+    {
+        $charges = Money::fromDatabase($this->db->fetchValue(
+            'SELECT COALESCE(SUM(total_cost), 0) FROM consumption_ledger WHERE DATE(created_at) BETWEEN :from AND :to',
+            ['from' => $from, 'to' => $to],
+        ));
+
+        $paid = Money::fromDatabase($this->db->fetchValue(
+            'SELECT COALESCE(SUM(amount_paid), 0) FROM receivable_payments WHERE DATE(created_at) BETWEEN :from AND :to',
+            ['from' => $from, 'to' => $to],
+        ));
+
+        $active = $this->activeStatusList();
+
+        $balanceRow = $this->db->fetchOne(
+            "SELECT
+                COALESCE(SUM(l.total_cost), 0) AS charged,
+                COALESCE(SUM(p.amount_paid), 0) AS paid,
+                COUNT(DISTINCT e.id) AS open_count
+             FROM encounters e
+             LEFT JOIN (SELECT encounter_id, SUM(total_cost) AS total_cost FROM consumption_ledger GROUP BY encounter_id) l
+                    ON l.encounter_id = e.id
+             LEFT JOIN (SELECT encounter_id, SUM(amount_paid) AS amount_paid FROM receivable_payments GROUP BY encounter_id) p
+                    ON p.encounter_id = e.id
+             WHERE e.status IN ({$active})
+               AND COALESCE(l.total_cost, 0) - COALESCE(p.amount_paid, 0) > 0",
+        ) ?? [];
+
+        $outstanding = Money::fromDatabase(
+            (string) ((float) ($balanceRow['charged'] ?? 0) - (float) ($balanceRow['paid'] ?? 0))
+        );
+
+        return [
+            'charges_posted'  => $charges,
+            'payments_posted' => $paid,
+            'outstanding'     => $outstanding,
+            'open_balances'   => (int) ($balanceRow['open_count'] ?? 0),
+        ];
+    }
+
+    /** @return list<\Aster\Domain\Entity\Encounter> */
+    public function recentEncounters(int $limit = 6): array
+    {
+        return $this->encounters->active($limit);
     }
 }

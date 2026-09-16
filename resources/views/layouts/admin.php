@@ -38,16 +38,30 @@ $nav = [
     ['articles',     'Health Articles',  'articles.view',      null, 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z'],
     ['inquiries',    'Enquiries',        'inquiries.view',     $unreadInquiries ?? null, 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'],
     ['users',        'Staff Accounts',   'users.view',         null, 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
+    ['settings/audit', 'Audit Logs',     'audit.view',         null, 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
     ['settings',     'Settings',         'settings.view',      null, 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'],
 ];
 
-$isActive = static function (string $path) use ($current, $base): bool {
-    $full = $path === '' ? $base : $base . '/' . $path;
+// The longest matching path wins, so a nested route like settings/audit
+// lights up only itself - not also its shorter sibling settings, which
+// would otherwise match too since /admin/settings/audit legitimately
+// starts with /admin/settings as well.
+$bestMatchPath = null;
+$bestMatchLen  = -1;
 
-    return $path === ''
+foreach ($nav as [$navPath]) {
+    $full = $navPath === '' ? $base : $base . '/' . $navPath;
+    $matches = $navPath === ''
         ? rtrim($current, '/') === rtrim($base, '/') || str_ends_with($current, '/dashboard')
         : str_starts_with($current, $full);
-};
+
+    if ($matches && strlen($navPath) > $bestMatchLen) {
+        $bestMatchPath = $navPath;
+        $bestMatchLen  = strlen($navPath);
+    }
+}
+
+$isActive = static fn (string $path): bool => $path === $bestMatchPath;
 ?>
 <!doctype html>
 <html lang="<?= $view->e($locale->htmlLang()) ?>" class="h-full">
@@ -59,6 +73,10 @@ $isActive = static function (string $path) use ($current, $base): bool {
     <title><?= $view->e(($meta['title'] ?? 'Admin') . ' | Aster Admin') ?></title>
     <meta name="csrf-token" content="<?= $view->e($view->csrfToken()) ?>">
     <link rel="icon" href="<?= $view->asset('assets/img/favicon.svg') ?>" type="image/svg+xml">
+    <link rel="manifest" href="<?= $view->url('manifest.webmanifest') ?>">
+    <link rel="apple-touch-icon" href="<?= $view->asset('assets/img/icons/apple-touch-icon.png') ?>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <?php if ($view->config->assetsBuilt()): ?>
         <link rel="stylesheet" href="<?= $view->asset('dist/css/app.min.css') ?>">

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aster\Presentation\Controller\Admin;
 
 use Aster\Application\Service\DashboardService;
+use Aster\Infrastructure\Persistence\AuditLogger;
 use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Security\SessionManager;
 use Aster\Infrastructure\Support\Config;
@@ -31,6 +32,7 @@ final class DashboardController extends Controller
         Config $config,
         private readonly DashboardService $dashboard,
         private readonly DoctorRepository $doctors,
+        private readonly AuditLogger $audit,
     ) {
         parent::__construct($view, $session, $config);
     }
@@ -82,6 +84,30 @@ final class DashboardController extends Controller
             $data['revenueTrend'] = $this->dashboard->revenueTrend(30);
             $data['express']      = $this->dashboard->expressUptake($from, $to);
             $data['settlement']   = $this->dashboard->settlementByMethod($from, $to);
+        }
+
+        // Phase II panels - same rule: gated on the resource permission a
+        // role actually holds, not fetched (and so never present in the
+        // HTML source) for one that doesn't.
+        if ($user->can('patients.view')) {
+            $data['mpi'] = $this->dashboard->mpiHeadline($from, $to);
+        }
+
+        if ($user->can('encounters.view')) {
+            $data['clinical']         = $this->dashboard->clinicalHeadline();
+            $data['visitTypeMix']     = $this->dashboard->encountersByVisitType();
+            $data['recentEncounters'] = $this->dashboard->recentEncounters(6);
+        }
+
+        if ($user->can('billing.view')) {
+            $data['ledger'] = $this->dashboard->ledgerSnapshot($from, $to);
+        }
+
+        // Super-admin-only: same audit.view permission that gates the
+        // full /settings/audit trail, so this panel and that page are
+        // never out of sync on who can see them.
+        if ($user->can('audit.view')) {
+            $data['recentAudit'] = $this->audit->recent(6);
         }
 
         return $this->renderAdmin('admin/dashboard', $data);

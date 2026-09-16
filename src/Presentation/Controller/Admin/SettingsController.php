@@ -100,14 +100,26 @@ final class SettingsController extends Controller
     {
         ['page' => $page, 'perPage' => $perPage, 'offset' => $offset] = $this->paginate($request, 50);
 
-        $action = $request->input('action');
-        $userId = $request->nullableInt('user_id');
+        $action     = $request->input('action');
+        $userId     = $request->nullableInt('user_id');
+        $targetType = $request->input('target_type');
+        $search     = $request->input('search');
+        $dateFrom   = $request->input('date_from');
+        $dateTo     = $request->input('date_to');
 
-        $total = $this->audit->countAll($action, $userId);
+        $total = $this->audit->countAll($action, $userId, $targetType, $search, $dateFrom, $dateTo);
 
         return $this->renderAdmin('admin/settings/audit', [
-            'entries'    => $this->audit->recent($perPage, $offset, $action, $userId),
-            'filters'    => ['action' => $action, 'user_id' => $userId],
+            'entries'     => $this->audit->recent($perPage, $offset, $action, $userId, $targetType, $search, $dateFrom, $dateTo),
+            'targetTypes' => $this->audit->distinctTargetTypes(),
+            'filters'     => [
+                'action'      => $action,
+                'user_id'     => $userId,
+                'target_type' => $targetType,
+                'search'      => $search,
+                'date_from'   => $dateFrom,
+                'date_to'     => $dateTo,
+            ],
             'pagination' => $this->paginationMeta($total, $page, $perPage),
             'meta'       => ['title' => 'Audit Trail', 'noindex' => true],
         ]);

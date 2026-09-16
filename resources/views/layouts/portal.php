@@ -25,7 +25,12 @@ declare(strict_types=1);
     <meta name="robots" content="noindex, nofollow">
     <title><?= $view->e(($meta['title'] ?? 'My Portal') . ' | Aster Medical') ?></title>
     <meta name="csrf-token" content="<?= $view->e($view->csrfToken()) ?>">
+    <meta name="theme-color" content="#056460">
     <link rel="icon" href="<?= $view->asset('assets/img/favicon.svg') ?>" type="image/svg+xml">
+    <link rel="manifest" href="<?= $view->url('manifest.webmanifest') ?>">
+    <link rel="apple-touch-icon" href="<?= $view->asset('assets/img/icons/apple-touch-icon.png') ?>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <?php if ($view->config->assetsBuilt()): ?>
         <link rel="stylesheet" href="<?= $view->asset('dist/css/app.min.css') ?>">

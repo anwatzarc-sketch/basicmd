@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aster\Presentation\Controller\Admin;
 
+use Aster\Domain\Entity\Encounter;
 use Aster\Domain\Enum\VisitType;
 use Aster\Domain\Exception\EncounterException;
 use Aster\Domain\Exception\HttpException;
@@ -67,17 +68,7 @@ final class EncounterController extends Controller
         }
 
         if ($encounter !== null) {
-            return $this->renderAdmin('admin/encounters/detail', [
-                'encounter'         => $encounter,
-                'patient'           => $this->patients->findById($encounter->patientId),
-                'balance'           => $this->billing->calculateReceivableBalance($encounter->id),
-                'cleared'           => $this->billing->verifyFinancialClearance($encounter->id),
-                'ledgerEntries'     => $this->ledger->forEncounter($encounter->id),
-                'paymentEntries'    => $this->payments->forEncounter($encounter->id),
-                'availableBeds'     => $this->wardLocations->availableForAdmission(),
-                'physicians'        => $this->users->all('physician', 'active'),
-                'meta'              => ['title' => $encounter->patientVisitNumber->value, 'noindex' => true],
-            ]);
+            return $this->renderDetail($encounter);
         }
 
         return $this->renderAdmin('admin/encounters/workbench', [
@@ -85,6 +76,40 @@ final class EncounterController extends Controller
             'notFound'     => $visitValue !== null && $visitValue !== '',
             'active'       => $this->encounters->active(),
             'meta'         => ['title' => 'Encounter Workbench', 'noindex' => true],
+        ]);
+    }
+
+    /**
+     * GET /encounters/{id} - the direct link every other screen already
+     * assumes exists (the billing ledger, the dashboard's recent-activity
+     * panel, and the detail view's own "back" link all built a URL for
+     * this before the route did). Renders the identical detail view
+     * workbench() does when a visit-number search matches - same data,
+     * reached by id instead of by typing a visit number in.
+     */
+    public function show(Request $request): Response
+    {
+        $encounter = $this->encounters->findById($request->routeInt('id'));
+
+        if ($encounter === null) {
+            throw HttpException::notFound();
+        }
+
+        return $this->renderDetail($encounter);
+    }
+
+    private function renderDetail(Encounter $encounter): Response
+    {
+        return $this->renderAdmin('admin/encounters/detail', [
+            'encounter'         => $encounter,
+            'patient'           => $this->patients->findById($encounter->patientId),
+            'balance'           => $this->billing->calculateReceivableBalance($encounter->id),
+            'cleared'           => $this->billing->verifyFinancialClearance($encounter->id),
+            'ledgerEntries'     => $this->ledger->forEncounter($encounter->id),
+            'paymentEntries'    => $this->payments->forEncounter($encounter->id),
+            'availableBeds'     => $this->wardLocations->availableForAdmission(),
+            'physicians'        => $this->users->all('physician', 'active'),
+            'meta'              => ['title' => $encounter->patientVisitNumber->value, 'noindex' => true],
         ]);
     }
 

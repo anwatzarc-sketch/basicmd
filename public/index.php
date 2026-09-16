@@ -18,10 +18,12 @@ use Aster\Application\Service\PatientAuthService;
 use Aster\Application\Service\PaymentService;
 use Aster\Application\Service\SeoService;
 use Aster\Domain\Exception\HttpException;
+use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
 use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
 use Aster\Domain\Repository\LedgerRepositoryInterface;
 use Aster\Domain\Repository\NumberSequenceInterface;
+use Aster\Domain\Repository\PrescriptionRepositoryInterface;
 use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
 use Aster\Domain\Repository\WardLocationRepositoryInterface;
 use Aster\Domain\Services\BillingService;
@@ -212,6 +214,7 @@ $sitemap = new WebController\SitemapController(
     $container->get(ServiceRepository::class),
     $container->get(DoctorRepository::class),
     $container->get(FileUploader::class),
+    $container->get(SettingsRepository::class),
 );
 
 $auth = $make(AdminController\AuthController::class, [$container->get(AuthService::class)]);
@@ -219,6 +222,7 @@ $auth = $make(AdminController\AuthController::class, [$container->get(AuthServic
 $dashboard = $make(AdminController\DashboardController::class, [
     $container->get(DashboardService::class),
     $container->get(DoctorRepository::class),
+    $container->get(AuditLogger::class),
 ]);
 
 $appointments = $make(AdminController\AppointmentController::class, [
@@ -288,6 +292,12 @@ $patientsAdmin = $make(AdminController\PatientController::class, [
     $container->get(PatientDeduplicationService::class),
     $container->get(EncounterRepositoryInterface::class),
     $container->get(PatientAuthService::class),
+    $container->get(ClinicalNoteRepositoryInterface::class),
+    $container->get(DiagnosticOrderRepositoryInterface::class),
+    $container->get(PrescriptionRepositoryInterface::class),
+    $container->get(LedgerRepositoryInterface::class),
+    $container->get(ReceivablePaymentRepositoryInterface::class),
+    $container->get(AuditLogger::class),
 ]);
 
 $encountersAdmin = $make(AdminController\EncounterController::class, [
@@ -353,11 +363,15 @@ foreach ([
     'users.view', 'users.write',
     'settings.view', 'settings.write',
     'payment_methods.write',
-    'audit.view',
+    'audit.view', 'audit.view_own',
     // Phase II (migration 006_phase2_permissions.sql)
     'patients.view', 'patients.write',
     'encounters.view', 'encounters.write',
     'billing.view', 'billing.write', 'billing.discharge', 'billing.override',
+    // Patient Detail (migration 007_patient_detail_permissions.sql)
+    'clinical_notes.view', 'clinical_notes.write', 'clinical_notes.write_vitals',
+    'diagnostics.view', 'diagnostics.order', 'diagnostics.result', 'diagnostics.result_lab',
+    'prescriptions.view', 'prescriptions.write', 'prescriptions.dispense',
 ] as $permission) {
     $router->registerMiddleware('can:' . $permission, new Authorize($permission, $logger));
 }
@@ -406,6 +420,7 @@ $router->post('/booking/{reference}/cancel', [$booking, 'cancel'], $publicForm);
 
 $router->get('/sitemap.xml', [$sitemap, 'sitemap'], ['headers']);
 $router->get('/robots.txt', [$sitemap, 'robots'], ['headers']);
+$router->get('/manifest.webmanifest', [$sitemap, 'manifest'], ['headers']);
 $router->get('/media/{path:.+}', [$sitemap, 'media'], ['headers']);
 
 // --- Patient portal (FRS 10.6) -----------------------------------------
@@ -528,12 +543,19 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->get('/patients/create', [$patientsAdmin, 'form'], [...$adminStack, 'can:patients.write']);
     $r->post('/patients', [$patientsAdmin, 'save'], [...$adminForm, 'can:patients.write']);
     $r->get('/patients/{id:\d+}', [$patientsAdmin, 'show'], [...$adminStack, 'can:patients.view']);
+    $r->post('/patients/{id:\d+}', [$patientsAdmin, 'update'], [...$adminForm, 'can:patients.write']);
     $r->post('/patients/{id:\d+}/portal-access', [$patientsAdmin, 'provisionPortalAccess'], [...$adminForm, 'can:patients.write']);
+    $r->post('/patients/{id:\d+}/notes', [$patientsAdmin, 'postClinicalNote'], [...$adminForm, 'can:clinical_notes.view']);
+    $r->post('/patients/{id:\d+}/diagnostics', [$patientsAdmin, 'postDiagnosticOrder'], [...$adminForm, 'can:diagnostics.order']);
+    $r->post('/patients/{id:\d+}/diagnostics/{orderId:\d+}/result', [$patientsAdmin, 'postDiagnosticResult'], [...$adminForm, 'can:diagnostics.view']);
+    $r->post('/patients/{id:\d+}/prescriptions', [$patientsAdmin, 'postPrescription'], [...$adminForm, 'can:prescriptions.write']);
+    $r->post('/patients/{id:\d+}/prescriptions/{rxId:\d+}/dispense', [$patientsAdmin, 'postDispense'], [...$adminForm, 'can:prescriptions.dispense']);
 
     // Phase II - Encounter workbench
     $r->get('/encounters/workbench', [$encountersAdmin, 'workbench'], [...$adminStack, 'can:encounters.view']);
     $r->post('/encounters/workbench', [$encountersAdmin, 'startWalkIn'], [...$adminForm, 'can:encounters.write']);
     $r->post('/encounters/upgrade-ipd', [$encountersAdmin, 'upgradeToIpd'], [...$adminForm, 'can:encounters.write']);
+    $r->get('/encounters/{id:\d+}', [$encountersAdmin, 'show'], [...$adminStack, 'can:encounters.view']);
     $r->post('/encounters/{id:\d+}/discharge', [$encountersAdmin, 'discharge'], [...$adminForm, 'can:billing.discharge']);
     $r->post('/encounters/{id:\d+}/override', [$encountersAdmin, 'applyOverride'], [...$adminForm, 'can:billing.override']);
     $r->post('/encounters/{id:\d+}/walk-out', [$encountersAdmin, 'walkOut'], [...$adminForm, 'can:encounters.write']);

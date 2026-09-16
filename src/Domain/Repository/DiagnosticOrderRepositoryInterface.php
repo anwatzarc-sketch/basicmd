@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aster\Domain\Repository;
 
 use Aster\Domain\Entity\DiagnosticOrder;
+use Aster\Domain\Enum\DiagnosticCategory;
 
 interface DiagnosticOrderRepositoryInterface
 {
@@ -22,9 +23,14 @@ interface DiagnosticOrderRepositoryInterface
      * enforce that scope in SQL rather than trust every caller to filter
      * correctly afterwards.
      *
+     * $category, when given, scopes to one category only - how Lab
+     * Technician's queue enforces "Lab orders only" (diagnostics.result_lab)
+     * at the query itself, not by filtering an already-fetched list in
+     * PHP where a bug could leak an Imaging/PACS row into view.
+     *
      * @return list<DiagnosticOrder>
      */
-    public function forPatient(int $patientId, int $limit = 50): array;
+    public function forPatient(int $patientId, int $limit = 50, ?DiagnosticCategory $category = null): array;
 
     /** @param array<string, mixed> $data */
     public function create(array $data): int;

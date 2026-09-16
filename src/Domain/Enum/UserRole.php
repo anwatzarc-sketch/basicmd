@@ -86,15 +86,21 @@ enum UserRole: string
                 'payment_methods.view', 'payment_methods.write',
                 'audit.view',
                 'reports.view',
-                'patients.view', 'patients.write',
+                'patients.view', 'patients.write', 'patients.notes',
                 'encounters.view', 'encounters.write',
                 'billing.view', 'billing.write', 'billing.discharge', 'billing.override',
+                'clinical_notes.view', 'clinical_notes.write', 'clinical_notes.write_vitals',
+                'diagnostics.view', 'diagnostics.order', 'diagnostics.result', 'diagnostics.result_lab',
+                'prescriptions.view', 'prescriptions.write', 'prescriptions.dispense',
             ],
 
             // Clinical staff: their own queue plus the articles they author.
             // No financial verification, no user administration. Sees the
             // MPI and the encounter workbench read-write, per migration
-            // 006 - upgradeOpdToIpd() names a physician directly.
+            // 006 - upgradeOpdToIpd() names a physician directly. Documents,
+            // orders and prescribes on the Patient Detail page (migration
+            // 007), and sees only its OWN audit entries there
+            // (audit.view_own), not the whole system trail.
             self::PHYSICIAN => [
                 'dashboard.view',
                 'appointments.view', 'appointments.write',
@@ -102,18 +108,38 @@ enum UserRole: string
                 'patients.notes',
                 'patients.view',
                 'encounters.view', 'encounters.write',
+                'clinical_notes.view', 'clinical_notes.write',
+                'diagnostics.view', 'diagnostics.order',
+                'prescriptions.view', 'prescriptions.write', 'prescriptions.dispense',
+                'audit.view_own',
             ],
 
-            // No screens exist for this role yet - Phase II stages 2+ grant
-            // it real permissions (clinical_notes.*, etc.) once the clinical
-            // record work lands. An empty set here is deliberate, not an
-            // oversight: it matches the seeded (lack of) role_permissions
-            // rows exactly, per migration 002_rbac.sql.
-            self::NURSE => [],
+            // First real permissions this role has ever held (migration 002
+            // deliberately left it empty pending the clinical documentation
+            // screens; migration 007 is that work). Monitoring and vitals
+            // capture, not diagnosis or prescription: clinical_notes.write_vitals
+            // rather than clinical_notes.write restricts note creation to
+            // note_type IN ('vitals','triage') at the point it is
+            // authorised - see PatientDetailAccess. Reads diagnostics and
+            // prescriptions for ward safety context but creates neither.
+            // prescriptions.dispense is the bare dispensed toggle (spec's
+            // own gap: e_prescriptions has no dispensed_by/at columns and
+            // no pharmacist role exists) - nurse and physician are the
+            // closest real fit until one does.
+            self::NURSE => [
+                'dashboard.view',
+                'patients.view',
+                'encounters.view',
+                'clinical_notes.view', 'clinical_notes.write_vitals',
+                'diagnostics.view',
+                'prescriptions.view', 'prescriptions.dispense',
+            ],
 
             // Front desk: the full booking lifecycle and patient comms, but
             // explicitly NOT payment verification (separation of duties -
             // whoever books a slot must not also be able to mark it paid).
+            // audit.view_own answers "who edited this patient's demographics"
+            // without exposing the system-wide trail.
             self::RECEPTIONIST => [
                 'dashboard.view',
                 'appointments.view', 'appointments.write', 'appointments.view_all',
@@ -125,13 +151,17 @@ enum UserRole: string
                 'inquiries.view', 'inquiries.write',
                 'patients.view', 'patients.write',
                 'encounters.view', 'encounters.write',
+                'audit.view_own',
             ],
 
             // Finance: verifies proof-of-payment and reads revenue reporting.
             // Cannot alter clinical scheduling. Owns the consumption ledger
             // and payment posting (BillingService's own accountant_id
             // columns), and the financial clearance gate - discharge and
-            // override are FIN-003/004's whole point.
+            // override are FIN-003/004's whole point. Deliberately holds
+            // none of the clinical_notes/diagnostics/prescriptions
+            // permissions - that separation from clinical content is the
+            // point of this role existing apart from PHYSICIAN.
             self::ACCOUNTANT => [
                 'dashboard.view', 'dashboard.finance',
                 'appointments.view', 'appointments.view_all',
@@ -144,8 +174,20 @@ enum UserRole: string
                 'billing.view', 'billing.write', 'billing.discharge', 'billing.override',
             ],
 
-            // Same deliberate empty set as NURSE - see that case's comment.
-            self::LAB_TECHNICIAN => [],
+            // First real permissions this role has ever held (see NURSE's
+            // comment - same migration 002 -> 007 history). Scoped to
+            // executing Lab orders only: diagnostics.result_lab rather than
+            // diagnostics.result, because "lab_technician" is literally
+            // this role's name and nothing in this enum represents an
+            // Imaging/PACS operator - those categories stay with the
+            // ordering physician and super_admin until a Radiology role
+            // exists. patients.view is safety context (identity, allergies)
+            // for running a test, not general MPI access.
+            self::LAB_TECHNICIAN => [
+                'dashboard.view',
+                'patients.view',
+                'diagnostics.view', 'diagnostics.result_lab',
+            ],
         };
     }
 

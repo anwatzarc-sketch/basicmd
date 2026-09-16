@@ -107,6 +107,12 @@ final readonly class SecurityHeaders
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "object-src 'none'",
+            // Both already fall back to default-src 'self' unset, but
+            // naming them explicitly documents that sw.js and the PWA
+            // manifest are an intended, reviewed part of this policy -
+            // not an accidental side effect of the fallback.
+            "worker-src 'self'",
+            "manifest-src 'self'",
         ];
 
         // Only meaningful once TLS is actually in front of the site. Emitting

@@ -142,16 +142,27 @@ final class RbacCutoverTest extends DatabaseTestCase
 
     public function test_a_role_with_no_seeded_permissions_falls_back_to_the_enum_not_to_nothing(): void
     {
-        // NURSE and LAB_TECHNICIAN deliberately have zero role_permissions
-        // rows (migration 002's own comment). User::resolvePermissions()
-        // must fall back to the enum's permissions() - which is also empty
-        // for these two today - rather than crash or silently grant
-        // everything.
-        $id   = $this->makeUser(UserRole::NURSE, 'nurse-empty');
+        // Every staff role now has real role_permissions rows (migration
+        // 007 gave NURSE and LAB_TECHNICIAN their first ones), so the
+        // "relational rows are missing" condition this test exists to pin
+        // has to be simulated rather than found sitting in seed data -
+        // delete one role's rows within this test's own rolled-back
+        // transaction. User::resolvePermissions() must then fall back to
+        // UserRole::permissions() - which for NURSE is no longer empty
+        // either - rather than crash or silently grant everything.
+        $id = $this->makeUser(UserRole::NURSE, 'nurse-empty');
+
+        $this->db->execute(
+            'DELETE FROM role_permissions WHERE role_id = (SELECT id FROM roles WHERE slug = :slug)',
+            ['slug' => UserRole::NURSE->value],
+        );
+
         $user = $this->users->findById($id);
 
-        self::assertSame([], $user->permissions);
-        self::assertFalse($user->can('appointments.view'));
+        self::assertSame(UserRole::NURSE->permissions(), $user->permissions);
+        self::assertNotSame([], $user->permissions, 'the enum fallback itself must not be empty for this assertion to mean anything');
+        self::assertTrue($user->can('patients.view'));
+        self::assertFalse($user->can('appointments.view'), 'NURSE must not fall back to a permission no version of its matrix ever granted');
     }
 
     // -----------------------------------------------------------------
