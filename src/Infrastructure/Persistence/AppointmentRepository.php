@@ -40,7 +40,7 @@ final class AppointmentRepository
     private const string SELECT_BASE = '
         SELECT a.*,
                d.full_name  AS doctor_name,
-               s.name       AS service_name,
+               s.ser_name   AS service_name,
                p.title      AS package_name,
                u.full_name  AS handler_name
         FROM appointments a

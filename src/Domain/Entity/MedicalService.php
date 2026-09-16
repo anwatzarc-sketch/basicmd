@@ -39,7 +39,7 @@ final readonly class MedicalService
         return new self(
             id:              (int) $row['id'],
             icon:            (string) ($row['icon'] ?? ''),
-            name:            (string) $row['name'],
+            name:            (string) $row['ser_name'],
             nameAm:          self::nullableString($row['name_am'] ?? null),
             slug:            (string) $row['slug'],
             description:     self::nullableString($row['description'] ?? null),

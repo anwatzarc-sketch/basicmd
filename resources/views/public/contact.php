@@ -63,11 +63,11 @@ $hours = $view->isAmharic()
                     <label class="label" for="name">
                         <?= $view->t('booking.name') ?> <span class="text-rose-500" aria-hidden="true">*</span>
                     </label>
-                    <input class="input <?= isset($errors['name']) ? 'input-error' : '' ?>"
-                           type="text" id="name" name="name" autocomplete="name" required
-                           value="<?= $view->e($old['name'] ?? '') ?>">
-                    <?php if (isset($errors['name'])): ?>
-                        <span class="field-error"><?= $view->e($errors['name']) ?></span>
+                    <input class="input <?= isset($errors['con_name']) ? 'input-error' : '' ?>"
+                           type="text" id="name" name="con_name" autocomplete="name" required
+                           value="<?= $view->e($old['con_name'] ?? '') ?>">
+                    <?php if (isset($errors['con_name'])): ?>
+                        <span class="field-error"><?= $view->e($errors['con_name']) ?></span>
                     <?php endif; ?>
                 </div>
 

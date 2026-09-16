@@ -288,7 +288,7 @@ final readonly class DashboardService
     public function topServices(string $from, string $to, int $limit = 6): array
     {
         return $this->db->fetchAll(
-            "SELECT s.name,
+            "SELECT s.ser_name AS name,
                     COUNT(a.id) AS bookings,
                     COALESCE(SUM(a.amount_paid), 0) AS revenue
              FROM services s
@@ -298,7 +298,7 @@ final readonly class DashboardService
                     AND a.appointment_date BETWEEN :from AND :to
                     AND a.status IN ('pending','confirmed','completed')
              WHERE s.deleted_at IS NULL
-             GROUP BY s.id, s.name
+             GROUP BY s.id, s.ser_name
              ORDER BY bookings DESC
              LIMIT :limit",
             ['from' => $from, 'to' => $to, 'limit' => $limit],

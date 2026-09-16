@@ -36,7 +36,7 @@ final class ServiceRepository
 
         if ($search !== null && $search !== '') {
             [$clause, $searchParams] = Database::searchClause(
-                ['name', 'description', 'name_am', 'description_am'],
+                ['ser_name', 'description', 'name_am', 'description_am'],
                 $search,
             );
 
@@ -46,7 +46,7 @@ final class ServiceRepository
 
         $rows = $this->db->fetchAll(
             'SELECT * FROM services WHERE ' . implode(' AND ', $where)
-            . ' ORDER BY sort_order ASC, name ASC',
+            . ' ORDER BY sort_order ASC, ser_name ASC',
             $params,
         );
 
@@ -73,7 +73,7 @@ final class ServiceRepository
         $params = [];
 
         if ($search !== null && $search !== '') {
-            [$clause, $searchParams] = Database::searchClause(['name', 'description'], $search);
+            [$clause, $searchParams] = Database::searchClause(['ser_name', 'description'], $search);
 
             $where[] = $clause;
             $params  = [...$params, ...$searchParams];
@@ -86,7 +86,7 @@ final class ServiceRepository
 
         $rows = $this->db->fetchAll(
             'SELECT * FROM services WHERE ' . implode(' AND ', $where)
-            . ' ORDER BY sort_order ASC, name ASC',
+            . ' ORDER BY sort_order ASC, ser_name ASC',
             $params,
         );
 
@@ -117,9 +117,9 @@ final class ServiceRepository
     public function options(): array
     {
         return $this->db->fetchPairs(
-            "SELECT id, name FROM services
+            "SELECT id, ser_name FROM services
              WHERE status = 'active' AND deleted_at IS NULL
-             ORDER BY sort_order ASC, name ASC"
+             ORDER BY sort_order ASC, ser_name ASC"
         );
     }
 

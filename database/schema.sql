@@ -110,7 +110,7 @@ CREATE TABLE `doctors` (
 CREATE TABLE `services` (
   `id`             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `icon`           VARCHAR(16)     NOT NULL DEFAULT '',
-  `name`           VARCHAR(140)    NOT NULL,
+  `ser_name`       VARCHAR(140)    NOT NULL,
   `name_am`        VARCHAR(140)    NULL,
   `slug`           VARCHAR(160)    NOT NULL,
   `description`    TEXT            NULL,
@@ -129,7 +129,7 @@ CREATE TABLE `services` (
   KEY `ix_services_status_sort` (`status`, `sort_order`),
   KEY `ix_services_category` (`category`, `status`),
   KEY `ix_services_featured` (`is_featured`, `status`),
-  FULLTEXT KEY `ft_services` (`name`, `description`),
+  FULLTEXT KEY `ft_services` (`ser_name`, `description`),
   CONSTRAINT `ck_services_price` CHECK (`price` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -139,7 +139,7 @@ CREATE TABLE `services` (
 -- ---------------------------------------------------------------------
 CREATE TABLE `facilities` (
   `id`             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name`           VARCHAR(160)    NOT NULL,
+  `fac_name`       VARCHAR(160)    NOT NULL,
   `name_am`        VARCHAR(160)    NULL,
   `type`           VARCHAR(80)     NOT NULL,
   `room_label`     VARCHAR(80)     NULL,
@@ -400,7 +400,7 @@ CREATE TABLE `articles` (
 -- ---------------------------------------------------------------------
 CREATE TABLE `contact_inquiries` (
   `id`           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name`         VARCHAR(160)    NOT NULL,
+  `con_name`     VARCHAR(160)    NOT NULL,
   `phone`        VARCHAR(32)     NOT NULL,
   `email`        VARCHAR(190)    NULL,
   `subject`      VARCHAR(190)    NULL,

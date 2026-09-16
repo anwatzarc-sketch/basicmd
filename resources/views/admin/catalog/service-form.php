@@ -22,7 +22,7 @@ $val = static fn (string $k, mixed $c = ''): string => (string) ($old[$k] ?? $c 
     <div class="grid gap-5 sm:grid-cols-2">
         <div class="field">
             <label class="label" for="name">Name (English) <span class="text-rose-500" aria-hidden="true">*</span></label>
-            <input class="input" type="text" id="name" name="name" required value="<?= $view->e($val('name', $service?->name)) ?>">
+            <input class="input" type="text" id="name" name="ser_name" required value="<?= $view->e($val('ser_name', $service?->name)) ?>">
         </div>
         <div class="field">
             <label class="label" for="name_am">Name (Amharic)</label>

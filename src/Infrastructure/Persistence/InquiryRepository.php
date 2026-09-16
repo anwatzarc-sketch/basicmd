@@ -87,7 +87,7 @@ final class InquiryRepository
 
         if (!empty($filters['search'])) {
             [$clause, $searchParams] = Database::searchClause(
-                ['i.name', 'i.phone', 'i.email', 'i.message'],
+                ['i.con_name', 'i.phone', 'i.email', 'i.message'],
                 (string) $filters['search'],
             );
 

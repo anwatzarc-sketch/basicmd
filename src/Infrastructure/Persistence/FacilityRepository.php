@@ -25,7 +25,7 @@ final class FacilityRepository
         $rows = $this->db->fetchAll(
             "SELECT * FROM facilities
              WHERE is_public = 1 AND status <> 'offline' AND deleted_at IS NULL
-             ORDER BY sort_order ASC, name ASC"
+             ORDER BY sort_order ASC, fac_name ASC"
         );
 
         return array_map(Facility::fromRow(...), $rows);
@@ -44,7 +44,7 @@ final class FacilityRepository
 
         $rows = $this->db->fetchAll(
             'SELECT * FROM facilities WHERE ' . implode(' AND ', $where)
-            . ' ORDER BY sort_order ASC, name ASC',
+            . ' ORDER BY sort_order ASC, fac_name ASC',
             $params,
         );
 

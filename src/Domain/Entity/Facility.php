@@ -30,7 +30,7 @@ final readonly class Facility
     {
         return new self(
             id:            (int) $row['id'],
-            name:          (string) $row['name'],
+            name:          (string) $row['fac_name'],
             nameAm:        self::nullableString($row['name_am'] ?? null),
             type:          (string) $row['type'],
             roomLabel:     self::nullableString($row['room_label'] ?? null),

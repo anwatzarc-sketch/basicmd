@@ -14,7 +14,7 @@ SET time_zone = '+00:00';
 --  Services (carried over from the prototype catalogue, now bilingual)
 -- ---------------------------------------------------------------------
 INSERT INTO `services`
-  (`icon`,`name`,`name_am`,`slug`,`description`,`description_am`,`category`,`price`,`duration_min`,`is_featured`,`status`,`sort_order`)
+  (`icon`,`ser_name`,`name_am`,`slug`,`description`,`description_am`,`category`,`price`,`duration_min`,`is_featured`,`status`,`sort_order`)
 VALUES
   ('🫀','Cardiology','የልብ ሕክምና','cardiology',
    'Heart and vascular assessment, prevention and ongoing care.',
@@ -122,7 +122,7 @@ VALUES
 --  Facilities
 -- ---------------------------------------------------------------------
 INSERT INTO `facilities`
-  (`name`,`name_am`,`type`,`room_label`,`description`,`description_am`,`status`,`notes`,`is_public`,`sort_order`)
+  (`fac_name`,`name_am`,`type`,`room_label`,`description`,`description_am`,`status`,`notes`,`is_public`,`sort_order`)
 VALUES
   ('Modern Consultation Suites','ዘመናዊ የምክክር ክፍሎች','Clinical Room','Room 102-108',
    'Private, comfortable spaces designed for meaningful conversations and complete patient confidentiality.',

@@ -79,7 +79,7 @@ final class CatalogController extends Controller
     public function saveService(Request $request): Response
     {
         $id   = $request->routeInt('id');
-        $name = $request->string('name');
+        $name = $request->string('ser_name');
 
         if ($name === '') {
             return $this->redirectWithError(
@@ -90,7 +90,7 @@ final class CatalogController extends Controller
 
         $data = [
             'icon'           => mb_substr($request->string('icon', ''), 0, 16),
-            'name'           => $name,
+            'ser_name'       => $name,
             'name_am'        => $request->input('name_am'),
             'description'    => $request->input('description'),
             'description_am' => $request->input('description_am'),
@@ -254,7 +254,7 @@ final class CatalogController extends Controller
     public function saveFacility(Request $request): Response
     {
         $id   = $request->routeInt('id');
-        $name = $request->string('name');
+        $name = $request->string('fac_name');
 
         if ($name === '') {
             return $this->redirectWithError(
@@ -264,7 +264,7 @@ final class CatalogController extends Controller
         }
 
         $data = [
-            'name'           => $name,
+            'fac_name'       => $name,
             'name_am'        => $request->input('name_am'),
             'type'           => $request->string('type', 'Clinical Room'),
             'room_label'     => $request->input('room_label'),

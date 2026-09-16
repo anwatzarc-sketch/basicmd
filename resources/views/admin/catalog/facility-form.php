@@ -22,8 +22,8 @@ $val = static fn (string $key, mixed $current = ''): string => (string) ($old[$k
     <div class="grid gap-5 sm:grid-cols-2">
         <div class="field">
             <label class="label" for="name">Name (English) <span class="text-rose-500" aria-hidden="true">*</span></label>
-            <input class="input" type="text" id="name" name="name" required
-                   value="<?= $view->e($val('name', $facility?->name)) ?>">
+            <input class="input" type="text" id="name" name="fac_name" required
+                   value="<?= $view->e($val('fac_name', $facility?->name)) ?>">
         </div>
 
         <div class="field">

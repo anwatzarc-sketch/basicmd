@@ -33,7 +33,7 @@ final readonly class ContactInquiry
     {
         return new self(
             id:          (int) $row['id'],
-            name:        (string) $row['name'],
+            name:        (string) $row['con_name'],
             phone:       PhoneNumber::fromString((string) $row['phone']),
             email:       self::nullableString($row['email'] ?? null),
             subject:     self::nullableString($row['subject'] ?? null),

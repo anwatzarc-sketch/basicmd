@@ -83,7 +83,7 @@ final class ContactController extends Controller
         }
 
         $inquiryId = $this->inquiries->create([
-            'name'       => $data['name'],
+            'con_name'   => $data['con_name'],
             'phone'      => $data['phone']->e164,
             'email'      => $data['email'],
             'subject'    => $data['subject'],
@@ -95,7 +95,7 @@ final class ContactController extends Controller
         $inquiry = $this->inquiries->findById($inquiryId);
 
         $this->audit
-            ->asAnonymous($data['name'], $request->ipBinary($this->config->trustProxy()), $request->userAgent())
+            ->asAnonymous($data['con_name'], $request->ipBinary($this->config->trustProxy()), $request->userAgent())
             ->record('inquiry.created', 'inquiry', $inquiryId, 'Contact form submitted');
 
         if ($inquiry !== null) {
@@ -116,19 +116,19 @@ final class ContactController extends Controller
     }
 
     /**
-     * @return array{name:string, phone:PhoneNumber, email:?string, subject:?string, message:string}
+     * @return array{con_name:string, phone:PhoneNumber, email:?string, subject:?string, message:string}
      * @throws ValidationException
      */
     private function validate(Request $request): array
     {
         $errors = [];
 
-        $name = $request->input('name') ?? '';
+        $name = $request->input('con_name') ?? '';
 
         if ($name === '') {
-            $errors['name'][] = 'Please enter your name.';
+            $errors['con_name'][] = 'Please enter your name.';
         } elseif (mb_strlen($name) > 160) {
-            $errors['name'][] = 'That name is too long.';
+            $errors['con_name'][] = 'That name is too long.';
         }
 
         $phone    = null;
@@ -173,11 +173,11 @@ final class ContactController extends Controller
         assert($phone instanceof PhoneNumber);
 
         return [
-            'name'    => $name,
-            'phone'   => $phone,
-            'email'   => $email !== null ? mb_strtolower($email) : null,
-            'subject' => $subject,
-            'message' => $message,
+            'con_name' => $name,
+            'phone'    => $phone,
+            'email'    => $email !== null ? mb_strtolower($email) : null,
+            'subject'  => $subject,
+            'message'  => $message,
         ];
     }
 }
