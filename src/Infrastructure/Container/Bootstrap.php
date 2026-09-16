@@ -26,9 +26,11 @@ use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
 use Aster\Domain\Repository\StaffDirectoryInterface;
 use Aster\Domain\Repository\TransactionManagerInterface;
 use Aster\Domain\Repository\WardLocationRepositoryInterface;
+use Aster\Domain\Repository\WardScopeRepositoryInterface;
 use Aster\Domain\Services\BillingService;
 use Aster\Domain\Services\EncounterService;
 use Aster\Domain\Services\PatientDeduplicationService;
+use Aster\Domain\Services\WardScopeService;
 use Aster\Domain\Services\QueueService;
 use Aster\Infrastructure\Mail\Mailer;
 use Aster\Infrastructure\Mail\MailQueue;
@@ -53,11 +55,13 @@ use Aster\Infrastructure\Persistence\PdoNumberSequence;
 use Aster\Infrastructure\Persistence\PdoTransactionManager;
 use Aster\Infrastructure\Persistence\PrescriptionRepository;
 use Aster\Infrastructure\Persistence\ReceivablePaymentRepository;
+use Aster\Infrastructure\Persistence\RoleRepository;
 use Aster\Infrastructure\Persistence\ServiceRepository;
 use Aster\Infrastructure\Persistence\SettingsRepository;
 use Aster\Infrastructure\Persistence\StaffDirectory;
 use Aster\Infrastructure\Persistence\UserRepository;
 use Aster\Infrastructure\Persistence\WardLocationRepository;
+use Aster\Infrastructure\Persistence\WardScopeRepository;
 use Aster\Infrastructure\Security\Csrf;
 use Aster\Infrastructure\Security\Encryptor;
 use Aster\Infrastructure\Security\PasswordHasher;
@@ -142,6 +146,8 @@ final class Bootstrap
             PrescriptionRepository::class,
             LedgerRepository::class,
             ReceivablePaymentRepository::class,
+            RoleRepository::class,
+            WardScopeRepository::class,
         ] as $repository) {
             $container->singleton(
                 $repository,
@@ -179,6 +185,10 @@ final class Bootstrap
         $container->singleton(
             WardLocationRepositoryInterface::class,
             static fn (Container $c): WardLocationRepositoryInterface => $c->get(WardLocationRepository::class),
+        );
+        $container->singleton(
+            WardScopeRepositoryInterface::class,
+            static fn (Container $c): WardScopeRepositoryInterface => $c->get(WardScopeRepository::class),
         );
         $container->singleton(
             EncounterRepositoryInterface::class,
@@ -296,6 +306,13 @@ final class Bootstrap
                 $c->get(NumberSequenceInterface::class),
                 $c->get(TransactionManagerInterface::class),
                 $c->get(AuditLoggerInterface::class),
+            ));
+
+        $container->singleton(WardScopeService::class, static fn (Container $c): WardScopeService
+            => new WardScopeService(
+                $c->get(WardScopeRepositoryInterface::class),
+                $c->get(EncounterRepositoryInterface::class),
+                $c->get(WardLocationRepositoryInterface::class),
             ));
 
         $container->singleton(BillingService::class, static fn (Container $c): BillingService

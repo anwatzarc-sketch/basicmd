@@ -35,7 +35,7 @@ final class AuthController extends Controller
         $user = $this->auth->currentUser();
 
         if ($user !== null) {
-            return $this->redirectToAdmin(ltrim($user->role->homeRoute(), '/'));
+            return $this->redirectToAdmin(ltrim(($user->role?->homeRoute() ?? '/dashboard'), '/'));
         }
 
         return $this->render('admin/login', [
@@ -80,7 +80,7 @@ final class AuthController extends Controller
 
         return $return !== '' && $return !== '/'
             ? Response::redirect($return)
-            : $this->redirectToAdmin(ltrim($user->role->homeRoute(), '/'));
+            : $this->redirectToAdmin(ltrim(($user->role?->homeRoute() ?? '/dashboard'), '/'));
     }
 
     public function logout(Request $request): Response
@@ -129,6 +129,6 @@ final class AuthController extends Controller
 
         $this->session->flash('success', 'Your password has been updated.');
 
-        return $this->redirectToAdmin(ltrim($user->role->homeRoute(), '/'));
+        return $this->redirectToAdmin(ltrim(($user->role?->homeRoute() ?? '/dashboard'), '/'));
     }
 }

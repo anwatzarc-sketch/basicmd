@@ -28,15 +28,31 @@ final class UserRepository
      * without ONLY_FULL_GROUP_BY (which this connection's sql_mode does not
      * set - see Database::pdo()) because every other selected column is
      * functionally dependent on u.id, the primary key.
+     *
+     * role_count (COUNT(DISTINCT ur.role_id)) exists solely so
+     * User::resolvePermissions() can tell "this user holds zero user_roles
+     * rows at all" (0 - the hardcoded UserRole::permissions() matrix is the
+     * correct fallback) apart from "this user holds a real role that
+     * resolves to zero permissions" (>= 1 with a NULL resolved_permissions -
+     * must be honoured as empty, never broadened). GROUP_CONCAT alone
+     * cannot distinguish those two cases.
+     *
+     * role_label resolves the created role's own `roles.label` for a
+     * users.role value the fixed UserRole enum does not recognise, so the
+     * display-only label (spec §4.3) still reads correctly for a role
+     * Role Management created.
      */
     private const string SELECT_BASE = '
         SELECT u.id, u.full_name, u.email, u.phone, u.role, u.status, u.locale,
                u.failed_attempts, u.locked_until, u.last_login_at,
                u.must_change_password, u.created_at,
                d.id AS doctor_id,
+               rl.label AS role_label,
+               COUNT(DISTINCT ur.role_id) AS role_count,
                GROUP_CONCAT(DISTINCT p.slug SEPARATOR \',\') AS resolved_permissions
         FROM users u
         LEFT JOIN doctors d ON d.user_id = u.id AND d.deleted_at IS NULL
+        LEFT JOIN roles rl ON rl.slug = u.role
         LEFT JOIN user_roles ur ON ur.user_id = u.id
         LEFT JOIN role_permissions rp ON rp.role_id = ur.role_id
         LEFT JOIN permissions p ON p.id = rp.permission_id
@@ -171,6 +187,14 @@ final class UserRepository
             : null;
 
         return $this->db->transaction(function (Database $db) use ($id, $data, $newRole): bool {
+            // Captured BEFORE the UPDATE below overwrites it - this is the
+            // "previous primary role" syncPrimaryRole() needs to know
+            // exactly which user_roles row to retire, rather than wiping
+            // every row this user holds (see that method's docblock).
+            $previousRoleSlug = $newRole !== null
+                ? $db->fetchValue('SELECT role FROM users WHERE id = :id', ['id' => $id])
+                : null;
+
             $assignments = implode(', ', array_map(
                 static fn (string $c): string => Database::quoteIdentifier($c) . ' = :' . $c,
                 array_keys($data),
@@ -184,7 +208,7 @@ final class UserRepository
             ) > 0;
 
             if ($changed && $newRole !== null) {
-                $this->syncPrimaryRole($db, $id, $newRole);
+                $this->syncPrimaryRole($db, $id, $newRole, is_string($previousRoleSlug) ? $previousRoleSlug : null);
             }
 
             return $changed;
@@ -192,12 +216,23 @@ final class UserRepository
     }
 
     /**
-     * Replace a user's role_permissions-driving assignment with exactly one
-     * row, matching the single-primary-role behaviour the rest of the
-     * application still assumes (see user_roles's own migration comment on
-     * why the table's shape allows more than one without requiring it).
+     * Keep users.role's "primary" role assignment in agreement with
+     * user_roles, touching ONLY that one grant.
+     *
+     * Deliberately NOT a delete-all-then-reinsert: a user can hold
+     * additional roles assigned through Role Management (§4.2/§4.5),
+     * each possibly carrying its own user_role_scopes rows. Every save of
+     * this form always resubmits the 'role' select (see
+     * UserController::save()), so a delete-all here would silently wipe
+     * every one of those extra grants - and their ward scopes with them,
+     * via the ON DELETE CASCADE on user_role_scopes - on every ordinary
+     * profile edit, not just an actual role change. Removing only the
+     * role_id that matches the OLD primary slug (and no-op'ing the insert
+     * via ON DUPLICATE KEY when the role did not actually change) fixes
+     * that while still keeping create()'s single-grant case unaffected
+     * ($previousRoleSlug is null there, so nothing is deleted).
      */
-    private function syncPrimaryRole(Database $db, int $userId, UserRole $role): void
+    private function syncPrimaryRole(Database $db, int $userId, UserRole $role, ?string $previousRoleSlug = null): void
     {
         $roleId = $db->fetchValue('SELECT id FROM roles WHERE slug = :slug', ['slug' => $role->value]);
 
@@ -210,9 +245,17 @@ final class UserRepository
             return;
         }
 
-        $db->execute('DELETE FROM user_roles WHERE user_id = :uid', ['uid' => $userId]);
+        if ($previousRoleSlug !== null && $previousRoleSlug !== $role->value) {
+            $db->execute(
+                'DELETE FROM user_roles
+                 WHERE user_id = :uid AND role_id = (SELECT id FROM roles WHERE slug = :slug)',
+                ['uid' => $userId, 'slug' => $previousRoleSlug],
+            );
+        }
+
         $db->execute(
-            'INSERT INTO user_roles (user_id, role_id) VALUES (:uid, :rid)',
+            'INSERT INTO user_roles (user_id, role_id) VALUES (:uid, :rid)
+             ON DUPLICATE KEY UPDATE user_id = user_id',
             ['uid' => $userId, 'rid' => $roleId],
         );
     }

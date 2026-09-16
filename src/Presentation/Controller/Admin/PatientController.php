@@ -22,6 +22,7 @@ use Aster\Domain\Repository\LedgerRepositoryInterface;
 use Aster\Domain\Repository\PrescriptionRepositoryInterface;
 use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
 use Aster\Domain\Services\PatientDeduplicationService;
+use Aster\Domain\Services\WardScopeService;
 use Aster\Domain\ValueObject\PhoneNumber;
 use Aster\Infrastructure\Persistence\AuditLogger;
 use Aster\Infrastructure\Persistence\PatientRepository;
@@ -69,14 +70,27 @@ final class PatientController extends Controller
         private readonly LedgerRepositoryInterface $ledger,
         private readonly ReceivablePaymentRepositoryInterface $receivablePayments,
         private readonly AuditLogger $audit,
+        private readonly WardScopeService $wardScope,
     ) {
         parent::__construct($view, $session, $config);
     }
 
     public function index(Request $request): Response
     {
+        $user    = $this->requireUser();
         $term    = $request->input('q');
         $results = $term !== null && trim($term) !== '' ? $this->patients->search($term) : [];
+
+        // Ward scoping (spec §4.5) applies to the lookup list too - a
+        // scoped grant that cannot open an out-of-ward patient must not
+        // be able to find them through search either, or the scope would
+        // leak through this screen alone. Post-filtered rather than
+        // pushed into PatientRepository::search()'s own query, since the
+        // check spans encounters/ward_locations, not patients.
+        $results = array_values(array_filter(
+            $results,
+            fn (\Aster\Domain\Entity\Patient $patient): bool => $this->wardScope->isPatientVisible($user, $patient->id),
+        ));
 
         return $this->renderAdmin('admin/patients/index', [
             'term'    => $term ?? '',
@@ -167,6 +181,8 @@ final class PatientController extends Controller
         if ($patient === null) {
             throw HttpException::notFound();
         }
+
+        $this->assertWardVisible($user, $patient->id);
 
         $tab = $request->input('tab') ?? 'overview';
 
@@ -304,6 +320,7 @@ final class PatientController extends Controller
      */
     public function update(Request $request): Response
     {
+        $user    = $this->requireUser();
         $id      = $request->routeInt('id');
         $patient = $this->patients->findById($id);
         $back    = $this->config->adminPath . '/patients/' . $id;
@@ -311,6 +328,8 @@ final class PatientController extends Controller
         if ($patient === null) {
             throw HttpException::notFound();
         }
+
+        $this->assertWardVisible($user, $patient->id);
 
         $firstName = $request->string('first_name');
         $lastName  = $request->string('last_name');
@@ -349,12 +368,15 @@ final class PatientController extends Controller
      */
     public function provisionPortalAccess(Request $request): Response
     {
+        $user    = $this->requireUser();
         $id      = $request->routeInt('id');
         $patient = $this->patients->findById($id);
 
         if ($patient === null) {
             throw HttpException::notFound();
         }
+
+        $this->assertWardVisible($user, $patient->id);
 
         $temporary = $this->portalAuth->provisionAccess($patient->id);
 
@@ -390,6 +412,8 @@ final class PatientController extends Controller
         if ($patient === null) {
             throw HttpException::notFound();
         }
+
+        $this->assertWardVisible($user, $patient->id);
 
         $encounterId = $request->nullableInt('encounter_id');
         $noteType    = ClinicalNoteType::tryFrom($request->string('note_type'));
@@ -456,6 +480,8 @@ final class PatientController extends Controller
             throw HttpException::notFound();
         }
 
+        $this->assertWardVisible($user, $patient->id);
+
         if (!PatientDetailAccess::canOrderDiagnostics($user)) {
             throw HttpException::forbidden();
         }
@@ -515,6 +541,8 @@ final class PatientController extends Controller
             throw HttpException::notFound();
         }
 
+        $this->assertWardVisible($user, $patient->id);
+
         $order = $this->diagnostics->findById($request->routeInt('orderId'));
 
         if ($order === null) {
@@ -567,6 +595,8 @@ final class PatientController extends Controller
         if ($patient === null) {
             throw HttpException::notFound();
         }
+
+        $this->assertWardVisible($user, $patient->id);
 
         if (!PatientDetailAccess::canWritePrescriptions($user)) {
             throw HttpException::forbidden();
@@ -625,6 +655,8 @@ final class PatientController extends Controller
             throw HttpException::notFound();
         }
 
+        $this->assertWardVisible($user, $patient->id);
+
         if (!PatientDetailAccess::canDispense($user)) {
             throw HttpException::forbidden();
         }
@@ -656,6 +688,21 @@ final class PatientController extends Controller
     private function blankToNull(?string $value): ?string
     {
         return $value === null || trim($value) === '' ? null : trim($value);
+    }
+
+    /**
+     * Ward-scoped access (spec §4.5) - the one extra check every entry
+     * point onto a specific patient carries alongside its own can()
+     * gate. Denied the same way AppointmentController::assertVisibleTo()
+     * denies its own-queue scoping (403, not a third response shape for
+     * what is, from the requester's point of view, the same "you can't
+     * see this patient" outcome as a 404).
+     */
+    private function assertWardVisible(User $user, int $patientId): void
+    {
+        if (!$this->wardScope->isPatientVisible($user, $patientId)) {
+            throw HttpException::forbidden();
+        }
     }
 
     /**

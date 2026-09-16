@@ -74,7 +74,7 @@ $val = static fn (string $k, mixed $c = ''): string => (string) ($old[$k] ?? $c 
             <select class="select" id="role" name="role">
                 <?php foreach ($roles as $role): ?>
                     <option value="<?= $view->e($role->value) ?>"
-                        <?= $view->attr(($account?->role->value ?? \Aster\Domain\Enum\UserRole::RECEPTIONIST->value) === $role->value, 'selected') ?>>
+                        <?= $view->attr(($account?->role?->value ?? \Aster\Domain\Enum\UserRole::RECEPTIONIST->value) === $role->value, 'selected') ?>>
                         <?= $view->e($role->label()) ?>
                     </option>
                 <?php endforeach; ?>

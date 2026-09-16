@@ -68,7 +68,7 @@ $t = $view->translator;
                             </div>
                         </td>
                         <td class="text-slate-600"><?= $view->e($account->email) ?></td>
-                        <td><span class="badge <?= $view->e($account->role->badgeClass()) ?>"><?= $view->e($account->role->label()) ?></span></td>
+                        <td><span class="badge <?= $view->e($account->role?->badgeClass() ?? 'bg-slate-100 text-slate-700 border-slate-200') ?>"><?= $view->e($account->roleLabel) ?></span></td>
                         <td>
                             <span class="badge <?= $view->e($account->status->badgeClass()) ?>"><?= $view->e($account->status->label()) ?></span>
                             <?php if ($account->isLocked()): ?>

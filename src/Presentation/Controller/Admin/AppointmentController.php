@@ -82,7 +82,7 @@ final class AppointmentController extends Controller
 
         // Clinical staff are pinned to their own queue. Overwriting rather
         // than merging means a doctor_id in the query string is ignored.
-        if ($user->role->isClinical()) {
+        if ($user->isScopedToOwnQueue()) {
             $doctor = $user->doctorId !== null
                 ? $this->doctors->findById($user->doctorId)
                 : $this->doctors->findByUserId($user->id);
@@ -389,7 +389,7 @@ final class AppointmentController extends Controller
 
         $filters = ['date' => $date];
 
-        if ($user->role->isClinical()) {
+        if ($user->isScopedToOwnQueue()) {
             $doctor               = $this->doctors->findByUserId($user->id);
             $filters['doctor_id'] = $doctor?->id ?? -1;
         }
@@ -411,7 +411,7 @@ final class AppointmentController extends Controller
      */
     private function assertVisibleTo(\Aster\Domain\Entity\User $user, \Aster\Domain\Entity\Appointment $appointment): void
     {
-        if (!$user->role->isClinical()) {
+        if (!$user->isScopedToOwnQueue()) {
             return;
         }
 

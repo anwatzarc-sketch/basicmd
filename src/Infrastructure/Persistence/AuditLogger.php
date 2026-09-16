@@ -82,7 +82,7 @@ final class AuditLogger implements AuditLoggerInterface
     public function withActor(?User $user, ?string $ipBinary, string $userAgent): self
     {
         $this->userId     = $user?->id;
-        $this->actorLabel = $user !== null ? $user->fullName . ' (' . $user->role->value . ')' : null;
+        $this->actorLabel = $user !== null ? $user->fullName . ' (' . $user->roleLabel . ')' : null;
         $this->ipBinary   = $ipBinary;
         $this->userAgent  = mb_substr($userAgent, 0, 255);
 

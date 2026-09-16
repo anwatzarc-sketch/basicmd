@@ -273,7 +273,7 @@ final readonly class AuthService
         if (!$user->can($permission)) {
             $this->logger->warning('Authorisation denied', [
                 'user_id'    => $user->id,
-                'role'       => $user->role->value,
+                'role'       => $user->roleLabel,
                 'permission' => $permission,
             ]);
 

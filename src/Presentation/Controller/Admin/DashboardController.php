@@ -49,7 +49,7 @@ final class DashboardController extends Controller
         $to   = $request->input('to') ?? $today->format('Y-m-d');
 
         // A doctor sees only their own day.
-        if ($user->role->isClinical()) {
+        if ($user->isScopedToOwnQueue()) {
             $doctor = $user->doctorId !== null
                 ? $this->doctors->findById($user->doctorId)
                 : $this->doctors->findByUserId($user->id);

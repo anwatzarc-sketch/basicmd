@@ -41,7 +41,7 @@ final readonly class Authorize
         if (!$user->can($this->permission)) {
             $this->logger->warning('Permission denied', [
                 'user_id'    => $user->id,
-                'role'       => $user->role->value,
+                'role'       => $user->roleLabel,
                 'permission' => $this->permission,
                 'path'       => $request->path,
             ]);

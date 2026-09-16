@@ -548,6 +548,23 @@
     };
 
     /* =================================================================
+       Admin: Role Management - "select all" per permission domain group
+       ================================================================= */
+    const initPermissionGroups = () => {
+        $$('[data-select-group]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const domain = button.getAttribute('data-select-group');
+                const group  = $(`[data-permission-group="${domain}"]`);
+                if (!group) return;
+
+                const boxes      = $$('input[type="checkbox"]', group);
+                const allChecked = boxes.every((box) => box.checked);
+                boxes.forEach((box) => { box.checked = !allChecked; });
+            });
+        });
+    };
+
+    /* =================================================================
        Admin: load a payment method into the edit form
        ================================================================= */
     const initMethodEditor = () => {
@@ -625,6 +642,7 @@
         initConfirms();
         initFilters();
         initMethodEditor();
+        initPermissionGroups();
         initServiceWorker();
     };
 

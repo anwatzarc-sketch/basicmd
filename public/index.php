@@ -298,6 +298,19 @@ $patientsAdmin = $make(AdminController\PatientController::class, [
     $container->get(LedgerRepositoryInterface::class),
     $container->get(ReceivablePaymentRepositoryInterface::class),
     $container->get(AuditLogger::class),
+    $container->get(\Aster\Domain\Services\WardScopeService::class),
+]);
+
+$rolesAdmin = $make(AdminController\RoleController::class, [
+    $container->get(\Aster\Infrastructure\Persistence\RoleRepository::class),
+    $container->get(UserRepository::class),
+    $container->get(\Aster\Infrastructure\Persistence\WardLocationRepository::class),
+    $container->get(AuditLogger::class),
+]);
+
+$wardsAdmin = $make(AdminController\WardLocationController::class, [
+    $container->get(\Aster\Infrastructure\Persistence\WardLocationRepository::class),
+    $container->get(AuditLogger::class),
 ]);
 
 $encountersAdmin = $make(AdminController\EncounterController::class, [
@@ -372,6 +385,8 @@ foreach ([
     'clinical_notes.view', 'clinical_notes.write', 'clinical_notes.write_vitals',
     'diagnostics.view', 'diagnostics.order', 'diagnostics.result', 'diagnostics.result_lab',
     'prescriptions.view', 'prescriptions.write', 'prescriptions.dispense',
+    // Role Management & Ward Locations (migration 008)
+    'roles.manage', 'wards.manage',
 ] as $permission) {
     $router->registerMiddleware('can:' . $permission, new Authorize($permission, $logger));
 }
@@ -437,7 +452,7 @@ $adminPath = $config->adminPath;
 $router->group($adminPath, [], static function (Router $r) use (
     $auth, $dashboard, $appointments, $payments, $doctorsAdmin, $catalog,
     $articlesAdmin, $inquiriesAdmin, $usersAdmin, $settingsAdmin,
-    $patientsAdmin, $encountersAdmin, $billingAdmin,
+    $patientsAdmin, $encountersAdmin, $billingAdmin, $rolesAdmin, $wardsAdmin,
     $publicStack, $publicForm, $adminStack, $adminForm
 ): void {
     // Authentication (no auth middleware, obviously)
@@ -529,6 +544,25 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->post('/users/{id:\d+}/reset-password', [$usersAdmin, 'resetPassword'], [...$adminForm, 'can:users.write']);
     $r->post('/users/{id:\d+}/unlock', [$usersAdmin, 'unlock'], [...$adminForm, 'can:users.write']);
     $r->post('/users/{id:\d+}/delete', [$usersAdmin, 'delete'], [...$adminForm, 'can:users.write']);
+
+    // Role Management (spec §4.2) - super_admin-only, no delegation path.
+    $r->get('/roles', [$rolesAdmin, 'index'], [...$adminStack, 'can:roles.manage']);
+    $r->get('/roles/create', [$rolesAdmin, 'form'], [...$adminStack, 'can:roles.manage']);
+    $r->post('/roles', [$rolesAdmin, 'save'], [...$adminForm, 'can:roles.manage']);
+    $r->get('/roles/{id:\d+}/edit', [$rolesAdmin, 'form'], [...$adminStack, 'can:roles.manage']);
+    $r->post('/roles/{id:\d+}', [$rolesAdmin, 'save'], [...$adminForm, 'can:roles.manage']);
+    $r->post('/roles/{id:\d+}/archive', [$rolesAdmin, 'archive'], [...$adminForm, 'can:roles.manage']);
+    $r->post('/roles/{id:\d+}/unarchive', [$rolesAdmin, 'unarchive'], [...$adminForm, 'can:roles.manage']);
+    $r->get('/roles/assign', [$rolesAdmin, 'assignForm'], [...$adminStack, 'can:roles.manage']);
+    $r->post('/roles/assign', [$rolesAdmin, 'assign'], [...$adminForm, 'can:roles.manage']);
+    $r->post('/roles/revoke', [$rolesAdmin, 'revoke'], [...$adminForm, 'can:roles.manage']);
+
+    // Ward Locations (spec §4.5) - occupancy stays display-only here.
+    $r->get('/wards', [$wardsAdmin, 'index'], [...$adminStack, 'can:wards.manage']);
+    $r->get('/wards/create', [$wardsAdmin, 'form'], [...$adminStack, 'can:wards.manage']);
+    $r->post('/wards', [$wardsAdmin, 'save'], [...$adminForm, 'can:wards.manage']);
+    $r->get('/wards/{id:\d+}/edit', [$wardsAdmin, 'form'], [...$adminStack, 'can:wards.manage']);
+    $r->post('/wards/{id:\d+}', [$wardsAdmin, 'save'], [...$adminForm, 'can:wards.manage']);
 
     // Settings
     $r->get('/settings', [$settingsAdmin, 'index'], [...$adminStack, 'can:settings.view']);
