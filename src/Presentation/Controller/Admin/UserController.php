@@ -10,6 +10,7 @@ use Aster\Domain\Exception\HttpException;
 use Aster\Domain\Exception\ValidationException;
 use Aster\Infrastructure\Persistence\AuditLogger;
 use Aster\Infrastructure\Persistence\DoctorRepository;
+use Aster\Infrastructure\Persistence\RoleRepository;
 use Aster\Infrastructure\Persistence\UserRepository;
 use Aster\Infrastructure\Security\PasswordHasher;
 use Aster\Infrastructure\Security\SessionManager;
@@ -25,6 +26,17 @@ use Aster\Presentation\View\View;
  * Two safeguards prevent an administrator locking the organisation out of its
  * own system: you cannot suspend or delete your own account, and the last
  * active SuperAdmin cannot be demoted or removed.
+ *
+ * The role selector here picks a user's single PRIMARY role (synced to the
+ * users.role display column) from the live `roles` table - never a
+ * hardcoded UserRole::all() list - so a role created through Role
+ * Management is assignable here with zero code change, the same bar Role
+ * Management itself is held to. UserRole survives only as the fallback
+ * permission matrix for the six roles that predate it (see
+ * User::resolvePermissions()) and as the one still-hardcoded concept this
+ * app has to keep comparing against: `super_admin`, the single seeded role
+ * the last-administrator guards below protect by slug, not by enum
+ * identity.
  */
 final class UserController extends Controller
 {
@@ -34,6 +46,7 @@ final class UserController extends Controller
         Config $config,
         private readonly UserRepository $users,
         private readonly DoctorRepository $doctors,
+        private readonly RoleRepository $roles,
         private readonly PasswordHasher $hasher,
         private readonly AuditLogger $audit,
     ) {
@@ -44,7 +57,9 @@ final class UserController extends Controller
     {
         return $this->renderAdmin('admin/users/index', [
             'users'    => $this->users->all($request->input('role'), $request->input('status')),
-            'roles'    => UserRole::all(),
+            // Every role, archived included - a filter must still be able
+            // to find users left holding one after it was archived.
+            'roles'    => $this->roles->all(),
             'statuses' => UserStatus::all(),
             'counts'   => $this->users->countByRole(),
             'filters'  => ['role' => $request->input('role'), 'status' => $request->input('status')],
@@ -63,7 +78,7 @@ final class UserController extends Controller
 
         return $this->renderAdmin('admin/users/form', [
             'account'  => $user,
-            'roles'    => UserRole::all(),
+            'roles'    => $this->assignableRoles($user),
             'statuses' => UserStatus::all(),
             'doctors'  => $this->doctors->options(false),
             'meta'     => [
@@ -73,14 +88,47 @@ final class UserController extends Controller
         ]);
     }
 
+    /**
+     * Unarchived roles, plus the account's own current role even if it has
+     * since been archived - so editing an existing account never silently
+     * drops the option that describes what they already are.
+     *
+     * @return list<\Aster\Domain\Entity\Role>
+     */
+    private function assignableRoles(?\Aster\Domain\Entity\User $account): array
+    {
+        $roles = $this->roles->all(false);
+
+        if ($account?->roleSlug === null) {
+            return $roles;
+        }
+
+        $alreadyListed = array_filter($roles, static fn ($r): bool => $r->slug === $account->roleSlug) !== [];
+
+        if (!$alreadyListed) {
+            $current = $this->roles->findBySlug($account->roleSlug);
+
+            if ($current !== null) {
+                $roles[] = $current;
+            }
+        }
+
+        return $roles;
+    }
+
     public function save(Request $request): Response
     {
-        $actor = $this->requireUser();
-        $id    = $request->routeInt('id');
+        $actor    = $this->requireUser();
+        $id       = $request->routeInt('id');
+        $existing = $id > 0 ? $this->users->findById($id) : null;
+
+        if ($id > 0 && $existing === null) {
+            throw HttpException::notFound();
+        }
 
         $name  = $request->string('full_name');
         $email = mb_strtolower($request->string('email'));
-        $role  = UserRole::tryFrom($request->string('role')) ?? UserRole::RECEPTIONIST;
+        $role  = $this->roles->findBySlug($request->string('role'));
 
         $formPath = $this->config->adminPath . '/users' . ($id > 0 ? '/' . $id . '/edit' : '/create');
 
@@ -96,21 +144,26 @@ final class UserController extends Controller
             $errors['email'][] = 'That email address is already registered.';
         }
 
+        // Fetched live from `roles`, not the fixed UserRole enum - a role
+        // created through Role Management is a valid choice the moment it
+        // exists, no code change required. Archived roles are still a
+        // valid choice for editing WHOEVER already holds one (see
+        // assignableRoles()), but never for a brand-new assignment.
+        if ($role === null) {
+            $errors['role'][] = 'Please choose a valid role.';
+        } elseif ($role->isArchived() && $role->slug !== $existing?->roleSlug) {
+            $errors['role'][] = 'That role is archived and can only be kept, not newly assigned.';
+        }
+
         if ($errors !== []) {
             return $this->redirectWithValidation($formPath, ValidationException::withErrors($errors), $request);
         }
 
         $status = UserStatus::tryFrom($request->string('status')) ?? UserStatus::ACTIVE;
 
-        if ($id > 0) {
-            $existing = $this->users->findById($id);
-
-            if ($existing === null) {
-                throw HttpException::notFound();
-            }
-
+        if ($existing !== null) {
             // Self-lockout guard.
-            if ($existing->id === $actor->id && ($status !== UserStatus::ACTIVE || $role !== $actor->role)) {
+            if ($existing->id === $actor->id && ($status !== UserStatus::ACTIVE || $role->slug !== $actor->roleSlug)) {
                 return $this->redirectWithError(
                     $formPath,
                     'You cannot change your own role or suspend your own account.',
@@ -119,8 +172,11 @@ final class UserController extends Controller
 
             // Last-admin guard: demoting or suspending the only remaining
             // SuperAdmin would leave nobody able to manage the system.
-            if ($existing->role === UserRole::SUPER_ADMIN
-                && ($role !== UserRole::SUPER_ADMIN || $status !== UserStatus::ACTIVE)
+            // super_admin is the one role slug still compared directly -
+            // it is the single seeded role every deployment always has
+            // (spec §4.1), not a name this app had to guess in advance.
+            if ($existing->roleSlug === UserRole::SUPER_ADMIN->value
+                && ($role->slug !== UserRole::SUPER_ADMIN->value || $status !== UserStatus::ACTIVE)
                 && $this->countActiveSuperAdmins() <= 1
             ) {
                 return $this->redirectWithError(
@@ -135,7 +191,7 @@ final class UserController extends Controller
                 'full_name' => $name,
                 'email'     => $email,
                 'phone'     => $request->input('phone'),
-                'role'      => $role->value,
+                'role'      => $role->slug,
                 'status'    => $status->value,
                 'locale'    => $request->string('locale', 'en') === 'am' ? 'am' : 'en',
             ]);
@@ -147,7 +203,7 @@ final class UserController extends Controller
                 'user',
                 $id,
                 $before ?? [],
-                ['full_name' => $name, 'email' => $email, 'role' => $role->value, 'status' => $status->value],
+                ['full_name' => $name, 'email' => $email, 'role' => $role->slug, 'status' => $status->value],
                 'Updated staff account ' . $name,
             );
 
@@ -163,7 +219,7 @@ final class UserController extends Controller
             fullName:           $name,
             email:              $email,
             passwordHash:       $this->hasher->hash($temporary),
-            role:               $role,
+            role:               $role->slug,
             phone:              $request->input('phone'),
             status:             $status->value,
             mustChangePassword: true,
@@ -175,7 +231,7 @@ final class UserController extends Controller
             AuditLogger::USER_CREATED,
             'user',
             $newId,
-            sprintf('Created %s account for %s', $role->label(), $name),
+            sprintf('Created %s account for %s', $role->label, $name),
         );
 
         // Shown once, on screen only. It is never emailed and never logged:
@@ -246,7 +302,7 @@ final class UserController extends Controller
             return $this->redirectWithError($this->config->adminPath . '/users', 'You cannot delete your own account.');
         }
 
-        if ($target->role === UserRole::SUPER_ADMIN && $this->countActiveSuperAdmins() <= 1) {
+        if ($target->roleSlug === UserRole::SUPER_ADMIN->value && $this->countActiveSuperAdmins() <= 1) {
             return $this->redirectWithError(
                 $this->config->adminPath . '/users',
                 'This is the last active administrator and cannot be deleted.',

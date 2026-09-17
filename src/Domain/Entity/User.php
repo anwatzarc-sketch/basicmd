@@ -36,6 +36,16 @@ final readonly class User
          */
         public ?UserRole $role,
         /**
+         * The raw users.role slug, unconditionally - present even when it
+         * does not map to a known UserRole case (a role Role Management
+         * created). $role above is a typed convenience for the fixed
+         * legacy cases; this is the actual value, needed anywhere code
+         * must compare or re-submit "this user's current primary role"
+         * without losing a custom slug down to null (e.g. the
+         * self-lockout guard in UserController::save()).
+         */
+        public ?string $roleSlug,
+        /**
          * The raw, always-populated display label - users.role's actual
          * value when it maps to a known UserRole, otherwise the created
          * role's own label from the `roles` table (falling back to the
@@ -78,6 +88,7 @@ final readonly class User
             email:              (string) $row['email'],
             phone:              $row['phone'] !== null ? (string) $row['phone'] : null,
             role:               $role,
+            roleSlug:           isset($row['role']) && $row['role'] !== null ? (string) $row['role'] : null,
             roleLabel:          self::resolveRoleLabel($row, $role),
             status:             UserStatus::from((string) $row['status']),
             locale:             Locale::from((string) ($row['locale'] ?? 'en')),

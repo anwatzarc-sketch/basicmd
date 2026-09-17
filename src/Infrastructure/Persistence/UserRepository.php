@@ -133,17 +133,25 @@ final class UserRepository
         return array_map(User::fromRow(...), $rows);
     }
 
+    /**
+     * $role accepts a plain slug string so ANY role Role Management has
+     * created can be assigned as a user's primary role, not just the six
+     * fixed UserRole cases - or a UserRole instance, kept for every
+     * existing caller (bin/install.php, tests) that already passes one.
+     */
     public function create(
         string $fullName,
         string $email,
         string $passwordHash,
-        UserRole $role,
+        UserRole|string $role,
         ?string $phone = null,
         string $status = 'active',
         bool $mustChangePassword = false,
     ): int {
+        $roleSlug = $role instanceof UserRole ? $role->value : $role;
+
         return $this->db->transaction(function (Database $db) use (
-            $fullName, $email, $passwordHash, $role, $phone, $status, $mustChangePassword,
+            $fullName, $email, $passwordHash, $roleSlug, $phone, $status, $mustChangePassword,
         ): int {
             $db->execute(
                 'INSERT INTO users (full_name, email, phone, password_hash, role, status, must_change_password)
@@ -153,7 +161,7 @@ final class UserRepository
                     'email'  => mb_strtolower(trim($email)),
                     'phone'  => $phone,
                     'hash'   => $passwordHash,
-                    'role'   => $role->value,
+                    'role'   => $roleSlug,
                     'status' => $status,
                     'must'   => $mustChangePassword ? 1 : 0,
                 ],
@@ -161,7 +169,7 @@ final class UserRepository
 
             $userId = $db->lastInsertId();
 
-            $this->syncPrimaryRole($db, $userId, $role);
+            $this->syncPrimaryRole($db, $userId, $roleSlug);
 
             return $userId;
         });
@@ -182,16 +190,25 @@ final class UserRepository
         // two drift, and User::fromRow()'s permission resolution reads
         // user_roles - a drifted row would keep the OLD permission set
         // after an admin visibly changed someone's role.
-        $newRole = isset($data['role']) && is_string($data['role'])
-            ? UserRole::tryFrom($data['role'])
+        //
+        // Any non-empty string is a candidate slug to sync - NOT gated to
+        // UserRole::tryFrom() any more. That gate used to silently skip
+        // syncPrimaryRole() whenever the submitted role was one Role
+        // Management created (since the fixed enum has never heard of
+        // it), leaving user_roles pointing at the OLD role while
+        // users.role visibly showed the new one. syncPrimaryRole() itself
+        // already resolves the slug against the real `roles` table, so it
+        // safely no-ops on a bogus slug without this pre-filter.
+        $newRoleSlug = isset($data['role']) && is_string($data['role']) && $data['role'] !== ''
+            ? $data['role']
             : null;
 
-        return $this->db->transaction(function (Database $db) use ($id, $data, $newRole): bool {
+        return $this->db->transaction(function (Database $db) use ($id, $data, $newRoleSlug): bool {
             // Captured BEFORE the UPDATE below overwrites it - this is the
             // "previous primary role" syncPrimaryRole() needs to know
             // exactly which user_roles row to retire, rather than wiping
             // every row this user holds (see that method's docblock).
-            $previousRoleSlug = $newRole !== null
+            $previousRoleSlug = $newRoleSlug !== null
                 ? $db->fetchValue('SELECT role FROM users WHERE id = :id', ['id' => $id])
                 : null;
 
@@ -207,8 +224,8 @@ final class UserRepository
                 $data,
             ) > 0;
 
-            if ($changed && $newRole !== null) {
-                $this->syncPrimaryRole($db, $id, $newRole, is_string($previousRoleSlug) ? $previousRoleSlug : null);
+            if ($changed && $newRoleSlug !== null) {
+                $this->syncPrimaryRole($db, $id, $newRoleSlug, is_string($previousRoleSlug) ? $previousRoleSlug : null);
             }
 
             return $changed;
@@ -231,21 +248,26 @@ final class UserRepository
      * via ON DUPLICATE KEY when the role did not actually change) fixes
      * that while still keeping create()'s single-grant case unaffected
      * ($previousRoleSlug is null there, so nothing is deleted).
+     *
+     * $roleSlug is a plain string, not a UserRole - this must resolve ANY
+     * role Role Management has created, not just the six fixed cases.
      */
-    private function syncPrimaryRole(Database $db, int $userId, UserRole $role, ?string $previousRoleSlug = null): void
+    private function syncPrimaryRole(Database $db, int $userId, string $roleSlug, ?string $previousRoleSlug = null): void
     {
-        $roleId = $db->fetchValue('SELECT id FROM roles WHERE slug = :slug', ['slug' => $role->value]);
+        $roleId = $db->fetchValue('SELECT id FROM roles WHERE slug = :slug', ['slug' => $roleSlug]);
 
         if ($roleId === null) {
-            // The relational catalogue has not been seeded (e.g. migration
-            // 002 has not run yet in this environment). users.role above is
-            // still correct, and User::resolvePermissions() falls back to
-            // the hardcoded matrix whenever no relational rows exist, so
-            // this is a silent no-op rather than a failure.
+            // Either the relational catalogue has not been seeded yet (e.g.
+            // migration 002 has not run in this environment), or the
+            // caller passed a slug that does not exist in `roles` at all.
+            // users.role above is still written either way, and
+            // User::resolvePermissions() falls back to the hardcoded
+            // matrix whenever no relational rows exist, so this is a
+            // silent no-op rather than a failure.
             return;
         }
 
-        if ($previousRoleSlug !== null && $previousRoleSlug !== $role->value) {
+        if ($previousRoleSlug !== null && $previousRoleSlug !== $roleSlug) {
             $db->execute(
                 'DELETE FROM user_roles
                  WHERE user_id = :uid AND role_id = (SELECT id FROM roles WHERE slug = :slug)',

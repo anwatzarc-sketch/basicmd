@@ -274,6 +274,7 @@ $inquiriesAdmin = $make(AdminController\InquiryController::class, [
 $usersAdmin = $make(AdminController\UserController::class, [
     $container->get(UserRepository::class),
     $container->get(DoctorRepository::class),
+    $container->get(\Aster\Infrastructure\Persistence\RoleRepository::class),
     $container->get(PasswordHasher::class),
     $container->get(AuditLogger::class),
 ]);

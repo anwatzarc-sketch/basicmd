@@ -5,7 +5,7 @@
  * @var \Aster\Presentation\View\View $view
  * @var \Aster\Domain\Entity\User $user       the signed-in administrator
  * @var list<\Aster\Domain\Entity\User> $users
- * @var list<\Aster\Domain\Enum\UserRole> $roles
+ * @var list<\Aster\Domain\Entity\Role> $roles
  * @var list<\Aster\Domain\Enum\UserStatus> $statuses
  * @var array<string,int> $counts
  * @var array $filters
@@ -22,8 +22,8 @@ $t = $view->translator;
             <select class="select" id="role" name="role">
                 <option value="">All roles</option>
                 <?php foreach ($roles as $role): ?>
-                    <option value="<?= $view->e($role->value) ?>" <?= $view->attr(($filters['role'] ?? '') === $role->value, 'selected') ?>>
-                        <?= $view->e($role->label()) ?> (<?= (int) ($counts[$role->value] ?? 0) ?>)
+                    <option value="<?= $view->e($role->slug) ?>" <?= $view->attr(($filters['role'] ?? '') === $role->slug, 'selected') ?>>
+                        <?= $view->e($role->label) ?><?= $role->isArchived() ? ' (archived)' : '' ?> (<?= (int) ($counts[$role->slug] ?? 0) ?>)
                     </option>
                 <?php endforeach; ?>
             </select>
