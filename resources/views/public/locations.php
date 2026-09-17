@@ -39,7 +39,7 @@ $embedUrl = $mapKey !== ''
     <div class="grid gap-10 lg:grid-cols-2">
         <div>
             <span class="eyebrow"><?= $view->t('locations.eyebrow') ?></span>
-            <h1 class="section-title"><?= $view->t('locations.title') ?></h1>
+            <h1 class="section-title"><?= $view->t('locations.title', ['city' => $view->brand->mainCity]) ?></h1>
 
             <dl class="mt-8 grid gap-5">
                 <?php
@@ -82,7 +82,7 @@ $embedUrl = $mapKey !== ''
 
         <div class="overflow-hidden rounded-3xl border border-slate-200 shadow-card">
             <iframe
-                title="<?= $view->e($view->tRaw('locations.title')) ?>"
+                title="<?= $view->e($view->tRaw('locations.title', ['city' => $view->brand->mainCity])) ?>"
                 src="<?= $view->e($embedUrl) ?>"
                 class="h-[420px] w-full border-0"
                 loading="lazy"

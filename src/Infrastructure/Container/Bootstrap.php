@@ -68,6 +68,8 @@ use Aster\Infrastructure\Security\PasswordHasher;
 use Aster\Infrastructure\Security\RateLimiter;
 use Aster\Infrastructure\Security\SessionManager;
 use Aster\Infrastructure\Storage\FileUploader;
+use Aster\Infrastructure\Support\BrandResolver;
+use Aster\Infrastructure\Support\BrandWriter;
 use Aster\Infrastructure\Support\Config;
 use Aster\Infrastructure\Support\Env;
 use Aster\Infrastructure\Support\Logger;
@@ -257,6 +259,12 @@ final class Bootstrap
             $c->get(Logger::class),
         ));
 
+        $container->singleton(BrandResolver::class, static fn (Container $c): BrandResolver
+            => new BrandResolver($config, $c->get(SettingsRepository::class)));
+
+        $container->singleton(BrandWriter::class, static fn (Container $c): BrandWriter
+            => new BrandWriter($c->get(BrandResolver::class)));
+
         // --- Mail --------------------------------------------------------
 
         $container->singleton(Mailer::class, static fn (Container $c): Mailer => new Mailer(
@@ -413,7 +421,7 @@ final class Bootstrap
         $container->singleton(SeoService::class, static function (Container $c) use ($config): SeoService {
             $settings = $c->get(SettingsRepository::class);
 
-            return new SeoService($config, $settings, $c->get(Translator::class));
+            return new SeoService($config, $settings, $c->get(Translator::class), $c->get(BrandResolver::class));
         });
 
         // --- Presentation ------------------------------------------------
@@ -422,6 +430,7 @@ final class Bootstrap
             viewPath:   $config->path('resources/views'),
             translator: $c->get(Translator::class),
             config:     $config,
+            brand:      $c->get(BrandResolver::class)->resolve(),
             csrf:       $cli ? null : $c->get(Csrf::class),
         ));
 

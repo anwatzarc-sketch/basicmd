@@ -19,9 +19,9 @@ $meta = $meta ?? [];
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title><?= $view->e(($meta['title'] ?? 'Sign in') . ' | Aster Medical') ?></title>
+    <title><?= $view->e(($meta['title'] ?? 'Sign in') . ' | ' . $view->brand->businessName) ?></title>
     <meta name="csrf-token" content="<?= $view->e($view->csrfToken()) ?>">
-    <meta name="theme-color" content="#056460">
+    <meta name="theme-color" content="rgb(<?= $view->e($view->brand->primary('700')) ?>)">
     <link rel="icon" href="<?= $view->asset('assets/img/favicon.svg') ?>" type="image/svg+xml">
     <link rel="manifest" href="<?= $view->url('manifest.webmanifest') ?>">
     <link rel="apple-touch-icon" href="<?= $view->asset('assets/img/icons/apple-touch-icon.png') ?>">
@@ -29,6 +29,7 @@ $meta = $meta ?? [];
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <?php if ($view->config->assetsBuilt()): ?>
         <link rel="stylesheet" href="<?= $view->asset('dist/css/app.min.css') ?>">
+        <?= $view->partial('partials/brand-vars', ['view' => $view, 'cspNonce' => $cspNonce ?? '']) ?>
     <?php else: ?>
         <script src="https://cdn.tailwindcss.com"></script>
         <script nonce="<?= $view->e($cspNonce ?? '') ?>">

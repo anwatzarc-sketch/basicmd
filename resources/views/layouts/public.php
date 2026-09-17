@@ -15,7 +15,7 @@ declare(strict_types=1);
 $meta       = $meta ?? [];
 $settings   = $settings ?? null;
 $t          = $view->translator;
-$clinicName = $settings?->string('clinic_name', 'Aster Medical Center') ?? 'Aster Medical Center';
+$clinicName = $view->brand->businessName;
 
 if ($locale->value === 'am' && $settings !== null) {
     $clinicName = $settings->string('clinic_name_am', $clinicName);
@@ -26,7 +26,7 @@ if ($locale->value === 'am' && $settings !== null) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#056460">
+    <meta name="theme-color" content="rgb(<?= $view->e($view->brand->primary('700')) ?>)">
 
     <title><?= $view->e($meta['title'] ?? $clinicName) ?></title>
     <meta name="description" content="<?= $view->e($meta['description'] ?? '') ?>">
@@ -74,6 +74,7 @@ if ($locale->value === 'am' && $settings !== null) {
         <?php /* Preloading the stylesheet removes a round trip from first paint. */ ?>
         <link rel="preload" as="style" href="<?= $view->asset('dist/css/app.min.css') ?>">
         <link rel="stylesheet" href="<?= $view->asset('dist/css/app.min.css') ?>">
+        <?= $view->partial('partials/brand-vars', ['view' => $view, 'cspNonce' => $cspNonce]) ?>
         <link rel="preload" as="font" type="font/woff2" href="/dist/fonts/inter-latin.woff2" crossorigin>
         <?php if ($view->isAmharic()): ?>
             <link rel="preload" as="font" type="font/woff2" href="/dist/fonts/noto-ethiopic.woff2" crossorigin>

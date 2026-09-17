@@ -9,6 +9,7 @@ use Aster\Infrastructure\Persistence\ArticleRepository;
 use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Persistence\ServiceRepository;
 use Aster\Infrastructure\Persistence\SettingsRepository;
+use Aster\Infrastructure\Support\BrandResolver;
 use Aster\Infrastructure\Support\Config;
 use Aster\Infrastructure\Storage\FileUploader;
 use Aster\Presentation\Http\Request;
@@ -36,6 +37,7 @@ final class SitemapController
         private readonly DoctorRepository $doctors,
         private readonly FileUploader $uploader,
         private readonly SettingsRepository $settings,
+        private readonly BrandResolver $brand,
     ) {
     }
 
@@ -157,8 +159,10 @@ final class SitemapController
      */
     public function manifest(Request $request): Response
     {
-        $clinicName = $this->settings->string('clinic_name', 'Aster Medical Center');
+        $clinicName = $this->brand->resolve()->businessName;
         $tagline    = $this->settings->string('tagline', '');
+        $primary    = array_map('intval', explode(' ', $this->brand->resolve()->primary('700')));
+        $themeColor = sprintf('#%02x%02x%02x', ...$primary);
 
         // Home-screen labels are cramped - truncate on a word boundary
         // rather than mid-word, and only when the full name would not fit.
@@ -176,7 +180,7 @@ final class SitemapController
             'display'          => 'standalone',
             'orientation'      => 'portrait-primary',
             'background_color' => '#ffffff',
-            'theme_color'      => '#056460',
+            'theme_color'      => $themeColor,
             'categories'       => ['health', 'medical'],
             'icons'            => [
                 ['src' => '/assets/img/icons/icon-192.png', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any'],

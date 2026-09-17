@@ -11,7 +11,7 @@ declare(strict_types=1);
 use Aster\Domain\Enum\Locale;
 
 $settings   = $settings ?? null;
-$clinicName = $settings?->string('clinic_name', 'Aster Medical') ?? 'Aster Medical';
+$clinicName = $view->brand->businessName;
 
 if ($locale === Locale::AM && $settings !== null) {
     $clinicName = $settings->string('clinic_name_am', $clinicName);
@@ -66,7 +66,12 @@ $isActive = static fn (string $path): bool => str_starts_with(parse_url($current
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
 
         <a href="<?= $view->url('') ?>" class="flex shrink-0 items-center gap-3">
-            <span class="grid h-11 w-11 place-items-center rounded-2xl bg-medical-700 text-xl font-extrabold text-white shadow-brand">A</span>
+            <?php if ($view->brand->logoImage !== null): ?>
+                <img src="<?= $view->media($view->brand->logoImage) ?>" alt=""
+                     class="h-11 w-11 rounded-2xl object-cover shadow-brand">
+            <?php else: ?>
+                <span class="grid h-11 w-11 place-items-center rounded-2xl bg-medical-700 text-xl font-extrabold text-white shadow-brand"><?= $view->e($view->brand->businessInitials) ?></span>
+            <?php endif; ?>
             <span class="leading-none">
                 <strong class="block text-base font-extrabold text-medical-900 dark:text-medical-200 sm:text-lg"><?= $view->e($clinicName) ?></strong>
                 <?php if ($tagline !== ''): ?>

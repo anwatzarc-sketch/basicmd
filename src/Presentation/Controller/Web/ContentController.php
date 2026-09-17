@@ -63,7 +63,8 @@ final class ContentController extends Controller
                     $this->view->translator->get('services.title'),
                     $locale,
                 ),
-                'description' => 'Cardiology, pediatrics, internal medicine, laboratory and imaging services at Aster Medical Center, Bole, Addis Ababa.',
+                'description' => 'Cardiology, pediatrics, internal medicine, laboratory and imaging services at '
+                    . $this->view->brand->businessName . ', ' . $this->view->brand->mainCity . '.',
                 'canonical'   => $this->config->url('services'),
             ],
         ]);
@@ -119,7 +120,8 @@ final class ContentController extends Controller
                     $this->view->translator->get('doctors.title'),
                     $this->currentLocale(),
                 ),
-                'description' => 'Meet the specialists at Aster Medical Center in Bole, Addis Ababa - cardiology, pediatrics, internal medicine, gynecology, orthopedics and dermatology.',
+                'description' => 'Meet the specialists at ' . $this->view->brand->businessName . ' in '
+                    . $this->view->brand->mainCity . ' - cardiology, pediatrics, internal medicine, gynecology, orthopedics and dermatology.',
                 'canonical'   => $this->config->url('doctors'),
             ],
         ]);
@@ -153,7 +155,8 @@ final class ContentController extends Controller
                     $locale,
                 ),
                 'description' => mb_substr(
-                    $doctor->biography($locale) ?? ($doctor->specialtyLabel($locale) . ' at Aster Medical Center, Addis Ababa.'),
+                    $doctor->biography($locale) ?? ($doctor->specialtyLabel($locale) . ' at '
+                        . $this->view->brand->businessName . ', ' . $this->view->brand->mainCity . '.'),
                     0,
                     155,
                 ),
@@ -176,7 +179,8 @@ final class ContentController extends Controller
                     $this->view->translator->get('packages.title'),
                     $this->currentLocale(),
                 ),
-                'description' => 'Preventive health screening packages in Addis Ababa - Essential Check from ETB 2,500 and Executive Health from ETB 6,500.',
+                'description' => 'Preventive health screening packages in ' . $this->view->brand->mainCity
+                    . ' - Essential Check from ETB 2,500 and Executive Health from ETB 6,500.',
                 'canonical'   => $this->config->url('packages'),
             ],
         ]);
@@ -207,7 +211,8 @@ final class ContentController extends Controller
                     $this->view->translator->get('articles.title'),
                     $this->currentLocale(),
                 ),
-                'description' => 'Health guidance from the clinical team at Aster Medical Center, Addis Ababa - prevention, family health and wellness.',
+                'description' => 'Health guidance from the clinical team at ' . $this->view->brand->businessName
+                    . ', ' . $this->view->brand->mainCity . ' - prevention, family health and wellness.',
                 'canonical'   => $this->config->url('health'),
             ],
         ]);
@@ -265,10 +270,11 @@ final class ContentController extends Controller
             'map'      => $this->config->mapCoordinates(),
             'meta'     => [
                 'title'       => $this->seo->title(
-                    $this->view->translator->get('locations.title'),
+                    $this->view->translator->get('locations.title', ['city' => $this->view->brand->mainCity]),
                     $this->currentLocale(),
                 ),
-                'description' => 'Aster Medical Center is located in Bole Sub-city, Addis Ababa. Opening hours, directions and contact details.',
+                'description' => $this->view->brand->businessName . ' is located in ' . $this->view->brand->mainCity
+                    . '. Opening hours, directions and contact details.',
                 'canonical'   => $this->config->url('locations'),
             ],
             'structuredData' => $this->seo->encode($this->seo->organisationSchema($this->currentLocale())),

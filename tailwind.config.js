@@ -67,21 +67,28 @@ module.exports = {
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
       },
 
+      // Every shade below is `rgb(var(--brand-N) / <alpha-value>)` rather
+      // than a literal hex. `--brand-N` is defined on :root by
+      // partials/brand-vars (see resources/css/app.css), with today's exact
+      // hex values as the default - CompanyBrand.json overrides them at
+      // runtime without a rebuild. `<alpha-value>` is Tailwind's own
+      // placeholder token: it lets `bg-medical-700/50` keep working, by
+      // substituting the alpha straight into the rgb() function.
       colors: {
         medical: {
-          50:  '#effcfb',
-          100: '#d8f7f4',
-          200: '#b3ede8',
-          300: '#82ded7',
-          400: '#4bc4bd',
-          500: '#0f8f89',
-          600: '#087b77',
-          700: '#056460',
-          800: '#0c4a47',
-          900: '#063b3a',
-          950: '#032423',
+          50:  'rgb(var(--brand-50) / <alpha-value>)',
+          100: 'rgb(var(--brand-100) / <alpha-value>)',
+          200: 'rgb(var(--brand-200) / <alpha-value>)',
+          300: 'rgb(var(--brand-300) / <alpha-value>)',
+          400: 'rgb(var(--brand-400) / <alpha-value>)',
+          500: 'rgb(var(--brand-500) / <alpha-value>)',
+          600: 'rgb(var(--brand-600) / <alpha-value>)',
+          700: 'rgb(var(--brand-700) / <alpha-value>)',
+          800: 'rgb(var(--brand-800) / <alpha-value>)',
+          900: 'rgb(var(--brand-900) / <alpha-value>)',
+          950: 'rgb(var(--brand-950) / <alpha-value>)',
         },
-        gold: '#d99a32',
+        gold: 'rgb(var(--brand-secondary) / <alpha-value>)',
       },
 
       fontSize: {
@@ -136,14 +143,19 @@ module.exports = {
       },
 
       typography: (theme) => ({
+        // The typography plugin writes these custom properties out as plain
+        // colour values, not through Tailwind's own utility pipeline, so
+        // they cannot take the `<alpha-value>` placeholder the way
+        // `colors.medical` does above - `rgb(var(--brand-900))` (no
+        // placeholder) is the literal value that plugin expects.
         DEFAULT: {
           css: {
             '--tw-prose-body': theme('colors.slate[600]'),
-            '--tw-prose-headings': theme('colors.medical[900]'),
-            '--tw-prose-links': theme('colors.medical[700]'),
-            '--tw-prose-bold': theme('colors.medical[900]'),
-            '--tw-prose-quotes': theme('colors.medical[800]'),
-            '--tw-prose-quote-borders': theme('colors.medical[200]'),
+            '--tw-prose-headings': 'rgb(var(--brand-900))',
+            '--tw-prose-links': 'rgb(var(--brand-700))',
+            '--tw-prose-bold': 'rgb(var(--brand-900))',
+            '--tw-prose-quotes': 'rgb(var(--brand-800))',
+            '--tw-prose-quote-borders': 'rgb(var(--brand-200))',
             maxWidth: '68ch',
             lineHeight: '1.75',
           },

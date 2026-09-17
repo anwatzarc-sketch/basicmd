@@ -11,7 +11,7 @@ declare(strict_types=1);
 use Aster\Domain\Enum\Locale;
 
 $settings   = $settings ?? null;
-$clinicName = $settings?->string('clinic_name', 'Aster Medical Center') ?? 'Aster Medical Center';
+$clinicName = $view->brand->businessName;
 
 if ($locale === Locale::AM && $settings !== null) {
     $clinicName = $settings->string('clinic_name_am', $clinicName);
@@ -40,18 +40,23 @@ $social = array_filter([
 
         <div class="lg:col-span-2">
             <div class="flex items-center gap-3">
-                <span class="grid h-11 w-11 place-items-center rounded-2xl bg-medical-700 text-xl font-extrabold text-white">A</span>
+                <?php if ($view->brand->logoImage !== null): ?>
+                    <img src="<?= $view->media($view->brand->logoImage) ?>" alt=""
+                         class="h-11 w-11 rounded-2xl object-cover">
+                <?php else: ?>
+                    <span class="grid h-11 w-11 place-items-center rounded-2xl bg-medical-700 text-xl font-extrabold text-white"><?= $view->e($view->brand->businessInitials) ?></span>
+                <?php endif; ?>
                 <b class="text-xl tracking-tight"><?= $view->e($clinicName) ?></b>
             </div>
             <p class="mt-4 max-w-md text-sm leading-7 text-white/60">
-                <?= $view->t('footer.about') ?>
+                <?= $view->t('footer.about', ['city' => $view->brand->mainCity]) ?>
             </p>
 
             <?php if ($social !== []): ?>
                 <div class="mt-5 flex flex-wrap gap-2">
                     <?php foreach ($social as $name => $url): ?>
                         <a href="<?= $view->href((string) $url) ?>" rel="noopener noreferrer" target="_blank"
-                           class="rounded-xl border border-white/15 px-3 py-1.5 text-xs font-bold text-white/70 transition hover:border-teal-300 hover:text-teal-300">
+                           class="rounded-xl border border-white/15 px-3 py-1.5 text-xs font-bold text-white/70 transition footer-accent-border-hover footer-accent-hover">
                             <?= $view->e($name) ?>
                         </a>
                     <?php endforeach; ?>
@@ -60,7 +65,7 @@ $social = array_filter([
         </div>
 
         <div>
-            <b class="text-sm font-bold uppercase tracking-wider text-teal-300"><?= $view->t('footer.explore') ?></b>
+            <b class="text-sm font-bold uppercase tracking-wider footer-accent"><?= $view->t('footer.explore') ?></b>
             <nav class="mt-4 grid gap-3 text-sm text-white/70" aria-label="Footer">
                 <a class="transition hover:text-white" href="<?= $view->url('services') ?>"><?= $view->t('nav.services') ?></a>
                 <a class="transition hover:text-white" href="<?= $view->url('doctors') ?>"><?= $view->t('nav.doctors') ?></a>
@@ -71,7 +76,7 @@ $social = array_filter([
         </div>
 
         <div>
-            <b class="text-sm font-bold uppercase tracking-wider text-teal-300"><?= $view->t('footer.contact') ?></b>
+            <b class="text-sm font-bold uppercase tracking-wider footer-accent"><?= $view->t('footer.contact') ?></b>
             <address class="mt-4 grid gap-3 text-sm not-italic text-white/70">
                 <?php if ($address !== ''): ?>
                     <span><?= $view->e($address) ?></span>

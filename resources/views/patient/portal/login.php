@@ -11,8 +11,13 @@
 declare(strict_types=1);
 ?>
 <div class="text-center">
-    <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-medical-700 text-2xl font-extrabold text-white shadow-brand">A</span>
-    <h1 class="mt-5 text-2xl font-extrabold text-medical-900">Aster Medical Center</h1>
+    <?php if ($view->brand->logoImage !== null): ?>
+        <img src="<?= $view->media($view->brand->logoImage) ?>" alt=""
+             class="mx-auto h-14 w-14 rounded-2xl object-cover shadow-brand">
+    <?php else: ?>
+        <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-medical-700 text-2xl font-extrabold text-white shadow-brand"><?= $view->e($view->brand->businessInitials) ?></span>
+    <?php endif; ?>
+    <h1 class="mt-5 text-2xl font-extrabold text-medical-900"><?= $view->e($view->brand->businessName) ?></h1>
     <p class="mt-1 text-sm text-slate-500">Patient portal</p>
 </div>
 

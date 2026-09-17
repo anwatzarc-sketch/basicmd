@@ -51,6 +51,8 @@ use Aster\Infrastructure\Security\PasswordHasher;
 use Aster\Infrastructure\Security\RateLimiter;
 use Aster\Infrastructure\Security\SessionManager;
 use Aster\Infrastructure\Storage\FileUploader;
+use Aster\Infrastructure\Support\BrandResolver;
+use Aster\Infrastructure\Support\BrandWriter;
 use Aster\Infrastructure\Support\Config;
 use Aster\Infrastructure\Support\Logger;
 use Aster\Presentation\Controller\Admin as AdminController;
@@ -215,6 +217,7 @@ $sitemap = new WebController\SitemapController(
     $container->get(DoctorRepository::class),
     $container->get(FileUploader::class),
     $container->get(SettingsRepository::class),
+    $container->get(BrandResolver::class),
 );
 
 $auth = $make(AdminController\AuthController::class, [$container->get(AuthService::class)]);
@@ -314,6 +317,13 @@ $wardsAdmin = $make(AdminController\WardLocationController::class, [
     $container->get(AuditLogger::class),
 ]);
 
+$brandAdmin = $make(AdminController\BrandController::class, [
+    $container->get(BrandResolver::class),
+    $container->get(BrandWriter::class),
+    $container->get(FileUploader::class),
+    $container->get(AuditLogger::class),
+]);
+
 $encountersAdmin = $make(AdminController\EncounterController::class, [
     $container->get(EncounterRepositoryInterface::class),
     $container->get(WardLocationRepositoryInterface::class),
@@ -388,6 +398,8 @@ foreach ([
     'prescriptions.view', 'prescriptions.write', 'prescriptions.dispense',
     // Role Management & Ward Locations (migration 008)
     'roles.manage', 'wards.manage',
+    // Brand & Theme (migration 010)
+    'brand.manage',
 ] as $permission) {
     $router->registerMiddleware('can:' . $permission, new Authorize($permission, $logger));
 }
@@ -453,7 +465,7 @@ $adminPath = $config->adminPath;
 $router->group($adminPath, [], static function (Router $r) use (
     $auth, $dashboard, $appointments, $payments, $doctorsAdmin, $catalog,
     $articlesAdmin, $inquiriesAdmin, $usersAdmin, $settingsAdmin,
-    $patientsAdmin, $encountersAdmin, $billingAdmin, $rolesAdmin, $wardsAdmin,
+    $patientsAdmin, $encountersAdmin, $billingAdmin, $rolesAdmin, $wardsAdmin, $brandAdmin,
     $publicStack, $publicForm, $adminStack, $adminForm
 ): void {
     // Authentication (no auth middleware, obviously)
@@ -564,6 +576,10 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->post('/wards', [$wardsAdmin, 'save'], [...$adminForm, 'can:wards.manage']);
     $r->get('/wards/{id:\d+}/edit', [$wardsAdmin, 'form'], [...$adminStack, 'can:wards.manage']);
     $r->post('/wards/{id:\d+}', [$wardsAdmin, 'save'], [...$adminForm, 'can:wards.manage']);
+
+    // Brand & Theme - one flat CompanyBrand.json, one edit screen.
+    $r->get('/brand', [$brandAdmin, 'index'], [...$adminStack, 'can:brand.manage']);
+    $r->post('/brand', [$brandAdmin, 'save'], [...$adminForm, 'can:brand.manage']);
 
     // Settings
     $r->get('/settings', [$settingsAdmin, 'index'], [...$adminStack, 'can:settings.view']);

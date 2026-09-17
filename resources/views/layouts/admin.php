@@ -41,6 +41,7 @@ $nav = [
     ['roles',        'Roles',            'roles.manage',       null, 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'],
     ['wards',        'Ward Locations',   'wards.manage',       null, 'M3 21h18M5 21V7l8-4v18M19 21V11l-6-4m-4 6h.01M9 16h.01'],
     ['settings/audit', 'Audit Logs',     'audit.view',         null, 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+    ['brand',        'Brand & Theme',    'brand.manage',       null, 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h10a2 2 0 012 2v3m-9 15l9-9m0 0a2.121 2.121 0 013 3l-9 9H9v-3z'],
     ['settings',     'Settings',         'settings.view',      null, 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'],
 ];
 
@@ -71,8 +72,8 @@ $isActive = static fn (string $path): bool => $path === $bestMatchPath;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <meta name="theme-color" content="#032423">
-    <title><?= $view->e(($meta['title'] ?? 'Admin') . ' | Aster Admin') ?></title>
+    <meta name="theme-color" content="rgb(<?= $view->e($view->brand->primary('950')) ?>)">
+    <title><?= $view->e(($meta['title'] ?? 'Admin') . ' | ' . $view->brand->businessName) ?></title>
     <meta name="csrf-token" content="<?= $view->e($view->csrfToken()) ?>">
     <link rel="icon" href="<?= $view->asset('assets/img/favicon.svg') ?>" type="image/svg+xml">
     <link rel="manifest" href="<?= $view->url('manifest.webmanifest') ?>">
@@ -82,6 +83,7 @@ $isActive = static fn (string $path): bool => $path === $bestMatchPath;
 
     <?php if ($view->config->assetsBuilt()): ?>
         <link rel="stylesheet" href="<?= $view->asset('dist/css/app.min.css') ?>">
+        <?= $view->partial('partials/brand-vars', ['view' => $view, 'cspNonce' => $cspNonce]) ?>
     <?php else: ?>
         <script src="https://cdn.tailwindcss.com"></script>
         <script nonce="<?= $view->e($cspNonce) ?>">
@@ -103,10 +105,15 @@ $isActive = static fn (string $path): bool => $path === $bestMatchPath;
         <div>
             <div class="flex items-center justify-between px-5 py-5">
                 <a href="<?= $view->adminUrl('') ?>" class="flex items-center gap-3">
-                    <span class="grid h-9 w-9 place-items-center rounded-xl bg-medical-700 text-base font-extrabold">A</span>
+                    <?php if ($view->brand->logoImage !== null): ?>
+                        <img src="<?= $view->media($view->brand->logoImage) ?>" alt=""
+                             class="h-9 w-9 rounded-xl object-cover">
+                    <?php else: ?>
+                        <span class="grid h-9 w-9 place-items-center rounded-xl bg-medical-700 text-base font-extrabold"><?= $view->e($view->brand->businessInitials) ?></span>
+                    <?php endif; ?>
                     <span class="leading-tight">
-                        <strong class="block text-sm font-extrabold">Aster Medical</strong>
-                        <small class="text-[10px] font-bold uppercase tracking-[0.16em] text-teal-300">Admin</small>
+                        <strong class="block text-sm font-extrabold"><?= $view->e($view->brand->businessName) ?></strong>
+                        <small class="text-[10px] font-bold uppercase tracking-[0.16em] footer-accent">Admin</small>
                     </span>
                 </a>
 
@@ -148,7 +155,7 @@ $isActive = static fn (string $path): bool => $path === $bestMatchPath;
                     </div>
                     <div class="min-w-0">
                         <p class="truncate text-xs font-bold text-white"><?= $view->e($user->fullName) ?></p>
-                        <p class="truncate text-[10px] font-medium text-teal-300"><?= $view->e($user->roleLabel) ?></p>
+                        <p class="truncate text-[10px] font-medium footer-accent"><?= $view->e($user->roleLabel) ?></p>
                     </div>
                 </div>
 

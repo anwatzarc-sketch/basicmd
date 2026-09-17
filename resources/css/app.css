@@ -40,6 +40,27 @@
   :root {
     color-scheme: light;
     --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #f1f5f9 50%, #e2e8f0 100%);
+
+    /* Brand palette defaults - CompanyBrand.json overrides these at runtime
+       via partials/brand-vars, which re-declares them on :root after this
+       stylesheet loads. Kept here too so the page is still on-brand before
+       that partial's <style> tag or if it is ever omitted. */
+    --brand-50: 239 252 251;
+    --brand-100: 216 247 244;
+    --brand-200: 179 237 232;
+    --brand-300: 130 222 215;
+    --brand-400: 75 196 189;
+    --brand-500: 15 143 137;
+    --brand-600: 8 123 119;
+    --brand-700: 5 100 96;
+    --brand-800: 12 74 71;
+    --brand-900: 6 59 58;
+    --brand-950: 3 36 35;
+    --brand-secondary: 217 154 50;
+    --brand-footer-bg: 3 36 35;
+    --brand-footer-text: 94 234 212;
+    --brand-header-text: 15 23 42;
+
     --glass-bg: rgba(255, 255, 255, 0.65);
     --glass-bg-hover: rgba(255, 255, 255, 0.85);
     --glass-border: rgba(255, 255, 255, 0.8);
@@ -372,14 +393,14 @@
     width: 6.75rem;
     height: 6.75rem;
     /* The signature detail: a gradient rim rather than a flat border. */
-    background: linear-gradient(135deg, theme('colors.gold'), theme('colors.medical.600'));
+    background: linear-gradient(135deg, rgb(var(--brand-secondary)), rgb(var(--brand-600)));
     box-shadow: 0 10px 24px -8px rgba(15, 23, 42, 0.45);
   }
 
   .doctor-card__photo {
     @apply h-full w-full rounded-full object-cover;
     border: 3px solid theme('colors.white');
-    background: theme('colors.medical.50');
+    background: rgb(var(--brand-50));
   }
 
   /* Initials stand in until a photo is uploaded, so the card never
@@ -388,7 +409,7 @@
     @apply grid h-full w-full place-items-center rounded-full text-2xl font-extrabold tracking-tight
            text-medical-800 dark:text-medical-100;
     border: 3px solid theme('colors.white');
-    background: linear-gradient(135deg, theme('colors.medical.50'), theme('colors.medical.100'));
+    background: linear-gradient(135deg, rgb(var(--brand-50)), rgb(var(--brand-100)));
   }
 
   .doctor-card__badge {
@@ -602,7 +623,7 @@
 
   .admin-nav-active {
     @apply bg-white/15 font-bold text-white shadow-inner;
-    border-left: 3px solid theme('colors.medical.300');
+    border-left: 3px solid rgb(var(--brand-300));
   }
 
   .stat-card {
@@ -688,6 +709,54 @@
 
   .faq summary::-webkit-details-marker {
     display: none;
+  }
+
+  /* Soft brand-tinted wash used behind hero-adjacent cards. Driven by
+     --brand-500 rather than the `from-medical-50 via-teal-50/30 to-white`
+     Tailwind arbitrary gradient it replaces, so it follows the configured
+     primary colour instead of a fixed shade. */
+  .hero-wash {
+    background-image: linear-gradient(
+      to bottom right,
+      rgb(var(--brand-50)),
+      rgb(var(--brand-500) / 0.08),
+      #fff
+    );
+  }
+
+  /* --- Footer accents ----------------------------------------------
+     Replaces the text-teal-300 / border-teal-300 utilities the public
+     footer used directly, so the footer's accent colour follows
+     --brand-footer-text (today's teal-300 by default) instead of being
+     pinned to Tailwind's teal palette. */
+  .footer-accent {
+    color: rgb(var(--brand-footer-text));
+  }
+
+  .footer-accent-hover:hover {
+    color: rgb(var(--brand-footer-text));
+  }
+
+  .footer-accent-border-hover:hover {
+    border-color: rgb(var(--brand-footer-text));
+  }
+
+  /* --- Brand & Theme admin preview ---------------------------------
+     The live colour-picker preview on the Brand & Theme screen sets
+     --preview-* via JS (CSSOM, not a template-authored style="" attribute)
+     so the swatch updates as staff type - the CSP's style-src has no
+     'unsafe-inline', so nothing here may fall back to an inline style
+     attribute in the markup itself. */
+  .brand-preview-surface {
+    background: var(--preview-background, #fff);
+  }
+
+  .brand-preview-primary {
+    background: var(--preview-primary, rgb(var(--brand-700)));
+  }
+
+  .brand-preview-body {
+    color: var(--preview-body, rgb(var(--brand-header-text)));
   }
 
   .prose-article {

@@ -110,7 +110,7 @@ final class HomeController extends Controller
             'settings' => $this->settings,
             'meta'     => [
                 'title'       => $this->seo->title('Privacy Policy', $this->currentLocale()),
-                'description' => 'How Aster Medical Center collects, uses and protects patient information.',
+                'description' => 'How ' . $this->view->brand->businessName . ' collects, uses and protects patient information.',
                 'canonical'   => $this->config->url('privacy'),
                 'noindex'     => false,
             ],
@@ -123,7 +123,7 @@ final class HomeController extends Controller
             'settings' => $this->settings,
             'meta'     => [
                 'title'       => $this->seo->title('Terms of Service', $this->currentLocale()),
-                'description' => 'Terms governing the use of the Aster Medical Center website and booking service.',
+                'description' => 'Terms governing the use of the ' . $this->view->brand->businessName . ' website and booking service.',
                 'canonical'   => $this->config->url('terms'),
             ],
         ]);

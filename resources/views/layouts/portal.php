@@ -23,9 +23,9 @@ declare(strict_types=1);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title><?= $view->e(($meta['title'] ?? 'My Portal') . ' | Aster Medical') ?></title>
+    <title><?= $view->e(($meta['title'] ?? 'My Portal') . ' | ' . $view->brand->businessName) ?></title>
     <meta name="csrf-token" content="<?= $view->e($view->csrfToken()) ?>">
-    <meta name="theme-color" content="#056460">
+    <meta name="theme-color" content="rgb(<?= $view->e($view->brand->primary('700')) ?>)">
     <link rel="icon" href="<?= $view->asset('assets/img/favicon.svg') ?>" type="image/svg+xml">
     <link rel="manifest" href="<?= $view->url('manifest.webmanifest') ?>">
     <link rel="apple-touch-icon" href="<?= $view->asset('assets/img/icons/apple-touch-icon.png') ?>">
@@ -34,6 +34,7 @@ declare(strict_types=1);
 
     <?php if ($view->config->assetsBuilt()): ?>
         <link rel="stylesheet" href="<?= $view->asset('dist/css/app.min.css') ?>">
+        <?= $view->partial('partials/brand-vars', ['view' => $view, 'cspNonce' => $cspNonce]) ?>
     <?php else: ?>
         <script src="https://cdn.tailwindcss.com"></script>
         <script nonce="<?= $view->e($cspNonce) ?>">
@@ -51,9 +52,14 @@ declare(strict_types=1);
 <header class="border-b border-slate-200 bg-white">
     <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
         <a href="<?= $view->url('patient/portal/dashboard') ?>" class="flex items-center gap-3">
-            <span class="grid h-9 w-9 place-items-center rounded-xl bg-medical-700 text-base font-extrabold text-white">A</span>
+            <?php if ($view->brand->logoImage !== null): ?>
+                <img src="<?= $view->media($view->brand->logoImage) ?>" alt=""
+                     class="h-9 w-9 rounded-xl object-cover">
+            <?php else: ?>
+                <span class="grid h-9 w-9 place-items-center rounded-xl bg-medical-700 text-base font-extrabold text-white"><?= $view->e($view->brand->businessInitials) ?></span>
+            <?php endif; ?>
             <span class="leading-tight">
-                <strong class="block text-sm font-extrabold text-medical-900">Aster Medical</strong>
+                <strong class="block text-sm font-extrabold text-medical-900"><?= $view->e($view->brand->businessName) ?></strong>
                 <small class="text-[10px] font-bold uppercase tracking-[0.16em] text-medical-600">My Portal</small>
             </span>
         </a>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Aster\Presentation\View;
 
 use Aster\Domain\Enum\Locale;
+use Aster\Domain\ValueObject\CompanyBrand;
 use Aster\Infrastructure\Security\Csrf;
 use Aster\Infrastructure\Support\Config;
 use Aster\Infrastructure\Support\Translator;
@@ -38,6 +39,7 @@ final class View
         private readonly string $viewPath,
         public readonly Translator $translator,
         public readonly Config $config,
+        public readonly CompanyBrand $brand,
         private readonly ?Csrf $csrf = null,
     ) {
     }

@@ -52,7 +52,7 @@ final class ContactController extends Controller
                     $this->view->translator->get('contact.title'),
                     $this->currentLocale(),
                 ),
-                'description' => 'Contact Aster Medical Center in Bole, Addis Ababa. Phone, email and enquiry form.',
+                'description' => 'Contact ' . $this->view->brand->businessName . ' in ' . $this->view->brand->mainCity . '. Phone, email and enquiry form.',
                 'canonical'   => $this->config->url('contact'),
             ],
         ]);

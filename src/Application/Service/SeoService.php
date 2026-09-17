@@ -9,6 +9,7 @@ use Aster\Domain\Entity\Doctor;
 use Aster\Domain\Entity\MedicalService;
 use Aster\Domain\Enum\Locale;
 use Aster\Infrastructure\Persistence\SettingsRepository;
+use Aster\Infrastructure\Support\BrandResolver;
 use Aster\Infrastructure\Support\Config;
 use Aster\Infrastructure\Support\Translator;
 use Aster\Presentation\View\HtmlSanitiser;
@@ -31,14 +32,23 @@ final readonly class SeoService
         private Config $config,
         private SettingsRepository $settings,
         private Translator $translator,
+        private BrandResolver $brand,
     ) {
     }
 
+    /**
+     * CompanyBrand.businessName already resolves JSON override -> Settings
+     * clinic_name -> Config::$appName, so it is the name for English. Amharic
+     * has its own Settings field (clinic_name_am) with no CompanyBrand
+     * equivalent, so it still layers on top when staff have set it.
+     */
     private function clinicName(Locale $locale): string
     {
+        $name = $this->brand->resolve()->businessName;
+
         return $locale === Locale::AM
-            ? $this->settings->string('clinic_name_am', $this->settings->string('clinic_name', $this->config->appName))
-            : $this->settings->string('clinic_name', $this->config->appName);
+            ? $this->settings->string('clinic_name_am', $name)
+            : $name;
     }
 
     /**
@@ -53,6 +63,7 @@ final readonly class SeoService
     {
         $phone     = $this->settings->string('phone_primary');
         $emergency = $this->settings->string('phone_emergency');
+        $brand     = $this->brand->resolve();
 
         $schema = [
             '@context'    => 'https://schema.org',
@@ -68,8 +79,8 @@ final readonly class SeoService
                 'streetAddress'   => $locale === Locale::AM
                     ? $this->settings->string('address_am', $this->settings->string('address'))
                     : $this->settings->string('address'),
-                'addressLocality' => 'Addis Ababa',
-                'addressRegion'   => 'Addis Ababa',
+                'addressLocality' => $brand->mainCity,
+                'addressRegion'   => $brand->mainCity,
                 'addressCountry'  => 'ET',
             ],
             'geo' => [
@@ -92,6 +103,14 @@ final readonly class SeoService
             'paymentAccepted'    => 'Cash, Bank Transfer, Telebirr, CBE Birr',
             'isAcceptingNewPatients' => true,
         ];
+
+        if ($brand->logoImage !== null) {
+            $schema['logo'] = $this->config->url('media/' . ltrim($brand->logoImage, '/'));
+        }
+
+        if ($brand->heroImage !== null) {
+            $schema['image'] = $this->config->url('media/' . ltrim($brand->heroImage, '/'));
+        }
 
         if ($phone !== '') {
             $schema['telephone'] = $phone;

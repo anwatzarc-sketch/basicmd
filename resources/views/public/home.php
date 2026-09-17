@@ -28,7 +28,7 @@ $emergency = $settings->string('phone_emergency', $phone);
 
     <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
         <div>
-            <span class="eyebrow"><?= $view->t('hero.eyebrow') ?></span>
+            <span class="eyebrow"><?= $view->t('hero.eyebrow', ['city' => $view->brand->mainCity]) ?></span>
 
             <h1 class="mt-5 text-4xl font-extrabold leading-[1.08] tracking-[-0.035em] text-medical-900 sm:text-5xl lg:text-6xl">
                 <?= $view->t('hero.title') ?>
@@ -78,8 +78,15 @@ $emergency = $settings->string('phone_emergency', $phone);
             </dl>
         </div>
 
-        <!-- Hero card: the four featured services, from the CMS. -->
+        <!-- Hero card: the configured hero image when set, else the four
+             featured services from the CMS. -->
         <div class="relative hidden lg:block">
+            <?php if ($view->brand->heroImage !== null): ?>
+                <div class="animate-float overflow-hidden rounded-[2rem] shadow-2xl shadow-medical-900/25">
+                    <img src="<?= $view->media($view->brand->heroImage) ?>" alt=""
+                         class="aspect-[4/5] w-full rounded-[2rem] object-cover">
+                </div>
+            <?php else: ?>
             <div class="animate-float overflow-hidden rounded-[2rem] bg-medical-900 p-3 shadow-2xl shadow-medical-900/25">
                 <div class="rounded-[1.5rem] bg-white/10 p-6 backdrop-blur-sm lg:p-8">
                     <div class="mb-6 flex items-center justify-between">
@@ -103,6 +110,7 @@ $emergency = $settings->string('phone_emergency', $phone);
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
 
             <div class="absolute -bottom-5 -left-4 flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl">
                 <div class="grid h-10 w-10 place-items-center rounded-xl bg-teal-50 text-lg font-bold text-teal-700" aria-hidden="true">&#10003;</div>
@@ -280,7 +288,7 @@ $emergency = $settings->string('phone_emergency', $phone);
 <!-- ========================== PACKAGES ========================== -->
 <?php if ($packages !== []): ?>
 <section id="packages" class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-    <div class="rounded-[2rem] bg-gradient-to-br from-medical-50 via-teal-50/30 to-white p-6 shadow-sm ring-1 ring-medical-100/80 sm:p-10 lg:p-12">
+    <div class="hero-wash rounded-[2rem] p-6 shadow-sm ring-1 ring-medical-100/80 sm:p-10 lg:p-12">
         <div class="grid items-start gap-10 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
                 <span class="eyebrow"><?= $view->t('packages.eyebrow') ?></span>

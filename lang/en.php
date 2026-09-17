@@ -33,7 +33,7 @@ return [
 
     // --- Hero ---------------------------------------------------------
     'hero' => [
-        'eyebrow'   => 'Trusted care | Addis Ababa',
+        'eyebrow'   => 'Trusted care | :city',
         'title'     => 'Exceptional healthcare.',
         'title_accent' => 'Designed around you.',
         'lead'      => 'Compassionate specialists, modern diagnostics and coordinated care for you and your family.',
@@ -121,7 +121,7 @@ return [
 
     'locations' => [
         'eyebrow'  => 'Visit us',
-        'title'    => 'Conveniently located in Addis Ababa.',
+        'title'    => 'Conveniently located in :city.',
         'address'  => 'Address',
         'phone'    => 'Phone',
         'email'    => 'Email',
@@ -398,7 +398,7 @@ return [
 
     // --- Footer -------------------------------------------------------
     'footer' => [
-        'about'     => 'Professional, compassionate healthcare in Addis Ababa. Modern facilities and expert clinical staff, designed around your wellbeing.',
+        'about'     => 'Professional, compassionate healthcare in :city. Modern facilities and expert clinical staff, designed around your wellbeing.',
         'explore'   => 'Explore',
         'contact'   => 'Contact',
         'legal'     => 'Legal',
