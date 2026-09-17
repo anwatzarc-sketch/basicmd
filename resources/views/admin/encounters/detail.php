@@ -19,7 +19,7 @@ declare(strict_types=1);
 use Aster\Domain\Enum\EncounterStatus;
 use Aster\Domain\Enum\VisitType;
 
-$adminPath = $view->config->adminPath;
+$adminPath = '/' . $view->config->adminPath;
 $encounterPath = $adminPath . '/encounters/' . $encounter->id;
 ?>
 <div class="grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">

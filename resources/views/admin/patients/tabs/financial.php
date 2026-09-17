@@ -24,7 +24,7 @@
 
 declare(strict_types=1);
 
-$adminPath = $view->config->adminPath;
+$adminPath = '/' . $view->config->adminPath;
 ?>
 <div class="grid gap-4 sm:grid-cols-3">
     <div class="stat-card">

@@ -16,7 +16,12 @@ declare(strict_types=1);
 
 use Aster\Presentation\Support\PatientDetailAccess;
 
-$adminPath   = $view->config->adminPath;
+// Leading slash matters: config->adminPath is "admin", and every link
+// below is built from it. Without it the browser resolves them RELATIVE
+// to the current page (/admin/patients/1583/) and you get
+// /admin/patients/admin/patients/1583 - a 404 that looks like a
+// permissions problem. layouts/admin.php does the same thing.
+$adminPath   = '/' . $view->config->adminPath;
 $patientPath = $adminPath . '/patients/' . $patient->id;
 ?>
 <div class="grid gap-6">

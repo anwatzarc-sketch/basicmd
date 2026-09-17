@@ -13,7 +13,7 @@
 declare(strict_types=1);
 
 $t         = $view->translator;
-$adminPath = $view->config->adminPath;
+$adminPath = '/' . $view->config->adminPath;
 
 $query = static function (array $overrides) use ($filters): string {
     $params = array_filter(array_merge($filters, $overrides), static fn ($v): bool => $v !== null && $v !== '');

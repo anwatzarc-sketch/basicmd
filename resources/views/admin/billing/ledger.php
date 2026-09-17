@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 use Aster\Domain\Enum\VisitType;
 
-$adminPath = $view->config->adminPath;
+$adminPath = '/' . $view->config->adminPath;
 
 // The ledger's mode column is OPD/IPD only (FRS 7.1 has no ER value) - an
 // ER encounter's charges are logged under whichever the patient's stay

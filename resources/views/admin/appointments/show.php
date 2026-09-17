@@ -21,7 +21,7 @@ use Aster\Domain\Enum\AppointmentStatus;
 use Aster\Domain\Enum\Gender;
 
 $t         = $view->translator;
-$adminPath = $view->config->adminPath;
+$adminPath = '/' . $view->config->adminPath;
 $ethiopian = $appointment->ethiopianDate();
 ?>
 

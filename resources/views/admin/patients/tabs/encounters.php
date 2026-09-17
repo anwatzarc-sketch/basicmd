@@ -10,7 +10,7 @@
 
 declare(strict_types=1);
 
-$adminPath = $view->config->adminPath;
+$adminPath = '/' . $view->config->adminPath;
 ?>
 <h2 class="text-base font-extrabold text-medical-900">Encounter history</h2>
 

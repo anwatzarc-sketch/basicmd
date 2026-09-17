@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 use Aster\Presentation\Support\PatientDetailAccess;
 
-$adminPath     = $view->config->adminPath;
+$adminPath     = '/' . $view->config->adminPath;
 $allowedTypes  = PatientDetailAccess::allowedNoteTypes($user);
 ?>
 <div class="grid gap-6 xl:grid-cols-[1.4fr_0.6fr]">

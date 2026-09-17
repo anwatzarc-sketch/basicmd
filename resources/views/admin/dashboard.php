@@ -25,7 +25,7 @@
 declare(strict_types=1);
 
 $t         = $view->translator;
-$adminPath = $view->config->adminPath;
+$adminPath = '/' . $view->config->adminPath;
 
 /** Inline sparkline, drawn as an SVG polyline with soft gradient backdrop area. */
 $sparkline = static function (array $series, string $stroke = '#0f8f89'): string {
