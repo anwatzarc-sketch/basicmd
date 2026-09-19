@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Enum\FinancialClearanceStatus;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\ValueObject\VisitNumber;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Enum\FinancialClearanceStatus;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\ValueObject\VisitNumber;
 use DateTimeImmutable;
 
 /**

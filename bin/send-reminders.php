@@ -23,11 +23,11 @@ declare(strict_types=1);
  * keeps the scheduling logic independent of SMTP availability.
  */
 
-use Aster\Application\Service\NotificationService;
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Application\Service\NotificationService;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Logger;
 
 if (PHP_SAPI !== 'cli') {
     http_response_code(403);

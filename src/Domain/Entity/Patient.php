@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\BloodGroup;
-use Aster\Domain\Enum\Gender;
-use Aster\Domain\ValueObject\PatientId;
-use Aster\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Domain\Enum\BloodGroup;
+use MediCareMini\Domain\Enum\Gender;
+use MediCareMini\Domain\ValueObject\PatientId;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
 use DateTimeImmutable;
 
 /**

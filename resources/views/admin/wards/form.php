@@ -2,8 +2,8 @@
 /**
  * Ward Locations - register/edit a bed (spec §4.5).
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\WardLocation|null $ward
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\WardLocation|null $ward
  */
 
 declare(strict_types=1);

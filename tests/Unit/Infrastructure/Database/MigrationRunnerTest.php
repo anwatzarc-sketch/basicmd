@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Unit\Infrastructure\Database;
+namespace MediCareMini\Tests\Unit\Infrastructure\Database;
 
-use Aster\Infrastructure\Database\MigrationRunner;
-use Aster\Tests\Support\MigrationTestCase;
+use MediCareMini\Infrastructure\Database\MigrationRunner;
+use MediCareMini\Tests\Support\MigrationTestCase;
 use RuntimeException;
 
 final class MigrationRunnerTest extends MigrationTestCase

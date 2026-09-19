@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Unit\Presentation\Support;
+namespace MediCareMini\Tests\Unit\Presentation\Support;
 
-use Aster\Presentation\Support\Code39;
+use MediCareMini\Presentation\Support\Code39;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -4,8 +4,8 @@
  * on create - there is no pre-existing role to prefill from, so the
  * checklist starts with nothing ticked.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Role|null $role
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Role|null $role
  * @var list<array{id:int, slug:string}> $permissions
  * @var array<string, list<string>> $groups domain label => sorted permission slugs
  */

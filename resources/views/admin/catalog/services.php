@@ -2,9 +2,9 @@
 /**
  * Service catalogue management.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\MedicalService> $services
- * @var list<\Aster\Domain\Enum\ServiceCategory> $categories
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\MedicalService> $services
+ * @var list<\MediCareMini\Domain\Enum\ServiceCategory> $categories
  * @var array $filters
  */
 

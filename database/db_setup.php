@@ -12,10 +12,10 @@ try {
     ]);
 
     // 2. Create Database
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS `aster_medical` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    echo "✔ Database 'aster_medical' created successfully.\n";
+    $pdo->exec("CREATE DATABASE IF NOT EXISTS `MediCareMini` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+    echo "✔ Database 'MediCareMini' created successfully.\n";
 
-    $pdo->exec("USE `aster_medical`");
+    $pdo->exec("USE `MediCareMini`");
 
     // 3. Import Schema
     $schemaFile = __DIR__ . '/schema.sql';

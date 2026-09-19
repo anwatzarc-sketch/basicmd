@@ -5,7 +5,7 @@
  * role="alert" so assistive technology announces the result of an action
  * (booking confirmed, payment rejected) without the user hunting for it.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var list<array{type:string, message:string}> $flash
  */
 

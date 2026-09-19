@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\ReceivablePaymentMethod;
-use Aster\Domain\ValueObject\Balance;
+use MediCareMini\Domain\Enum\ReceivablePaymentMethod;
+use MediCareMini\Domain\ValueObject\Balance;
 use DateTimeImmutable;
 
 /**

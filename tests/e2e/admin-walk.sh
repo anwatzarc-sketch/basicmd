@@ -3,7 +3,7 @@
 set -u
 
 B=http://127.0.0.1:8000
-JAR=/tmp/aster-cookies.txt
+JAR=/tmp/medicaremini-cookies.txt
 PASS=0
 FAIL=0
 
@@ -51,7 +51,7 @@ rm -f "$JAR"
 curl -s -c "$JAR" "$B/admin/login" -o /tmp/login.html
 TOK=$(token_from /tmp/login.html)
 CODE=$(curl -s -b "$JAR" -c "$JAR" -o /tmp/bad.html -w "%{http_code}" -X POST "$B/admin/login" \
-  --data-urlencode "_token=$TOK" --data-urlencode "email=admin@astermedical.et" \
+  --data-urlencode "_token=$TOK" --data-urlencode "email=admin@medicaremini.radiants.net.et" \
   --data-urlencode "password=wrong-password")
 [ "$CODE" = "302" ] && ok "bad password redirects back (no session granted)" || bad "unexpected $CODE"
 curl -s -b "$JAR" -o /tmp/d.html -w "%{http_code}" "$B/admin/dashboard" | grep -q 302 \
@@ -64,7 +64,7 @@ echo "=================================================="
 rm -f "$JAR"
 curl -s -c "$JAR" "$B/admin/login" -o /dev/null
 CODE=$(curl -s -b "$JAR" -o /dev/null -w "%{http_code}" -X POST "$B/admin/login" \
-  --data-urlencode "email=admin@astermedical.et" --data-urlencode "password=Test#Passw0rd!2026")
+  --data-urlencode "email=admin@medicaremini.radiants.net.et" --data-urlencode "password=Test#Passw0rd!2026")
 [ "$CODE" = "419" ] && ok "missing CSRF token -> 419" || bad "missing CSRF token -> $CODE (want 419)"
 
 CODE=$(curl -s -b "$JAR" -o /dev/null -w "%{http_code}" -X POST "$B/contact" \
@@ -75,7 +75,7 @@ echo ""
 echo "=================================================="
 echo " 3. SUPER ADMIN sees everything"
 echo "=================================================="
-login_as "admin@astermedical.et" "super_admin"
+login_as "admin@medicaremini.radiants.net.et" "super_admin"
 expect "/admin/dashboard"        200 "dashboard"
 expect "/admin/appointments"     200 "appointments"
 expect "/admin/appointments/day" 200 "day sheet"
@@ -106,7 +106,7 @@ echo ""
 echo "=================================================="
 echo " 4. RECEPTIONIST is fenced out of finance & users"
 echo "=================================================="
-login_as "reception@astermedical.et" "receptionist"
+login_as "reception@medicaremini.radiants.net.et" "receptionist"
 expect "/admin/appointments" 200 "appointments  (allowed)"
 expect "/admin/payments"     200 "payments read (allowed)"
 expect "/admin/inquiries"    200 "enquiries     (allowed)"
@@ -118,7 +118,7 @@ echo ""
 echo "=================================================="
 echo " 5. ACCOUNTANT is fenced out of scheduling & CMS"
 echo "=================================================="
-login_as "finance@astermedical.et" "accountant"
+login_as "finance@medicaremini.radiants.net.et" "accountant"
 expect "/admin/payments"           200 "payments      (allowed)"
 expect "/admin/payments/methods"   200 "methods       (allowed)"
 expect "/admin/appointments"       200 "appointments read (allowed)"
@@ -131,7 +131,7 @@ echo ""
 echo "=================================================="
 echo " 6. PHYSICIAN sees only their own clinical view"
 echo "=================================================="
-login_as "dawit@astermedical.et" "physician"
+login_as "dawit@medicaremini.radiants.net.et" "physician"
 expect "/admin/dashboard"    200 "clinical dashboard (allowed)"
 expect "/admin/appointments" 200 "own queue          (allowed)"
 expect "/admin/articles"     200 "articles           (allowed)"

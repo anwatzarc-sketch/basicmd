@@ -8,16 +8,16 @@
  * PatientDetailAccess::canDispense()'s own docblock for why physician
  * and nurse are the roles that can flip it.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User $user
- * @var \Aster\Domain\Entity\Patient $patient
- * @var list<\Aster\Domain\Entity\EPrescription> $prescriptions
- * @var list<\Aster\Domain\Entity\Encounter> $openEncounters
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User $user
+ * @var \MediCareMini\Domain\Entity\Patient $patient
+ * @var list<\MediCareMini\Domain\Entity\EPrescription> $prescriptions
+ * @var list<\MediCareMini\Domain\Entity\Encounter> $openEncounters
  */
 
 declare(strict_types=1);
 
-use Aster\Presentation\Support\PatientDetailAccess;
+use MediCareMini\Presentation\Support\PatientDetailAccess;
 
 $adminPath = '/' . $view->config->adminPath;
 ?>

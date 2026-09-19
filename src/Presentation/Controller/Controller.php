@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller;
+namespace MediCareMini\Presentation\Controller;
 
-use Aster\Domain\Entity\Patient;
-use Aster\Domain\Entity\User;
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Domain\Entity\Patient;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * Shared controller behaviour.
@@ -47,7 +47,7 @@ abstract class Controller
             'errors'    => $this->session->errors(),
             'locale'    => $this->currentLocale(),
             'user'      => $this->currentUser(),
-            'cspNonce'  => $GLOBALS['aster_csp_nonce'] ?? '',
+            'cspNonce'  => $GLOBALS['medicaremini_csp_nonce'] ?? '',
         ]);
 
         return Response::html($this->view->renderWithLayout($template, $layout, $data));
@@ -132,7 +132,7 @@ abstract class Controller
 
     protected function currentUser(): ?User
     {
-        $user = $GLOBALS['aster_current_user'] ?? null;
+        $user = $GLOBALS['medicaremini_current_user'] ?? null;
 
         return $user instanceof User ? $user : null;
     }
@@ -145,7 +145,7 @@ abstract class Controller
         if ($user === null) {
             // Unreachable behind Authenticate; failing loudly beats a
             // null-dereference further down.
-            throw \Aster\Domain\Exception\HttpException::unauthorized();
+            throw \MediCareMini\Domain\Exception\HttpException::unauthorized();
         }
 
         return $user;
@@ -153,7 +153,7 @@ abstract class Controller
 
     protected function currentPatient(): ?Patient
     {
-        $patient = $GLOBALS['aster_current_patient'] ?? null;
+        $patient = $GLOBALS['medicaremini_current_patient'] ?? null;
 
         return $patient instanceof Patient ? $patient : null;
     }
@@ -166,7 +166,7 @@ abstract class Controller
         if ($patient === null) {
             // Unreachable behind AuthenticatePatient; failing loudly beats a
             // null-dereference further down.
-            throw \Aster\Domain\Exception\HttpException::unauthorized();
+            throw \MediCareMini\Domain\Exception\HttpException::unauthorized();
         }
 
         return $patient;
@@ -174,7 +174,7 @@ abstract class Controller
 
     protected function currentLocale(): Locale
     {
-        $locale = $GLOBALS['aster_locale'] ?? null;
+        $locale = $GLOBALS['medicaremini_locale'] ?? null;
 
         return $locale instanceof Locale ? $locale : $this->config->defaultLocale;
     }

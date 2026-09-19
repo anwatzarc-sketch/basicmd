@@ -2,11 +2,11 @@
 /**
  * Single service page.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale $locale
- * @var \Aster\Domain\Entity\MedicalService $service
- * @var list<\Aster\Domain\Entity\Doctor> $doctors
- * @var list<\Aster\Domain\Entity\MedicalService> $related
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale $locale
+ * @var \MediCareMini\Domain\Entity\MedicalService $service
+ * @var list<\MediCareMini\Domain\Entity\Doctor> $doctors
+ * @var list<\MediCareMini\Domain\Entity\MedicalService> $related
  */
 
 declare(strict_types=1);

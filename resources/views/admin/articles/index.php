@@ -5,9 +5,9 @@
  * Only transitions the state machine permits are offered, and publishing is
  * hidden entirely from users without articles.publish.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\Article> $articles
- * @var list<\Aster\Domain\Enum\ArticleStatus> $statuses
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\Article> $articles
+ * @var list<\MediCareMini\Domain\Enum\ArticleStatus> $statuses
  * @var array $filters
  * @var array<string,int|bool> $pagination
  * @var bool $canPublish
@@ -15,8 +15,8 @@
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\ArticleStatus;
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\ArticleStatus;
+use MediCareMini\Domain\Enum\Locale;
 
 $t         = $view->translator;
 $adminPath = '/' . $view->config->adminPath;
@@ -24,7 +24,7 @@ $adminPath = '/' . $view->config->adminPath;
 // Which languages this article is actually readable in. English is the base
 // column and therefore always present; the rest are listed only when both a
 // headline and a body have been translated.
-$languages = static function (\Aster\Domain\Entity\Article $article): string {
+$languages = static function (\MediCareMini\Domain\Entity\Article $article): string {
     $tags = ['EN'];
 
     foreach ([Locale::AM, Locale::OM] as $locale) {

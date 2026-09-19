@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Http;
+namespace MediCareMini\Presentation\Http;
 
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\Locale;
 
 /**
  * Immutable snapshot of the incoming HTTP request.
@@ -285,7 +285,7 @@ final class Request
             return Locale::fromRequest($this->input('lang'), $default);
         }
 
-        $cookie = $this->cookies['aster_locale'] ?? null;
+        $cookie = $this->cookies['medicaremini_locale'] ?? null;
 
         return Locale::fromRequest(is_string($cookie) ? $cookie : null, $default);
     }

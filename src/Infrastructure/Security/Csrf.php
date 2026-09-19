@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Security;
+namespace MediCareMini\Infrastructure\Security;
 
 /**
  * Synchroniser-token CSRF protection.

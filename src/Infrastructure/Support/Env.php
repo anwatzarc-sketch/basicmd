@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Support;
+namespace MediCareMini\Infrastructure\Support;
 
 use RuntimeException;
 

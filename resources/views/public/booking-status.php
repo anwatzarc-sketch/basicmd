@@ -5,9 +5,9 @@
  * Reached straight after booking and from the confirmation email. Printable,
  * because patients bring a printout to reception.
  *
- * @var \Aster\Presentation\View\View      $view
- * @var \Aster\Domain\Entity\Appointment   $appointment
- * @var list<\Aster\Domain\Entity\Payment> $payments
+ * @var \MediCareMini\Presentation\View\View      $view
+ * @var \MediCareMini\Domain\Entity\Appointment   $appointment
+ * @var list<\MediCareMini\Domain\Entity\Payment> $payments
  * @var bool                               $canCancel
  */
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Support;
+namespace MediCareMini\Presentation\Support;
 
-use Aster\Domain\Entity\User;
-use Aster\Domain\Enum\ClinicalNoteType;
-use Aster\Domain\Enum\DiagnosticCategory;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Enum\ClinicalNoteType;
+use MediCareMini\Domain\Enum\DiagnosticCategory;
 
 /**
  * The single visibility/capability map behind the Patient Detail shell

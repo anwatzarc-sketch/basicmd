@@ -11,64 +11,64 @@ declare(strict_types=1);
  * the .env file all sit outside public/.
  */
 
-use Aster\Application\Service\AuthService;
-use Aster\Application\Service\BookingService;
-use Aster\Application\Service\DashboardService;
-use Aster\Application\Service\PatientAuthService;
-use Aster\Application\Service\PaymentService;
-use Aster\Application\Service\SeoService;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Repository\NumberSequenceInterface;
-use Aster\Domain\Repository\PrescriptionRepositoryInterface;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\Services\BillingService;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\Services\PatientDeduplicationService;
-use Aster\Domain\Services\QueueService;
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Container\Container;
-use Aster\Infrastructure\Mail\MailQueue;
-use Aster\Infrastructure\Mail\Mailer;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Persistence\ArticleRepository;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\FacilityRepository;
-use Aster\Infrastructure\Persistence\InquiryRepository;
-use Aster\Infrastructure\Persistence\PackageRepository;
-use Aster\Infrastructure\Persistence\PatientRepository;
-use Aster\Infrastructure\Persistence\PaymentRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Security\Csrf;
-use Aster\Infrastructure\Security\PasswordHasher;
-use Aster\Infrastructure\Security\RateLimiter;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Storage\FileUploader;
-use Aster\Infrastructure\Support\BrandResolver;
-use Aster\Infrastructure\Support\BrandWriter;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Logger;
-use Aster\Presentation\Controller\Admin as AdminController;
-use Aster\Presentation\Controller\Patient as PatientPortalController;
-use Aster\Presentation\Controller\Web as WebController;
-use Aster\Presentation\Http\ErrorHandler;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\Http\Router;
-use Aster\Presentation\Middleware\Authenticate;
-use Aster\Presentation\Middleware\AuthenticatePatient;
-use Aster\Presentation\Middleware\Authorize;
-use Aster\Presentation\Middleware\SecurityHeaders;
-use Aster\Presentation\Middleware\SetLocale;
-use Aster\Presentation\Middleware\VerifyCsrf;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\AuthService;
+use MediCareMini\Application\Service\BookingService;
+use MediCareMini\Application\Service\DashboardService;
+use MediCareMini\Application\Service\PatientAuthService;
+use MediCareMini\Application\Service\PaymentService;
+use MediCareMini\Application\Service\SeoService;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Repository\ClinicalNoteRepositoryInterface;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Repository\NumberSequenceInterface;
+use MediCareMini\Domain\Repository\PrescriptionRepositoryInterface;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\Services\BillingService;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\Services\PatientDeduplicationService;
+use MediCareMini\Domain\Services\QueueService;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Container\Container;
+use MediCareMini\Infrastructure\Mail\MailQueue;
+use MediCareMini\Infrastructure\Mail\Mailer;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Persistence\ArticleRepository;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\FacilityRepository;
+use MediCareMini\Infrastructure\Persistence\InquiryRepository;
+use MediCareMini\Infrastructure\Persistence\PackageRepository;
+use MediCareMini\Infrastructure\Persistence\PatientRepository;
+use MediCareMini\Infrastructure\Persistence\PaymentRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Security\Csrf;
+use MediCareMini\Infrastructure\Security\PasswordHasher;
+use MediCareMini\Infrastructure\Security\RateLimiter;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Storage\FileUploader;
+use MediCareMini\Infrastructure\Support\BrandResolver;
+use MediCareMini\Infrastructure\Support\BrandWriter;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Logger;
+use MediCareMini\Presentation\Controller\Admin as AdminController;
+use MediCareMini\Presentation\Controller\Patient as PatientPortalController;
+use MediCareMini\Presentation\Controller\Web as WebController;
+use MediCareMini\Presentation\Http\ErrorHandler;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\Http\Router;
+use MediCareMini\Presentation\Middleware\Authenticate;
+use MediCareMini\Presentation\Middleware\AuthenticatePatient;
+use MediCareMini\Presentation\Middleware\Authorize;
+use MediCareMini\Presentation\Middleware\SecurityHeaders;
+use MediCareMini\Presentation\Middleware\SetLocale;
+use MediCareMini\Presentation\Middleware\VerifyCsrf;
+use MediCareMini\Presentation\View\View;
 
 $basePath = dirname(__DIR__);
 
@@ -114,7 +114,7 @@ try {
 } catch (Throwable $e) {
     // Before the logger exists there is nowhere to record this, so the
     // message goes to PHP's own error log and the visitor sees nothing.
-    error_log('Aster boot failure: ' . $e->getMessage());
+    error_log('MediCareMini boot failure: ' . $e->getMessage());
     http_response_code(503);
     header('Content-Type: text/html; charset=UTF-8');
     echo '<!doctype html><meta charset="utf-8"><title>Service unavailable</title>'
@@ -148,7 +148,7 @@ if ($config->isProduction() && $trustedHosts !== [] && !in_array($request->host(
 }
 
 // One CSP nonce per request, shared with the templates.
-$GLOBALS['aster_csp_nonce'] = SecurityHeaders::generateNonce();
+$GLOBALS['medicaremini_csp_nonce'] = SecurityHeaders::generateNonce();
 
 /** @var SessionManager $session */
 $session = $container->get(SessionManager::class);
@@ -202,7 +202,7 @@ $content = $make(WebController\ContentController::class, [
 
 $contact = $make(WebController\ContactController::class, [
     $container->get(InquiryRepository::class),
-    $container->get(\Aster\Application\Service\NotificationService::class),
+    $container->get(\MediCareMini\Application\Service\NotificationService::class),
     $container->get(SettingsRepository::class),
     $container->get(RateLimiter::class),
     $container->get(AuditLogger::class),
@@ -211,7 +211,7 @@ $contact = $make(WebController\ContactController::class, [
 ]);
 
 $chat = $make(WebController\ChatController::class, [
-    $container->get(\Aster\Application\Service\ChatService::class),
+    $container->get(\MediCareMini\Application\Service\ChatService::class),
     $container->get(RateLimiter::class),
 ]);
 
@@ -282,7 +282,7 @@ $inquiriesAdmin = $make(AdminController\InquiryController::class, [
 $usersAdmin = $make(AdminController\UserController::class, [
     $container->get(UserRepository::class),
     $container->get(DoctorRepository::class),
-    $container->get(\Aster\Infrastructure\Persistence\RoleRepository::class),
+    $container->get(\MediCareMini\Infrastructure\Persistence\RoleRepository::class),
     $container->get(PasswordHasher::class),
     $container->get(AuditLogger::class),
 ]);
@@ -307,19 +307,19 @@ $patientsAdmin = $make(AdminController\PatientController::class, [
     $container->get(LedgerRepositoryInterface::class),
     $container->get(ReceivablePaymentRepositoryInterface::class),
     $container->get(AuditLogger::class),
-    $container->get(\Aster\Domain\Services\WardScopeService::class),
-    $container->get(\Aster\Application\Service\LabReportService::class),
+    $container->get(\MediCareMini\Domain\Services\WardScopeService::class),
+    $container->get(\MediCareMini\Application\Service\LabReportService::class),
 ]);
 
 $rolesAdmin = $make(AdminController\RoleController::class, [
-    $container->get(\Aster\Infrastructure\Persistence\RoleRepository::class),
+    $container->get(\MediCareMini\Infrastructure\Persistence\RoleRepository::class),
     $container->get(UserRepository::class),
-    $container->get(\Aster\Infrastructure\Persistence\WardLocationRepository::class),
+    $container->get(\MediCareMini\Infrastructure\Persistence\WardLocationRepository::class),
     $container->get(AuditLogger::class),
 ]);
 
 $wardsAdmin = $make(AdminController\WardLocationController::class, [
-    $container->get(\Aster\Infrastructure\Persistence\WardLocationRepository::class),
+    $container->get(\MediCareMini\Infrastructure\Persistence\WardLocationRepository::class),
     $container->get(AuditLogger::class),
 ]);
 
@@ -353,12 +353,12 @@ $billingAdmin = $make(AdminController\BillingController::class, [
 
 $labAdmin = $make(AdminController\LabController::class, [
     $container->get(DiagnosticOrderRepositoryInterface::class),
-    $container->get(\Aster\Domain\Repository\LabCatalogRepositoryInterface::class),
+    $container->get(\MediCareMini\Domain\Repository\LabCatalogRepositoryInterface::class),
     $container->get(EncounterRepositoryInterface::class),
-    $container->get(\Aster\Application\Service\LabReportService::class),
+    $container->get(\MediCareMini\Application\Service\LabReportService::class),
     $container->get(SettingsRepository::class),
     $container->get(AuditLogger::class),
-    $container->get(\Aster\Domain\Services\WardScopeService::class),
+    $container->get(\MediCareMini\Domain\Services\WardScopeService::class),
 ]);
 
 $patientPortal = $make(PatientPortalController\PortalController::class, [
@@ -375,7 +375,7 @@ $patientPortal = $make(PatientPortalController\PortalController::class, [
 $router = new Router();
 
 $router->registerMiddleware('headers', new SecurityHeaders($config));
-$router->registerMiddleware('locale', new SetLocale($container->get(\Aster\Infrastructure\Support\Translator::class), $config));
+$router->registerMiddleware('locale', new SetLocale($container->get(\MediCareMini\Infrastructure\Support\Translator::class), $config));
 $router->registerMiddleware('csrf', new VerifyCsrf($container->get(Csrf::class), $logger));
 $router->registerMiddleware('auth', new Authenticate(
     $container->get(AuthService::class),

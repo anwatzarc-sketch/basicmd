@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /**
  * schema.org type emitted as JSON-LD for an article.

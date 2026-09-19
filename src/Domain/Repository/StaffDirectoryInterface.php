@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
 /**
  * The one staff-account fact EncounterService needs: whether a given user

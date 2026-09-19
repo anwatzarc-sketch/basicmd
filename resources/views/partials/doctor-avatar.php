@@ -22,7 +22,7 @@
  * adjacent text, so the SVG is hidden from assistive technology rather than
  * announcing "image" on every card in a directory.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string                        $class
  */
 

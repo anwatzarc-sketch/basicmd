@@ -10,8 +10,8 @@
  * Inactive panels are listed, greyed, rather than hidden - a retired
  * panel still explains the reports already printed under it.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\LabPanel> $panels
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\LabPanel> $panels
  * @var bool $canManage
  */
 

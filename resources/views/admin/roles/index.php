@@ -2,8 +2,8 @@
 /**
  * Role Management - list (spec §4.2).
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\Role> $roles
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\Role> $roles
  */
 
 declare(strict_types=1);

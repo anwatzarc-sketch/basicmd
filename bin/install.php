@@ -17,12 +17,12 @@ declare(strict_types=1);
  * or to a log.
  */
 
-use Aster\Domain\Enum\UserRole;
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Persistence\Database;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Security\PasswordHasher;
-use Aster\Infrastructure\Support\Config;
+use MediCareMini\Domain\Enum\UserRole;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Security\PasswordHasher;
+use MediCareMini\Infrastructure\Support\Config;
 
 if (PHP_SAPI !== 'cli') {
     http_response_code(403);
@@ -106,7 +106,7 @@ $askSecret = static function (string $prompt) use ($line, $paint): string {
 // ---------------------------------------------------------------------
 
 $line();
-$line($paint('  Aster Medical Center - Installer', C_BOLD));
+$line($paint('  MediCareMini - Installer', C_BOLD));
 $line($paint('  ' . str_repeat('=', 48), C_DIM));
 $line();
 
@@ -327,7 +327,7 @@ if (!$users->isEmpty()) {
         try {
             PasswordHasher::assertStrong($password);
         } catch (Throwable $e) {
-            foreach ((array) ($e instanceof \Aster\Domain\Exception\ValidationException ? $e->all() : [$e->getMessage()]) as $problem) {
+            foreach ((array) ($e instanceof \MediCareMini\Domain\Exception\ValidationException ? $e->all() : [$e->getMessage()]) as $problem) {
                 $line($paint('       - ' . $problem, C_RED));
             }
 

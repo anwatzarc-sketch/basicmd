@@ -2,30 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Application\Service\LabReportService;
-use Aster\Domain\Entity\DiagnosticOrder;
-use Aster\Domain\Entity\Encounter;
-use Aster\Domain\Entity\User;
-use Aster\Domain\Enum\DiagnosticCategory;
-use Aster\Domain\Enum\DiagnosticStatus;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LabCatalogRepositoryInterface;
-use Aster\Domain\Services\WardScopeService;
-use Aster\Domain\ValueObject\VisitNumber;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\Database;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\Support\PatientDetailAccess;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\LabReportService;
+use MediCareMini\Domain\Entity\DiagnosticOrder;
+use MediCareMini\Domain\Entity\Encounter;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Enum\DiagnosticCategory;
+use MediCareMini\Domain\Enum\DiagnosticStatus;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LabCatalogRepositoryInterface;
+use MediCareMini\Domain\Services\WardScopeService;
+use MediCareMini\Domain\ValueObject\VisitNumber;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\Support\PatientDetailAccess;
+use MediCareMini\Presentation\View\View;
 use DateTimeImmutable;
 use PDOException;
 

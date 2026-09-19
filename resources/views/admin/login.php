@@ -2,7 +2,7 @@
 /**
  * Staff sign-in.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string $return
  * @var array<string,string> $old
  * @var array<string,string> $errors
@@ -12,7 +12,7 @@ declare(strict_types=1);
 ?>
 <div class="text-center">
     <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-medical-700 text-2xl font-extrabold text-white shadow-brand">A</span>
-    <h1 class="mt-5 text-2xl font-extrabold text-medical-900">Aster Medical Center</h1>
+    <h1 class="mt-5 text-2xl font-extrabold text-medical-900">MediCareMini</h1>
     <p class="mt-1 text-sm text-slate-500">Staff portal</p>
 </div>
 

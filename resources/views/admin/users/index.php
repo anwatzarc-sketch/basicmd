@@ -2,11 +2,11 @@
 /**
  * Staff account list.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User $user       the signed-in administrator
- * @var list<\Aster\Domain\Entity\User> $users
- * @var list<\Aster\Domain\Entity\Role> $roles
- * @var list<\Aster\Domain\Enum\UserStatus> $statuses
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User $user       the signed-in administrator
+ * @var list<\MediCareMini\Domain\Entity\User> $users
+ * @var list<\MediCareMini\Domain\Entity\Role> $roles
+ * @var list<\MediCareMini\Domain\Enum\UserStatus> $statuses
  * @var array<string,int> $counts
  * @var array $filters
  */

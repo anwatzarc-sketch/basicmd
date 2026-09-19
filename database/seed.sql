@@ -1,5 +1,5 @@
 -- =====================================================================
---  ASTER MEDICAL CENTER - SEED DATA
+--  MEDICAREMINI - SEED DATA
 --  Run AFTER schema.sql.
 --
 --  NOTE: no `users` rows are seeded on purpose. Shipping a known
@@ -242,19 +242,19 @@ INSERT INTO `payment_methods`
   (`channel`,`provider`,`provider_am`,`account_name`,`account_number`,`branch`,`instructions`,`instructions_am`,`requires_proof`,`status`,`sort_order`)
 VALUES
   ('bank_transfer','Commercial Bank of Ethiopia','የኢትዮጵያ ንግድ ባንክ',
-   'Aster Medical Center PLC','1000XXXXXXXXX','Bole Branch, Addis Ababa',
+   'MediCareMini PLC','1000XXXXXXXXX','Bole Branch, Addis Ababa',
    'Transfer the amount to the CBE account above, then upload a clear photo of the deposit slip. Write your booking reference in the transfer reason field so our finance team can match it quickly.',
    'ከላይ ወደተጠቀሰው የኢትዮጵያ ንግድ ባንክ ሒሳብ ገንዘቡን ያስተላልፉ፤ ከዚያም የደረሰኙን ግልጽ ፎቶ ይጫኑ። የፋይናንስ ቡድናችን በቀላሉ እንዲያገናኘው የቀጠሮ መለያዎን በማስተላለፊያው ምክንያት ሳጥን ውስጥ ይጻፉ።',
    1,'active',10),
 
   ('mobile_money','Telebirr','ቴሌብር',
-   'Aster Medical Center','+251911123456',NULL,
+   'MediCareMini','+251911123456',NULL,
    'Send the amount via Telebirr to the merchant number above. After the transaction completes, upload the Telebirr confirmation screenshot showing the transaction ID.',
    'ከላይ ወደተጠቀሰው የነጋዴ ቁጥር በቴሌብር ገንዘቡን ይላኩ። ክፍያው ከተጠናቀቀ በኋላ የግብይት መለያውን የሚያሳየውን የቴሌብር ማረጋገጫ ስክሪንሾት ይጫኑ።',
    1,'active',20),
 
   ('bank_transfer','Dashen Bank','ዳሽን ባንክ',
-   'Aster Medical Center PLC','0000XXXXXXXXX','Bole Medhanialem Branch',
+   'MediCareMini PLC','0000XXXXXXXXX','Bole Medhanialem Branch',
    'Transfer to the Dashen account above and upload the bank slip. Mobile-banking screenshots are accepted as long as the transaction reference and amount are legible.',
    'ከላይ ወደተጠቀሰው የዳሽን ባንክ ሒሳብ አስተላልፈው የባንክ ደረሰኙን ይጫኑ። የግብይት መለያውና መጠኑ በግልጽ እስከታየ ድረስ የሞባይል ባንኪንግ ስክሪንሾት ተቀባይነት አለው።',
    1,'active',30),
@@ -278,8 +278,8 @@ VALUES
    '<p>Cardiovascular disease is rising across urban Ethiopia, and Addis Ababa is no exception. The encouraging news is that most of the risk is modifiable through habits you control every day.</p><h2>1. Move for 30 minutes, five days a week</h2><p>Brisk walking counts. Consistency matters more than intensity, and a daily walk around your neighbourhood is enough to lower resting blood pressure over several weeks.</p><h2>2. Reduce added salt</h2><p>High sodium intake is one of the strongest drivers of hypertension. Cook with herbs and spices, and taste food before reaching for the salt shaker.</p><h2>3. Do not smoke, and avoid second-hand smoke</h2><p>Smoking damages the lining of your arteries within minutes. Quitting lowers heart-attack risk measurably within the first year.</p><h2>4. Sleep seven to eight hours</h2><p>Chronic short sleep raises blood pressure and disrupts glucose control. Keep a consistent bedtime, even on weekends.</p><h2>5. Know your numbers</h2><p>Blood pressure, cholesterol and blood sugar are silent until they are not. An annual screening catches problems while they are still easy to treat.</p><p><strong>When to see a doctor:</strong> chest pain, breathlessness on mild exertion, palpitations or swelling in the ankles warrant prompt assessment.</p>',
    '<p>የልብና የደም ቧንቧ ሕመም በኢትዮጵያ ከተሞች እየጨመረ ነው፤ አዲስ አበባም ከዚህ የተለየች አይደለችም። የሚያበረታታው ነገር አብዛኛው አደጋ በየዕለቱ በሚቆጣጠሩት ልማዶች ሊቀየር መቻሉ ነው።</p><h2>1. በሳምንት አምስት ቀን ለ30 ደቂቃ ይንቀሳቀሱ</h2><p>ፈጣን የእግር ጉዞ ይበቃል። ከጥንካሬው ይልቅ ቀጣይነቱ ይበልጣል፤ በአካባቢዎ የሚያደርጉት ዕለታዊ የእግር ጉዞ በጥቂት ሳምንታት ውስጥ የደም ግፊትዎን ይቀንሳል።</p><h2>2. የተጨመረ ጨውን ይቀንሱ</h2><p>ከፍተኛ የጨው መጠን ለደም ግፊት ዋነኛ መንስኤ ነው። በቅመማ ቅመም ያብስሉ፤ ጨው ከመጨመርዎ በፊት ምግቡን ይቅመሱ።</p><h2>3. ሲጋራ አያጨሱ፤ ከጭስም ይራቁ</h2><p>ማጨስ በደቂቃዎች ውስጥ የደም ቧንቧዎችዎን ውስጠኛ ክፍል ይጎዳል። ማቆም በመጀመሪያው ዓመት ውስጥ የልብ ድካም አደጋን በሚታይ ሁኔታ ይቀንሳል።</p><h2>4. ከሰባት እስከ ስምንት ሰዓት ይተኙ</h2><p>ተደጋጋሚ የእንቅልፍ እጥረት የደም ግፊትን ከፍ ያደርጋል፤ የስኳር ቁጥጥርንም ያዛባል። በሳምንቱ መጨረሻም ቢሆን ወጥ የሆነ የመኝታ ሰዓት ይያዙ።</p><h2>5. ቁጥሮችዎን ይወቁ</h2><p>የደም ግፊት፣ ኮሌስትሮልና የደም ስኳር ምልክት ሳያሳዩ ይቆያሉ። ዓመታዊ ምርመራ ችግሮችን በቀላሉ በሚታከሙበት ጊዜ ይይዛቸዋል።</p><p><strong>ሐኪም መቼ ማየት እንዳለብዎ፡</strong> የደረት ሕመም፣ በቀላል እንቅስቃሴ መተንፈስ መቸገር፣ የልብ ምት መዛባት ወይም የቁርጭምጭሚት እብጠት ካለ በፍጥነት ምርመራ ያስፈልጋል።</p>',
    2,1,'MedicalWebPage',
-   'Heart Health Tips from Cardiologists in Addis Ababa | Aster Medical',
-   'Five evidence-based habits that protect your heart, explained by the cardiology team at Aster Medical Center in Bole, Addis Ababa.',
+   'Heart Health Tips from Cardiologists in Addis Ababa | MediCareMini',
+   'Five evidence-based habits that protect your heart, explained by the cardiology team at MediCareMini in Bole, Addis Ababa.',
    'heart health addis ababa',5,482,'published','2026-02-10 09:00:00'),
 
   ('When Should Your Child See a Pediatrician?','ልጅዎን ወደ ሕፃናት ሐኪም መቼ ማምጣት አለብዎ?','when-should-your-child-see-a-pediatrician','Family Health',
@@ -288,7 +288,7 @@ VALUES
    '<p>Most childhood illnesses resolve on their own. Knowing which symptoms need a clinician saves you an unnecessary trip - and, more importantly, makes sure you do not delay one that matters.</p><h2>Seek care the same day</h2><ul><li>Fever above 38&deg;C in an infant under three months</li><li>Difficulty breathing, rapid breathing, or visible chest retraction</li><li>Persistent vomiting preventing fluid intake</li><li>Signs of dehydration: dry mouth, no tears, reduced wet nappies</li><li>A rash that does not fade when pressed</li><li>Unusual drowsiness or difficulty waking</li></ul><h2>Book a routine appointment</h2><ul><li>Cough lasting more than two weeks</li><li>Recurring ear pain</li><li>Poor weight gain or appetite change over weeks</li><li>Concerns about developmental milestones</li></ul><h2>Well-child visits still matter</h2><p>Even a healthy child benefits from scheduled checkups. They keep immunisations on track and catch growth or hearing issues before they affect schooling.</p>',
    '<p>አብዛኞቹ የሕፃናት ሕመሞች በራሳቸው ይድናሉ። የትኞቹ ምልክቶች ሐኪም እንደሚያስፈልጋቸው ማወቅ አላስፈላጊ ጉዞን ያስቀርልዎታል፤ ከዚያም በላይ አስፈላጊ የሆነውን ጉብኝት እንዳያዘገዩ ያደርጋል።</p><h2>በዚያኑ ዕለት ሕክምና ይፈልጉ</h2><ul><li>ከሦስት ወር በታች በሆነ ሕፃን ከ38 ዲግሪ ሴልሺየስ በላይ ትኩሳት</li><li>የመተንፈስ ችግር፣ ፈጣን ትንፋሽ ወይም የደረት መጎተት</li><li>ፈሳሽ እንዳይወስድ የሚያግድ ተደጋጋሚ ትውከት</li><li>የውሃ እጥረት ምልክቶች፡ የደረቀ አፍ፣ እንባ አለመኖር፣ የሽንት መቀነስ</li><li>ሲጫኑት የማይጠፋ ሽፍታ</li><li>ያልተለመደ እንቅልፍ ወይም ለመንቃት መቸገር</li></ul><h2>መደበኛ ቀጠሮ ይያዙ</h2><ul><li>ከሁለት ሳምንት በላይ የቆየ ሳል</li><li>ተደጋጋሚ የጆሮ ሕመም</li><li>የክብደት አለመጨመር ወይም የምግብ ፍላጎት መቀነስ</li><li>ስለ ዕድገት ደረጃዎች ስጋት ካለ</li></ul><h2>መደበኛ የጤና ክትትል አሁንም ያስፈልጋል</h2><p>ጤናማ ልጅም ቢሆን ከመደበኛ ምርመራ ይጠቀማል። ክትባቶች በሰዓቱ እንዲሰጡ ያደርጋል፤ የዕድገትና የመስማት ችግሮችንም ትምህርት ላይ ተጽዕኖ ከማሳደራቸው በፊት ይይዛል።</p>',
    3,3,'MedicalWebPage',
-   'When to Take Your Child to a Pediatrician | Aster Medical Center',
+   'When to Take Your Child to a Pediatrician | MediCareMini',
    'Clear guidance from Addis Ababa pediatricians on the childhood symptoms that need same-day care versus a routine appointment.',
    'pediatrician addis ababa',4,310,'published','2026-02-18 09:00:00'),
 
@@ -298,7 +298,7 @@ VALUES
    '<p>Hypertension, diabetes and high cholesterol share an inconvenient trait: they cause no symptoms until damage is already done. A screening appointment is the only reliable way to find them early.</p><h2>What a screening actually covers</h2><p>A baseline check measures blood pressure, fasting glucose, a lipid panel and kidney function, alongside a physical examination and a conversation about family history and lifestyle.</p><h2>How often?</h2><p>Healthy adults under 40 benefit from a check every two years. From 40 onwards - or earlier with a family history of heart disease or diabetes - annual screening is the sensible default.</p><h2>The economics of early detection</h2><p>Treating established complications costs many times more than managing a risk factor caught early. Prevention is the cheapest medicine available.</p>',
    '<p>የደም ግፊት፣ የስኳር ሕመምና ከፍተኛ ኮሌስትሮል አንድ የሚያመሳስላቸው ነገር አለ፡ ጉዳቱ እስኪደርስ ድረስ ምንም ምልክት አያሳዩም። እነሱን ቀድሞ ለማግኘት ብቸኛው አስተማማኝ መንገድ የምርመራ ቀጠሮ ነው።</p><h2>ምርመራው ምን ይሸፍናል</h2><p>መሰረታዊ ምርመራ የደም ግፊትን፣ የጾም የደም ስኳርን፣ የስብ መጠንንና የኩላሊት ሥራን ይለካል፤ ከአካላዊ ምርመራና ስለ ቤተሰብ ታሪክና የአኗኗር ዘይቤ ከሚደረግ ውይይት ጋር።</p><h2>በምን ያህል ጊዜ?</h2><p>ከ40 ዓመት በታች ያሉ ጤናማ አዋቂዎች በየሁለት ዓመቱ ምርመራ ማድረግ ይጠቅማቸዋል። ከ40 ዓመት በኋላ - ወይም የልብ ሕመም ወይም የስኳር የቤተሰብ ታሪክ ካለ ቀደም ብሎ - ዓመታዊ ምርመራ ተገቢ ነው።</p><h2>ቀድሞ የማወቅ ኢኮኖሚያዊ ጥቅም</h2><p>የተከሰቱ ችግሮችን ማከም ቀድሞ የተያዘን የአደጋ ምክንያት ከመቆጣጠር ብዙ እጥፍ ያስወጣል። መከላከል በጣም ርካሹ መድኃኒት ነው።</p>',
    1,2,'MedicalWebPage',
-   'Annual Health Screening in Addis Ababa | Aster Medical Center',
+   'Annual Health Screening in Addis Ababa | MediCareMini',
    'Why preventive health screening saves money and lives, and how often adults in Addis Ababa should book a checkup.',
    'health screening addis ababa',4,198,'published','2026-03-01 09:00:00'),
 
@@ -309,7 +309,7 @@ VALUES
    '<p>የደም ግፊት እንዳለብዎ መታወቁ ቀውስ አይደለም - መረጃ ነው። በቀጣዮቹ ወራት በዚህ መረጃ የሚያደርጉት ነገር ከምርመራው ዕለት ቁጥር ይልቅ የረጅም ጊዜ አደጋዎን ይወስናል።</p><h2>መድኃኒትዎን በታዘዘው መሠረት ይውሰዱ</h2><p>የደም ግፊት መድኃኒት የሚሰራው በሰውነትዎ ውስጥ እስካለ ድረስ ብቻ ነው። ጥሩ ስለተሰማዎት ማቆም ቁጥጥር የሚጠፋበት ዋነኛ ምክንያት ነው።</p><h2>የማይታየውን ጨው ይጠንቀቁ</h2><p>የተዘጋጁ ምግቦች፣ የሾርባ ኩቦችና የተቀመሙ ሥጋዎች ከጨው ማንኪያ በላይ ሶዲየም ይይዛሉ። ባሉበት ቦታ መለያዎችን ያንብቡ፤ በተቻለ መጠንም ትኩስ ምግብ ያብስሉ።</p><h2>በቤት ውስጥ ይለኩ</h2><p>በሳምንት ሁለት ጊዜ በተመሳሳይ ሰዓት የሚጠቀሙት የቤት መለኪያ፣ ተጣድፈውና ተጨንቀው በክሊኒክ ከሚወሰድ አንድ ንባብ ይልቅ ለሐኪምዎ በጣም የተሻለ መረጃ ይሰጣል።</p><h2>ንባቦችዎን ወደ እያንዳንዱ ቀጠሮ ይዘው ይምጡ</h2><p>የተጻፈ መዝገብ ሐኪምዎ በግምት ሳይሆን በማስረጃ ላይ ተመስርቶ ሕክምናዎን እንዲያስተካክል ያስችለዋል።</p>',
    2,1,'MedicalCondition',
    'Managing High Blood Pressure | Hypertension Care in Addis Ababa',
-   'How to keep hypertension controlled day to day, from the cardiology team at Aster Medical Center, Bole, Addis Ababa.',
+   'How to keep hypertension controlled day to day, from the cardiology team at MediCareMini, Bole, Addis Ababa.',
    'high blood pressure treatment ethiopia',5,0,'draft',NULL);
 
 -- ---------------------------------------------------------------------
@@ -317,9 +317,9 @@ VALUES
 --  `is_public = 1` marks values safe to render in public templates.
 -- ---------------------------------------------------------------------
 INSERT INTO `system_settings` (`setting_key`,`value`,`group_name`,`value_type`,`label`,`is_public`) VALUES
-  ('clinic_name','Aster Medical Center','general','string','Clinic name',1),
-  ('clinic_name_am','አስቴር ሕክምና ማዕከል','general','string','Clinic name (Amharic)',1),
-  ('clinic_name_om','Wiirtuu Yaalaa Aster','general','string','Clinic name (Afaan Oromo)',1),
+  ('clinic_name','MediCareMini','general','string','Clinic name',1),
+  ('clinic_name_am','MediCareMini ሕክምና ማዕከል','general','string','Clinic name (Amharic)',1),
+  ('clinic_name_om','Wiirtuu Yaalaa MediCareMini','general','string','Clinic name (Afaan Oromo)',1),
   ('tagline','Exceptional healthcare. Designed around you.','general','string','Tagline',1),
   ('tagline_am','ልዩ የሕክምና አገልግሎት። ለእርስዎ ተዘጋጅቶ የቀረበ።','general','string','Tagline (Amharic)',1),
   ('tagline_om','Tajaajila fayyaa olaanaa. Isin irratti kan xiyyeeffate.','general','string','Tagline (Afaan Oromo)',1),
@@ -329,8 +329,8 @@ INSERT INTO `system_settings` (`setting_key`,`value`,`group_name`,`value_type`,`
   ('phone_primary','+251911123456','contact','string','Primary phone',1),
   ('phone_secondary','+251116000000','contact','string','Secondary phone',1),
   ('phone_emergency','+251911999000','contact','string','Emergency hotline',1),
-  ('email_public','info@pyramid.biz.et','contact','string','Public email',1),
-  ('email_admin_notify','frontdesk@pyramid.biz.et','notifications','string','Internal notification inbox',0),
+  ('email_public','info@medicaremini.radiants.net.et','contact','string','Public email',1),
+  ('email_admin_notify','frontdesk@medicaremini.radiants.net.et','notifications','string','Internal notification inbox',0),
   ('operating_hours','Mon-Sat: 08:00 - 18:00 | Emergency 24/7','contact','string','Operating hours',1),
   ('operating_hours_am','ሰኞ-ቅዳሜ፡ 08:00 - 18:00 | ድንገተኛ አደጋ 24/7','contact','string','Operating hours (Amharic)',1),
   ('operating_hours_om','Wiixata-Sanbata: 08:00 - 18:00 | Ariifachiisaa 24/7','contact','string','Operating hours (Afaan Oromo)',1),

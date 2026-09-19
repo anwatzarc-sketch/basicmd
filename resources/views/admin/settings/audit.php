@@ -6,7 +6,7 @@
  * Append-only: there is no edit or delete action here by design. The trail is
  * the record of who did what, and a trail that can be altered is not one.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var list<array<string,mixed>> $entries
  * @var list<string> $targetTypes
  * @var array $filters

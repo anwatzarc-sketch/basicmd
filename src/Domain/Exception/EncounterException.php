@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Exception;
+namespace MediCareMini\Domain\Exception;
 
-use Aster\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Enum\EncounterStatus;
 use RuntimeException;
 
 /**

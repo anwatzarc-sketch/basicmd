@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\WardLocation;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\Entity\WardLocation;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
 
 final class WardLocationRepository implements WardLocationRepositoryInterface
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Middleware;
+namespace MediCareMini\Presentation\Middleware;
 
-use Aster\Application\Service\PatientAuthService;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
+use MediCareMini\Application\Service\PatientAuthService;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
 
 /**
  * Requires a signed-in patient (FRS 11.1: "Patient portal routes must
@@ -17,9 +17,9 @@ use Aster\Presentation\Http\Response;
  * Deliberately the mirror of Authenticate, not a variant of it: it
  * validates and writes to the session's PATIENT identity slot only
  * (SessionManager::validatePatientSession()/loginPatient()/patientId()),
- * and caches the resolved Patient onto $GLOBALS['aster_current_patient'] -
- * a different global from staff's aster_current_user. Authorize's `can:`
- * checks read aster_current_user exclusively, so a patient session can
+ * and caches the resolved Patient onto $GLOBALS['medicaremini_current_patient'] -
+ * a different global from staff's medicaremini_current_user. Authorize's `can:`
+ * checks read medicaremini_current_user exclusively, so a patient session can
  * never satisfy one; this middleware never touches that global at all,
  * which is what makes that true by construction rather than by a check
  * someone has to remember to add.
@@ -50,7 +50,7 @@ final readonly class AuthenticatePatient
             return $this->redirectToLogin($request);
         }
 
-        $GLOBALS['aster_current_patient'] = $patient;
+        $GLOBALS['medicaremini_current_patient'] = $patient;
 
         return $next($request)->withoutCache();
     }

@@ -431,13 +431,13 @@ return [
     'email' => [
         'greeting'     => 'ውድ :name፣',
         'signoff'      => 'ከሰላምታ ጋር፣',
-        'team'         => 'የአስቴር ሕክምና ማዕከል ቡድን',
+        'team'         => 'የMediCareMini ሕክምና ማዕከል ቡድን',
         'auto_note'    => 'ይህ በራስ ሰር የተላከ መልእክት ነው። እባክዎ በቀጥታ አይመልሱ።',
         'contact_note' => 'ጥያቄ አለዎት? በ :phone ይደውሉ ወይም ወደ :email ይጻፉ።',
 
         'booked_subject' => 'ቀጠሮዎ ተይዟል - :ref',
         'booked_heading' => 'ቀጠሮዎ ተይዟል',
-        'booked_intro'   => 'አስቴር ሕክምና ማዕከልን ስለመረጡ እናመሰግናለን። የቀጠሮዎ ዝርዝር ከዚህ በታች ይገኛል።',
+        'booked_intro'   => 'MediCareMini ሕክምና ማዕከልን ስለመረጡ እናመሰግናለን። የቀጠሮዎ ዝርዝር ከዚህ በታች ይገኛል።',
 
         'reminder_subject' => 'ማስታወሻ፡ ነገ ቀጠሮ አለዎት - :ref',
         'reminder_heading' => 'ነገ ቀጠሮ አለዎት',

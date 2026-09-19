@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\ClinicalNoteType;
+use MediCareMini\Domain\Enum\ClinicalNoteType;
 use DateTimeImmutable;
 
 /**

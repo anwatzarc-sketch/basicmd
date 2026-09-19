@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Services;
+namespace MediCareMini\Tests\Feature\Services;
 
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Enum\LedgerCategory;
-use Aster\Domain\Enum\LedgerMode;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Exception\EncounterException;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Services\BillingService;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\Services\QueueService;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Enum\LedgerCategory;
+use MediCareMini\Domain\Enum\LedgerMode;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Exception\EncounterException;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Services\BillingService;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\Services\QueueService;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 
 /** FRS 8.4 / AC-FIN-08: walk-out preserves charges and debt. */
 final class QueueServiceTest extends DatabaseTestCase

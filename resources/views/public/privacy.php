@@ -6,7 +6,7 @@
  * what this application actually does - it is not boilerplate, and it should
  * be reviewed by the clinic's legal adviser before launch.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  */
 
 declare(strict_types=1);

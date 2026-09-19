@@ -262,5 +262,9 @@ echo "    1. Set the domain's document root to the bundle's  public/  directory\
 echo "    2. cp .env.example .env   and fill in DB_*, MAIL_*, APP_URL, TRUSTED_HOSTS\n";
 echo "    3. chmod -R 775 storage/  (owner: the web user)\n";
 echo "    4. Import database/schema.sql then database/seed.sql\n";
-echo "    5. php bin/install.php\n";
-echo "    6. Add the two scheduled tasks (see README)\n\n";
+// schema.sql is the Phase I baseline only; every table added since -
+// patients, encounters, clinical notes, the ledger, the laboratory -
+// lives in database/migrations/, so this step is not optional.
+echo "    5. php bin/migrate.php   (applies database/migrations/*.sql)\n";
+echo "    6. php bin/install.php\n";
+echo "    7. Add the two scheduled tasks (see README)\n\n";

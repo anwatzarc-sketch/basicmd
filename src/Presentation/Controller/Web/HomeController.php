@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Web;
+namespace MediCareMini\Presentation\Controller\Web;
 
-use Aster\Application\Service\SeoService;
-use Aster\Infrastructure\Persistence\ArticleRepository;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\FacilityRepository;
-use Aster\Infrastructure\Persistence\PackageRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\SeoService;
+use MediCareMini\Infrastructure\Persistence\ArticleRepository;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\FacilityRepository;
+use MediCareMini\Infrastructure\Persistence\PackageRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * The public homepage.

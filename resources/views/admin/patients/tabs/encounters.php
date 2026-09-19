@@ -3,9 +3,9 @@
  * Patient Detail - Encounters tab: full history (spec §4.3, receptionist's
  * check-in/registration context).
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Patient $patient
- * @var list<\Aster\Domain\Entity\Encounter> $encounters
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Patient $patient
+ * @var list<\MediCareMini\Domain\Entity\Encounter> $encounters
  */
 
 declare(strict_types=1);

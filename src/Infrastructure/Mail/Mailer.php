@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Mail;
+namespace MediCareMini\Infrastructure\Mail;
 
-use Aster\Infrastructure\Support\Env;
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Infrastructure\Support\Env;
+use MediCareMini\Infrastructure\Support\Logger;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -40,8 +40,8 @@ final class Mailer
         private readonly string $logDirectory,
     ) {
         $this->driver      = strtolower(Env::get('MAIL_MAILER', 'smtp') ?? 'smtp');
-        $this->fromAddress = Env::get('MAIL_FROM_ADDRESS', 'no-reply@pyramid.biz.et') ?? 'no-reply@pyramid.biz.et';
-        $this->fromName    = Env::get('MAIL_FROM_NAME', 'Aster Medical Center') ?? 'Aster Medical Center';
+        $this->fromAddress = Env::get('MAIL_FROM_ADDRESS', 'no-reply@medicaremini.radiants.net.et') ?? 'no-reply@medicaremini.radiants.net.et';
+        $this->fromName    = Env::get('MAIL_FROM_NAME', 'MediCareMini') ?? 'MediCareMini';
         $this->replyTo     = Env::get('MAIL_REPLY_TO') ?: null;
         $this->catchAll    = Env::get('MAIL_CATCH_ALL') ?: null;
     }

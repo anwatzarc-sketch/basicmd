@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
 /**
  * Transaction boundary port. A Domain service orchestrates a multi-step

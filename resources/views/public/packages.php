@@ -2,9 +2,9 @@
 /**
  * Health package pricing page - the prepaid screening products.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale $locale
- * @var list<\Aster\Domain\Entity\HealthPackage> $packages
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale $locale
+ * @var list<\MediCareMini\Domain\Entity\HealthPackage> $packages
  */
 
 declare(strict_types=1);

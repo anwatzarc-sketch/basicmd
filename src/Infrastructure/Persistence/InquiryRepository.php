@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\ContactInquiry;
-use Aster\Domain\Enum\InquiryStatus;
+use MediCareMini\Domain\Entity\ContactInquiry;
+use MediCareMini\Domain\Enum\InquiryStatus;
 
 final class InquiryRepository
 {

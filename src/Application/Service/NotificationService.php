@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\Entity\Appointment;
-use Aster\Domain\Entity\ContactInquiry;
-use Aster\Domain\Entity\Payment;
-use Aster\Domain\Enum\Locale;
-use Aster\Infrastructure\Mail\MailQueue;
-use Aster\Infrastructure\Mail\MailRenderer;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Env;
-use Aster\Infrastructure\Support\Translator;
+use MediCareMini\Domain\Entity\Appointment;
+use MediCareMini\Domain\Entity\ContactInquiry;
+use MediCareMini\Domain\Entity\Payment;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Infrastructure\Mail\MailQueue;
+use MediCareMini\Infrastructure\Mail\MailRenderer;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Env;
+use MediCareMini\Infrastructure\Support\Translator;
 
 /**
  * Composes every patient- and staff-facing email.
@@ -521,7 +521,7 @@ final readonly class NotificationService
             $this->queue->enqueue(
                 mailable:    'staff_new_booking',
                 toEmail:     $inbox,
-                toName:      'Aster Front Desk',
+                toName:      'MediCareMini Front Desk',
                 subject:     '[New booking] ' . $appointment->reference->value . ' - ' . $appointment->patientName,
                 htmlBody:    $html,
                 relatedType: 'appointment',
@@ -574,7 +574,7 @@ final readonly class NotificationService
             $this->queue->enqueue(
                 mailable:    'staff_new_proof',
                 toEmail:     $inbox,
-                toName:      'Aster Finance',
+                toName:      'MediCareMini Finance',
                 subject:     '[Payment review] ' . $appointment->reference->value . ' - ' . $t->money($payment->amount),
                 htmlBody:    $html,
                 relatedType: 'payment',
@@ -612,7 +612,7 @@ final readonly class NotificationService
             $this->queue->enqueue(
                 mailable:    'staff_new_inquiry',
                 toEmail:     $inbox,
-                toName:      'Aster Front Desk',
+                toName:      'MediCareMini Front Desk',
                 subject:     '[Enquiry] ' . $inquiry->subjectLine() . ' - ' . $inquiry->name,
                 htmlBody:    $html,
                 relatedType: 'inquiry',

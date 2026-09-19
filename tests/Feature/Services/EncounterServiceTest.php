@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Services;
+namespace MediCareMini\Tests\Feature\Services;
 
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Exception\EncounterException;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\ValueObject\VisitNumber;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Exception\EncounterException;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\ValueObject\VisitNumber;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 
 /**
  * FRS AC-ENC-01 through AC-ENC-10, exercised against the real database.
@@ -24,7 +24,7 @@ final class EncounterServiceTest extends DatabaseTestCase
     private EncounterService $service;
     private WardLocationRepositoryInterface $wardLocations;
 
-    /** An existing seeded physician - id 4, dawit@astermedical.et. */
+    /** An existing seeded physician - id 4, dawit@medicaremini.radiants.net.et. */
     private const int PHYSICIAN_ID = 4;
 
     protected function setUp(): void
@@ -227,7 +227,7 @@ final class EncounterServiceTest extends DatabaseTestCase
         $bedId     = $this->makeLocation();
         $started   = $this->service->startEncounter($patientId, VisitType::OPD, null);
 
-        // User id 2 is reception@astermedical.et (receptionist), not a physician.
+        // User id 2 is reception@medicaremini.radiants.net.et (receptionist), not a physician.
         $this->expectException(EncounterException::class);
         $this->service->upgradeOpdToIpd($started->patientVisitNumber, $bedId, 2);
     }

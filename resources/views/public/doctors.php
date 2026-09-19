@@ -2,9 +2,9 @@
 /**
  * Doctor directory with specialty filtering.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale $locale
- * @var list<\Aster\Domain\Entity\Doctor> $doctors
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale $locale
+ * @var list<\MediCareMini\Domain\Entity\Doctor> $doctors
  * @var list<string> $specialties
  * @var array{specialty:?string, q:?string} $filters
  */

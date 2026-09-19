@@ -5,14 +5,14 @@
  * Bullet lists are edited as newline-separated textareas rather than a
  * repeater widget - far quicker for staff, and the controller splits them.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\HealthPackage|null $package
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\HealthPackage|null $package
  * @var array<string,string> $old
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\Locale;
 
 $action = $package === null
     ? $view->adminUrl('packages')

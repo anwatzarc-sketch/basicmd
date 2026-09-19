@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /** FRS 5.5 / 8.3: the discharge/closure gate's own state. */
 enum FinancialClearanceStatus: string

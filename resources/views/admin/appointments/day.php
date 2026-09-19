@@ -5,10 +5,10 @@
  * Express bookings sort to the top of each slot: that priority is exactly
  * what the surcharge buys.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\Appointment> $appointments
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\Appointment> $appointments
  * @var DateTimeImmutable $date
- * @var list<\Aster\Domain\Enum\TimeSlot> $slots
+ * @var list<\MediCareMini\Domain\Enum\TimeSlot> $slots
  * @var array<string,int> $availability
  */
 

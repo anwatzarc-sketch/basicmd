@@ -7,10 +7,10 @@
  * second of two passes - belt and braces on the one place where stored HTML
  * reaches a page.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale $locale
- * @var \Aster\Domain\Entity\Article $article
- * @var list<\Aster\Domain\Entity\Article> $related
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale $locale
+ * @var \MediCareMini\Domain\Entity\Article $article
+ * @var list<\MediCareMini\Domain\Entity\Article> $related
  */
 
 declare(strict_types=1);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\ValueObject;
+namespace MediCareMini\Domain\ValueObject;
 
 /**
  * Resolved brand identity and colour theme for the current request.

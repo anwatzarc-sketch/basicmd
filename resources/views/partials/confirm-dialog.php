@@ -11,7 +11,7 @@
  * speed bump, never the thing that enforces a rule - the server re-checks
  * every state transition regardless.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  */
 
 declare(strict_types=1);

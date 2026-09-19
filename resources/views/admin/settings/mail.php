@@ -5,7 +5,7 @@
  * The queue is what makes reminders reliable: if the cron worker stops, this
  * page is where that becomes visible before patients stop being reminded.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var array<string,int> $stats
  * @var list<array<string,mixed>> $failures
  * @var string $driver

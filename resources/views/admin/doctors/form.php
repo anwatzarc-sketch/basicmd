@@ -5,10 +5,10 @@
  * The capacity fields on this page directly control the public booking
  * engine: raising slot_capacity widens availability immediately.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Doctor|null $doctor
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Doctor|null $doctor
  * @var list<array<string,mixed>> $timeOff
- * @var list<\Aster\Domain\Enum\DoctorStatus> $statuses
+ * @var list<\MediCareMini\Domain\Enum\DoctorStatus> $statuses
  * @var array<string,string> $old
  */
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
-use Aster\Domain\Entity\LedgerEntry;
-use Aster\Domain\ValueObject\Balance;
+use MediCareMini\Domain\Entity\LedgerEntry;
+use MediCareMini\Domain\ValueObject\Balance;
 
 /**
  * consumption_ledger persistence (FRS 7.1).

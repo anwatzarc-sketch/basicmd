@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\ValueObject\Money;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\ValueObject\Money;
 
 /**
  * A prepaid screening package - the direct-checkout revenue product.

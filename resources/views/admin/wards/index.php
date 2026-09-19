@@ -4,8 +4,8 @@
  * this screen never writes is_occupied (see WardLocationController's
  * docblock).
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\WardLocation> $wards
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\WardLocation> $wards
  */
 
 declare(strict_types=1);

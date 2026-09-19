@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
 /**
  * Port onto `user_role_scopes` (spec §4.5) - the ward-scoping half of

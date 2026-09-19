@@ -7,21 +7,21 @@
  * are both scoped to one encounter, and a patient with a prior visit could
  * otherwise have charges posted against the wrong one.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string $searchTerm
  * @var bool $notFound
- * @var \Aster\Domain\Entity\Encounter|null $encounter
- * @var list<\Aster\Domain\Entity\LedgerEntry> $entries
- * @var list<\Aster\Domain\Entity\ReceivablePayment> $payments
+ * @var \MediCareMini\Domain\Entity\Encounter|null $encounter
+ * @var list<\MediCareMini\Domain\Entity\LedgerEntry> $entries
+ * @var list<\MediCareMini\Domain\Entity\ReceivablePayment> $payments
  * @var float|null $balance
- * @var list<\Aster\Domain\Enum\LedgerCategory> $categories
- * @var list<\Aster\Domain\Enum\LedgerMode> $modes
- * @var list<\Aster\Domain\Enum\ReceivablePaymentMethod> $paymentMethods
+ * @var list<\MediCareMini\Domain\Enum\LedgerCategory> $categories
+ * @var list<\MediCareMini\Domain\Enum\LedgerMode> $modes
+ * @var list<\MediCareMini\Domain\Enum\ReceivablePaymentMethod> $paymentMethods
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\VisitType;
+use MediCareMini\Domain\Enum\VisitType;
 
 $adminPath = '/' . $view->config->adminPath;
 

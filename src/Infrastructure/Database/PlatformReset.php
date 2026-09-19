@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Database;
+namespace MediCareMini\Infrastructure\Database;
 
-use Aster\Infrastructure\Persistence\Database;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Security\PasswordHasher;
+use MediCareMini\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Security\PasswordHasher;
 use RuntimeException;
 
 /**

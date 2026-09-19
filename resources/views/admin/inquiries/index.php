@@ -2,9 +2,9 @@
 /**
  * Patient enquiry inbox.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\ContactInquiry> $inquiries
- * @var list<\Aster\Domain\Enum\InquiryStatus> $statuses
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\ContactInquiry> $inquiries
+ * @var list<\MediCareMini\Domain\Enum\InquiryStatus> $statuses
  * @var array $filters
  * @var int $unread
  * @var array<string,int|bool> $pagination

@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Application\DTO\BookingRequest;
-use Aster\Domain\Entity\Appointment;
-use Aster\Domain\Enum\AppointmentStatus;
-use Aster\Domain\Enum\BookingSource;
-use Aster\Domain\Enum\QueueTier;
-use Aster\Domain\Enum\TimeSlot;
-use Aster\Domain\Exception\BookingException;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\ValueObject\BookingReference;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\PackageRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Application\DTO\BookingRequest;
+use MediCareMini\Domain\Entity\Appointment;
+use MediCareMini\Domain\Enum\AppointmentStatus;
+use MediCareMini\Domain\Enum\BookingSource;
+use MediCareMini\Domain\Enum\QueueTier;
+use MediCareMini\Domain\Enum\TimeSlot;
+use MediCareMini\Domain\Exception\BookingException;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\ValueObject\BookingReference;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\PackageRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Logger;
 use DateTimeImmutable;
 use RuntimeException;
 
@@ -352,7 +352,7 @@ final readonly class BookingService
         return $calendar;
     }
 
-    public function quoteFor(?int $serviceId, ?int $packageId, ?int $doctorId, QueueTier $tier): \Aster\Application\DTO\PriceQuote
+    public function quoteFor(?int $serviceId, ?int $packageId, ?int $doctorId, QueueTier $tier): \MediCareMini\Application\DTO\PriceQuote
     {
         return $this->pricing->quote(
             $serviceId !== null ? $this->services->findById($serviceId) : null,

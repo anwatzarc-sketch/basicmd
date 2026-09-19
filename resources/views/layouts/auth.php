@@ -4,7 +4,7 @@
  * admin area. No navigation - there is nothing a signed-out visitor should
  * be able to reach from here.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string $content
  * @var array $meta
  */

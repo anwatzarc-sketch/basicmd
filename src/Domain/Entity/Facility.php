@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\FacilityStatus;
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\FacilityStatus;
+use MediCareMini\Domain\Enum\Locale;
 
 final readonly class Facility
 {

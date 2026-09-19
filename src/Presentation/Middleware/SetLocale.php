@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Middleware;
+namespace MediCareMini\Presentation\Middleware;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Translator;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Translator;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
 
 /**
  * Resolves the display language for the request.
@@ -23,7 +23,7 @@ use Aster\Presentation\Http\Response;
  */
 final readonly class SetLocale
 {
-    private const string COOKIE_NAME = 'aster_locale';
+    private const string COOKIE_NAME = 'medicaremini_locale';
 
     public function __construct(
         private Translator $translator,
@@ -39,7 +39,7 @@ final readonly class SetLocale
         $this->translator->setLocale($locale);
 
         // Shared so views, emails and JSON responses all agree.
-        $GLOBALS['aster_locale'] = $locale;
+        $GLOBALS['medicaremini_locale'] = $locale;
 
         $response = $next($request);
 

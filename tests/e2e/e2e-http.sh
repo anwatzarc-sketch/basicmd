@@ -16,7 +16,7 @@ echo "=================================================="
 echo " 1. Patient books through the public form"
 echo "=================================================="
 # Re-run safety: drop the patient this script books.
-"$MYSQL" -u root aster_medical -e "DELETE FROM appointments WHERE patient_phone='+251911777888';" 2>/dev/null
+"$MYSQL" -u root MediCareMini -e "DELETE FROM appointments WHERE patient_phone='+251911777888';" 2>/dev/null
 rm -f "$JAR"
 curl -s -c "$JAR" "$B/book" -o /tmp/bookform.html
 T=$(tok /tmp/bookform.html)
@@ -39,14 +39,14 @@ CODE=$(curl -s -b "$JAR" -c "$JAR" -o /dev/null -w "%{http_code}" -D /tmp/h.txt 
 
 [ "$CODE" = "302" ] && ok "booking accepted (302 to payment)" || bad "booking returned $CODE"
 
-REF=$("$MYSQL" -u root -N -B aster_medical -e "SELECT booking_ref FROM appointments WHERE patient_phone='+251911777888' ORDER BY id DESC LIMIT 1;")
+REF=$("$MYSQL" -u root -N -B MediCareMini -e "SELECT booking_ref FROM appointments WHERE patient_phone='+251911777888' ORDER BY id DESC LIMIT 1;")
 [ -n "$REF" ] && ok "appointment persisted: $REF" || bad "no appointment row created"
 
 LOC=$(grep -i '^location:' /tmp/h.txt | tr -d '\r' | sed 's/.*: //')
 echo "$LOC" | grep -q "/pay" && ok "redirected to the payment step" || bad "unexpected redirect: $LOC"
 
 # Express surcharge should be on the row.
-read -r TOTAL SUR TIER <<< "$("$MYSQL" -u root -N -B aster_medical -e \
+read -r TOTAL SUR TIER <<< "$("$MYSQL" -u root -N -B MediCareMini -e \
   "SELECT total_amount, surcharge_amount, queue_tier FROM appointments WHERE booking_ref='$REF';")"
 [ "$TIER" = "express" ] && ok "express tier stored" || bad "tier=$TIER"
 php -r "exit(abs($SUR - 240.00) < 0.01 ? 0 : 1);" && ok "surcharge = ETB $SUR (20% of 1200)" || bad "surcharge=$SUR"
@@ -95,15 +95,15 @@ echo " 5. Doctor cannot reach another doctor's patient"
 echo "=================================================="
 # The booking above is assigned to doctor_id 2 (Dawit). Dawit's login IS linked
 # to doctor 2 only if a users<->doctors link exists; link it now.
-"$MYSQL" -u root aster_medical -e "UPDATE doctors SET user_id=NULL WHERE user_id=(SELECT id FROM users WHERE email='dawit@astermedical.et'); UPDATE doctors SET user_id=(SELECT id FROM users WHERE email='dawit@astermedical.et') WHERE id=2;" 2>/dev/null
+"$MYSQL" -u root MediCareMini -e "UPDATE doctors SET user_id=NULL WHERE user_id=(SELECT id FROM users WHERE email='dawit@medicaremini.radiants.net.et'); UPDATE doctors SET user_id=(SELECT id FROM users WHERE email='dawit@medicaremini.radiants.net.et') WHERE id=2;" 2>/dev/null
 
-OWN_ID=$("$MYSQL" -u root -N -B aster_medical -e "SELECT id FROM appointments WHERE doctor_id=2 AND deleted_at IS NULL ORDER BY id DESC LIMIT 1;")
-OTHER_ID=$("$MYSQL" -u root -N -B aster_medical -e "SELECT id FROM appointments WHERE doctor_id<>2 AND doctor_id IS NOT NULL AND deleted_at IS NULL ORDER BY id DESC LIMIT 1;")
+OWN_ID=$("$MYSQL" -u root -N -B MediCareMini -e "SELECT id FROM appointments WHERE doctor_id=2 AND deleted_at IS NULL ORDER BY id DESC LIMIT 1;")
+OTHER_ID=$("$MYSQL" -u root -N -B MediCareMini -e "SELECT id FROM appointments WHERE doctor_id<>2 AND doctor_id IS NOT NULL AND deleted_at IS NULL ORDER BY id DESC LIMIT 1;")
 
 rm -f "$JAR"; curl -s -c "$JAR" "$B/admin/login" -o /tmp/l.html
 T=$(grep -oE 'name="_token" value="[^"]+"' /tmp/l.html | head -1 | cut -d'"' -f4)
 curl -s -b "$JAR" -c "$JAR" -o /dev/null -X POST "$B/admin/login" \
-  --data-urlencode "_token=$T" --data-urlencode "email=dawit@astermedical.et" \
+  --data-urlencode "_token=$T" --data-urlencode "email=dawit@medicaremini.radiants.net.et" \
   --data-urlencode "password=Test#Passw0rd!2026"
 
 C=$(curl -s -b "$JAR" -o /dev/null -w "%{http_code}" "$B/admin/appointments/$OWN_ID")

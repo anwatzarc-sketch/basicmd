@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /**
  * The four payment methods FRS 7.2 defines for receivable_payments.

@@ -2,11 +2,11 @@
 /**
  * Appointment queue.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\Appointment> $appointments
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\Appointment> $appointments
  * @var array $filters
  * @var array<int,string> $doctors
- * @var list<\Aster\Domain\Enum\AppointmentStatus> $statuses
+ * @var list<\MediCareMini\Domain\Enum\AppointmentStatus> $statuses
  * @var array<string,int|bool> $pagination
  * @var bool $canEdit
  */

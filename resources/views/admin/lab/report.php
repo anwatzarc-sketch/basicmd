@@ -16,17 +16,17 @@
  * ordering physician. Neither is decorative - if a name is missing the
  * line says so rather than printing a blank where a signature belongs.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\DiagnosticOrder $order
- * @var \Aster\Domain\DTO\LabReport|null $report
- * @var \Aster\Infrastructure\Persistence\SettingsRepository $settings
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\DiagnosticOrder $order
+ * @var \MediCareMini\Domain\DTO\LabReport|null $report
+ * @var \MediCareMini\Infrastructure\Persistence\SettingsRepository $settings
  * @var \DateTimeImmutable $generatedAt
  * @var bool $canResult
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\DiagnosticStatus;
+use MediCareMini\Domain\Enum\DiagnosticStatus;
 
 $clinicName = $settings->localized('clinic_name', $view->locale(), $view->brand->businessName);
 $address    = $settings->localized('address', $view->locale());

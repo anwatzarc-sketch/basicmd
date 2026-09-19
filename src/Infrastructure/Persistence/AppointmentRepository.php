@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\Appointment;
-use Aster\Domain\Enum\AppointmentStatus;
-use Aster\Domain\Enum\TimeSlot;
-use Aster\Domain\Exception\BookingException;
-use Aster\Domain\ValueObject\BookingReference;
+use MediCareMini\Domain\Entity\Appointment;
+use MediCareMini\Domain\Enum\AppointmentStatus;
+use MediCareMini\Domain\Enum\TimeSlot;
+use MediCareMini\Domain\Exception\BookingException;
+use MediCareMini\Domain\ValueObject\BookingReference;
 use DateTimeImmutable;
 use PDO;
 use PDOException;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /**
  * How the patient settles: all manual, all verified by staff.

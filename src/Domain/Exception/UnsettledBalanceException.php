@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Exception;
+namespace MediCareMini\Domain\Exception;
 
-use Aster\Domain\ValueObject\Balance;
+use MediCareMini\Domain\ValueObject\Balance;
 use RuntimeException;
 
 /**

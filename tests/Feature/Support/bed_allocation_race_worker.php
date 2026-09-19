@@ -15,10 +15,10 @@ declare(strict_types=1);
 
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
-use Aster\Domain\Exception\EncounterException;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\ValueObject\VisitNumber;
-use Aster\Infrastructure\Container\Bootstrap;
+use MediCareMini\Domain\Exception\EncounterException;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\ValueObject\VisitNumber;
+use MediCareMini\Infrastructure\Container\Bootstrap;
 
 [, $visitNumberValue, $bedId, $physicianId, $outputFile] = $argv;
 

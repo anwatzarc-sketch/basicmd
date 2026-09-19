@@ -90,7 +90,7 @@ ALTER TABLE `articles`
 -- ---------------------------------------------------------------------
 INSERT IGNORE INTO `system_settings`
   (`setting_key`,`value`,`group_name`,`value_type`,`label`,`is_public`) VALUES
-  ('clinic_name_om','Wiirtuu Yaalaa Aster','general','string','Clinic name (Afaan Oromo)',1),
+  ('clinic_name_om','Wiirtuu Yaalaa MediCareMini','general','string','Clinic name (Afaan Oromo)',1),
   ('tagline_om','Tajaajila fayyaa olaanaa. Isin irratti kan xiyyeeffate.','general','string','Tagline (Afaan Oromo)',1),
   ('address_om','Kutaa Magaalaa Bolee, Finfinnee, Itoophiyaa','contact','string','Street address (Afaan Oromo)',1),
   ('operating_hours_om','Wiixata-Sanbata: 08:00 - 18:00 | Ariifachiisaa 24/7','contact','string','Operating hours (Afaan Oromo)',1);

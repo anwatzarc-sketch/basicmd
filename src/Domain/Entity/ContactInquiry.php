@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\InquiryStatus;
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Domain\Enum\InquiryStatus;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
 use DateTimeImmutable;
 
 final readonly class ContactInquiry

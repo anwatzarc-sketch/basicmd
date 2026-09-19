@@ -8,7 +8,7 @@
  * only way brand colours reach the page - there must never be an inline
  * style="..." attribute carrying one instead.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string $cspNonce
  */
 
@@ -17,7 +17,7 @@ declare(strict_types=1);
 $brand = $view->brand;
 ?>
 <style nonce="<?= $view->e($cspNonce ?? '') ?>">:root{
-<?php foreach (\Aster\Infrastructure\Support\BrandPalette::SHADES as $shade): ?>
+<?php foreach (\MediCareMini\Infrastructure\Support\BrandPalette::SHADES as $shade): ?>
 --brand-<?= $shade ?>: <?= $view->e($brand->primary($shade)) ?>;
 <?php endforeach; ?>
 --brand-secondary: <?= $view->e($brand->secondaryColor) ?>;

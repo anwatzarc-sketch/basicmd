@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
-use Aster\Domain\Entity\Patient;
+use MediCareMini\Domain\Entity\Patient;
 use DateTimeImmutable;
 
 /**

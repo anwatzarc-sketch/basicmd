@@ -2,13 +2,13 @@
 /**
  * Public site header: brand, navigation, language switcher, mobile menu, day/night theme toggler.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale     $locale
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale     $locale
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\Locale;
 
 $settings   = $settings ?? null;
 $clinicName = $settings?->localized('clinic_name', $locale, $view->brand->businessName)
@@ -234,7 +234,7 @@ $isActive = static fn (string $path): bool => str_starts_with(parse_url($current
 <?php /* nonce required: the CSP blocks any inline script without one. */ ?>
 <script nonce="<?= $view->e($cspNonce ?? '') ?>">
 (function () {
-    var KEY   = 'aster-theme';
+    var KEY   = 'medicaremini-theme';
     var LIGHT = 'rgb(<?= $view->e($view->brand->primary('700')) ?>)';
     var media = window.matchMedia('(prefers-color-scheme: dark)');
 

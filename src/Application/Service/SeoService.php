@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\Entity\Article;
-use Aster\Domain\Entity\Doctor;
-use Aster\Domain\Entity\MedicalService;
-use Aster\Domain\Enum\Locale;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Support\BrandResolver;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Translator;
-use Aster\Presentation\View\HtmlSanitiser;
+use MediCareMini\Domain\Entity\Article;
+use MediCareMini\Domain\Entity\Doctor;
+use MediCareMini\Domain\Entity\MedicalService;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Support\BrandResolver;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Translator;
+use MediCareMini\Presentation\View\HtmlSanitiser;
 
 /**
  * Structured data and page metadata.

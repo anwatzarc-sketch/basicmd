@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Mail;
+namespace MediCareMini\Infrastructure\Mail;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Infrastructure\Support\Translator;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Infrastructure\Support\Translator;
 
 /**
  * Builds HTML emails.

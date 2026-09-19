@@ -6,19 +6,19 @@
  * to construct an illegal state change from the UI, and the service re-checks
  * it under a row lock anyway.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Appointment $appointment
- * @var list<\Aster\Domain\Entity\Payment> $payments
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Appointment $appointment
+ * @var list<\MediCareMini\Domain\Entity\Payment> $payments
  * @var list<array<string,mixed>> $history
- * @var list<\Aster\Domain\Enum\AppointmentStatus> $transitions
+ * @var list<\MediCareMini\Domain\Enum\AppointmentStatus> $transitions
  * @var bool $canEdit
- * @var \Aster\Domain\Entity\Encounter|null $encounter Phase II check-in bridge; null until checked in.
+ * @var \MediCareMini\Domain\Entity\Encounter|null $encounter Phase II check-in bridge; null until checked in.
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\AppointmentStatus;
-use Aster\Domain\Enum\Gender;
+use MediCareMini\Domain\Enum\AppointmentStatus;
+use MediCareMini\Domain\Enum\Gender;
 
 $t         = $view->translator;
 $adminPath = '/' . $view->config->adminPath;

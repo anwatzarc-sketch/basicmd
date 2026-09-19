@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /**
  * Standard vs. Express (VIP) queue placement.

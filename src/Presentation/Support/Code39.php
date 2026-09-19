@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Support;
+namespace MediCareMini\Presentation\Support;
 
 /**
  * Code 39 symbology, as bar geometry.

@@ -2,8 +2,8 @@
 /**
  * Health package management.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\HealthPackage> $packages
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\HealthPackage> $packages
  */
 
 declare(strict_types=1);
@@ -46,7 +46,7 @@ $t = $view->translator;
             <p class="mt-3 text-sm leading-relaxed text-slate-600"><?= $view->excerpt($package->description, 110) ?></p>
 
             <p class="mt-3 text-xs font-semibold text-slate-400">
-                <?= count($package->itemList(\Aster\Domain\Enum\Locale::EN)) ?> items listed
+                <?= count($package->itemList(\MediCareMini\Domain\Enum\Locale::EN)) ?> items listed
                 <?php if (($package->items['am'] ?? []) === []): ?>
                     &middot; <span class="text-amber-600">No Amharic list</span>
                 <?php endif; ?>

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Services;
+namespace MediCareMini\Tests\Feature\Services;
 
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Persistence\Database;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -40,7 +40,7 @@ final class PatientDeduplicationConcurrencyTest extends TestCase
     {
         $phone     = '0955' . random_int(100000, 999999);
         $firstName = 'RaceTest' . bin2hex(random_bytes(3));
-        $outputDir = sys_get_temp_dir() . '/aster_mpi_race_' . bin2hex(random_bytes(4));
+        $outputDir = sys_get_temp_dir() . '/medicaremini_mpi_race_' . bin2hex(random_bytes(4));
         mkdir($outputDir);
 
         $workerScript = __DIR__ . '/../Support/patient_dedup_race_worker.php';

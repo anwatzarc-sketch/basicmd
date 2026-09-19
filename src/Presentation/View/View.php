@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\View;
+namespace MediCareMini\Presentation\View;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\ValueObject\CompanyBrand;
-use Aster\Infrastructure\Security\Csrf;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Translator;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\ValueObject\CompanyBrand;
+use MediCareMini\Infrastructure\Security\Csrf;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Translator;
 use RuntimeException;
 use Throwable;
 

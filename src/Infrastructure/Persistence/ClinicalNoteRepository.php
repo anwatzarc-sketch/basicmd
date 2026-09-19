@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\ClinicalNote;
-use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
-use Aster\Infrastructure\Security\Encryptor;
+use MediCareMini\Domain\Entity\ClinicalNote;
+use MediCareMini\Domain\Repository\ClinicalNoteRepositoryInterface;
+use MediCareMini\Infrastructure\Security\Encryptor;
 
 final class ClinicalNoteRepository implements ClinicalNoteRepositoryInterface
 {

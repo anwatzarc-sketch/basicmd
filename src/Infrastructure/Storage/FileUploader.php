@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Storage;
+namespace MediCareMini\Infrastructure\Storage;
 
-use Aster\Domain\Exception\ValidationException;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Logger;
 use RuntimeException;
 
 /**

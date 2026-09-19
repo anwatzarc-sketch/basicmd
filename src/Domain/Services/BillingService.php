@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Services;
+namespace MediCareMini\Domain\Services;
 
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Enum\FinancialClearanceStatus;
-use Aster\Domain\Exception\EncounterException;
-use Aster\Domain\Exception\UnsettledBalanceException;
-use Aster\Domain\Repository\AuditLoggerInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\Repository\StaffDirectoryInterface;
-use Aster\Domain\Repository\TransactionManagerInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\ValueObject\Balance;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Enum\FinancialClearanceStatus;
+use MediCareMini\Domain\Exception\EncounterException;
+use MediCareMini\Domain\Exception\UnsettledBalanceException;
+use MediCareMini\Domain\Repository\AuditLoggerInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\Repository\StaffDirectoryInterface;
+use MediCareMini\Domain\Repository\TransactionManagerInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\ValueObject\Balance;
 use DateTimeImmutable;
 
 /**

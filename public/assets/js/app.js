@@ -1,5 +1,5 @@
 /**
- * Aster Medical Center - frontend behaviour.
+ * MediCareMini - frontend behaviour.
  *
  * Vanilla ES2020, no framework, no build step for this file. Everything here
  * is an enhancement: every page works with JavaScript disabled, and this

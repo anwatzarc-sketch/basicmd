@@ -10,14 +10,14 @@
  * Geometry comes from Code39::bars(); everything emitted here is a
  * number, escaped like any other value.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string $value
  * @var int $height bar height in px
  */
 
 declare(strict_types=1);
 
-use Aster\Presentation\Support\Code39;
+use MediCareMini\Presentation\Support\Code39;
 
 $symbol = Code39::bars($value ?? '');
 $height = (int) ($height ?? 34);

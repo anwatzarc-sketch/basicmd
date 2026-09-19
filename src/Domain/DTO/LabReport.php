@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\DTO;
+namespace MediCareMini\Domain\DTO;
 
-use Aster\Domain\Enum\LabResultFlag;
+use MediCareMini\Domain\Enum\LabResultFlag;
 
 /**
  * The decoded contents of diagnostic_orders.results_payload_encrypted for

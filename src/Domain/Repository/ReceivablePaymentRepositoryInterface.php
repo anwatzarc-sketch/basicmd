@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
-use Aster\Domain\Entity\ReceivablePayment;
-use Aster\Domain\ValueObject\Balance;
-use Aster\Domain\ValueObject\ReceiptId;
+use MediCareMini\Domain\Entity\ReceivablePayment;
+use MediCareMini\Domain\ValueObject\Balance;
+use MediCareMini\Domain\ValueObject\ReceiptId;
 
 /**
  * receivable_payments persistence (FRS 7.2). Insert-only, like

@@ -9,20 +9,20 @@
  * path where an Imaging/PACS row could leak into a Lab Technician's
  * view by a display-layer bug.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User $user
- * @var \Aster\Domain\Entity\Patient $patient
- * @var list<\Aster\Domain\Entity\DiagnosticOrder> $orders
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User $user
+ * @var \MediCareMini\Domain\Entity\Patient $patient
+ * @var list<\MediCareMini\Domain\Entity\DiagnosticOrder> $orders
  * @var array<int, string> $orderResults id => decrypted plaintext (Imaging/PACS results, which are free text)
- * @var array<int, \Aster\Domain\DTO\LabReport|null> $labReports id => decoded structured result (Lab orders only)
- * @var list<\Aster\Domain\Entity\Encounter> $openEncounters
- * @var list<\Aster\Domain\Enum\DiagnosticCategory> $categories
+ * @var array<int, \MediCareMini\Domain\DTO\LabReport|null> $labReports id => decoded structured result (Lab orders only)
+ * @var list<\MediCareMini\Domain\Entity\Encounter> $openEncounters
+ * @var list<\MediCareMini\Domain\Enum\DiagnosticCategory> $categories
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\DiagnosticStatus;
-use Aster\Presentation\Support\PatientDetailAccess;
+use MediCareMini\Domain\Enum\DiagnosticStatus;
+use MediCareMini\Presentation\Support\PatientDetailAccess;
 
 $adminPath = '/' . $view->config->adminPath;
 ?>

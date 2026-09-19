@@ -1,8 +1,8 @@
 -- =====================================================================
---  ASTER MEDICAL CENTER - PRODUCTION SCHEMA
+--  MEDICAREMINI - PRODUCTION SCHEMA
 --  Target:   MariaDB 10.4+  (InnoDB, utf8mb4)
 --  Charset:  utf8mb4 / utf8mb4_unicode_ci  - required for Ge'ez (Amharic)
---  Note:     matches every table already live in aster_medical. MySQL 8's
+--  Note:     matches every table already live in MediCareMini. MySQL 8's
 --            utf8mb4_0900_ai_ci collation is not available on MariaDB, so
 --            this schema targets MariaDB explicitly rather than MySQL 8.
 --  Timezone: all timestamps stored UTC; rendered in Africa/Addis_Ababa
@@ -10,8 +10,8 @@
 --  Load order:  schema.sql  ->  seed.sql
 --  Re-runnable: drops are ordered child-first to satisfy FK constraints.
 -- =====================================================================
-CREATE DATABASE IF NOT EXISTS `aster_medical` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `aster_medical`;
+CREATE DATABASE IF NOT EXISTS `MediCareMini` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `MediCareMini`;
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 SET time_zone = '+00:00';
 SET FOREIGN_KEY_CHECKS = 0;

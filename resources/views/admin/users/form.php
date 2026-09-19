@@ -5,10 +5,10 @@
  * New accounts receive a generated temporary password shown once on screen
  * after saving. It is never emailed and never logged.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User|null $account
- * @var list<\Aster\Domain\Entity\Role> $roles
- * @var list<\Aster\Domain\Enum\UserStatus> $statuses
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User|null $account
+ * @var list<\MediCareMini\Domain\Entity\Role> $roles
+ * @var list<\MediCareMini\Domain\Enum\UserStatus> $statuses
  * @var array<int,string> $doctors
  * @var array<string,string> $old
  * @var array<string,string> $errors

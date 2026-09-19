@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Web;
+namespace MediCareMini\Presentation\Controller\Web;
 
-use Aster\Application\Service\ChatService;
-use Aster\Infrastructure\Security\RateLimiter;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Env;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\ChatService;
+use MediCareMini\Infrastructure\Security\RateLimiter;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Env;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * JSON endpoint behind the site assistant widget.

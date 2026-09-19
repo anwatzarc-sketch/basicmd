@@ -11,11 +11,11 @@
  * intentionally ambiguous requirement is to show that a result exists,
  * not what it says.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Patient $patient
- * @var list<\Aster\Domain\Entity\Encounter> $encounters
- * @var list<\Aster\Domain\Entity\DiagnosticOrder> $diagnostics
- * @var list<array{encounter: \Aster\Domain\Entity\Encounter, balance: float}> $balances
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Patient $patient
+ * @var list<\MediCareMini\Domain\Entity\Encounter> $encounters
+ * @var list<\MediCareMini\Domain\Entity\DiagnosticOrder> $diagnostics
+ * @var list<array{encounter: \MediCareMini\Domain\Entity\Encounter, balance: float}> $balances
  */
 
 declare(strict_types=1);

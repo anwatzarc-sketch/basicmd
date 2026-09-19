@@ -5,7 +5,7 @@
  * Shared by all three funnel screens so a patient always knows how far along
  * they are; the payment screen used to be the only step that showed it.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var int                           $current 1, 2 or 3
  */
 

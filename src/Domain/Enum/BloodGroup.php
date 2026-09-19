@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /** The eight groups FRS 5.2 specifies. */
 enum BloodGroup: string

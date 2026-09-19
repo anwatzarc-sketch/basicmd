@@ -1,6 +1,6 @@
-# Aster Medical Center
+# MediCareMini
 
-Public website and administration portal for Aster Medical Center, Bole Sub-city, Addis Ababa.
+Public website and administration portal for MediCareMini, Bole Sub-city, Addis Ababa.
 
 Bilingual (English / አማርኛ), PHP 8.3, MariaDB 10.4+, Tailwind CSS 3. No framework.
 
@@ -8,8 +8,8 @@ Bilingual (English / አማርኛ), PHP 8.3, MariaDB 10.4+, Tailwind CSS 3. No f
 
 ## What this is
 
-A production rebuild of two prototypes (`prototype/aster_medical_center_website.html` and
-`prototype/aster_medical_center_admin_portal.php`), which are kept in `prototype/` for
+A production rebuild of two prototypes (`prototype/medicaremini_website.html` and
+`prototype/medicaremini_admin_portal.php`), which are kept in `prototype/` for
 reference. The visual design is carried over intact; everything behind it is new.
 
 **Four things earn money here:**
@@ -79,7 +79,7 @@ laboratory — lives in `database/migrations/`, so **`bin/migrate.php` is not op
 on a fresh install or an upgrade. It is idempotent: already-applied versions are
 skipped.
 
-> `schema.sql` opens with `CREATE DATABASE` / `USE aster_medical` and a `DROP TABLE`
+> `schema.sql` opens with `CREATE DATABASE` / `USE MediCareMini` and a `DROP TABLE`
 > block. It targets that database by name whatever connection you feed it to, and it
 > drops the Phase I tables before recreating them. Never run it against a database
 > holding data you want to keep.
@@ -133,7 +133,7 @@ not secure, so neither of those will break a plain-HTTP deployment.
 
 **Get a certificate.** This site carries patient names, phone numbers, typed symptoms,
 bank receipts and staff passwords. Over plain HTTP all of it is readable by anyone on the
-network path. `certbot --nginx -d medical.pyramid.biz.et` takes about a minute.
+network path. `certbot --nginx -d medicaremini.radiants.net.et` takes about a minute.
 
 ### Cron
 
@@ -179,11 +179,11 @@ downloader, the prototypes and the tests are all left behind. `.env` is delibera
 ### Steps
 
 1. **Upload and unzip** into the domain directory, e.g.
-   `/var/www/vhosts/medical.pyramid.biz.et/aster/`.
+   `/var/www/vhosts/medicaremini.radiants.net.et/medicaremini/`.
 
 2. **Set the document root** — this is the step people get wrong.
    *Websites & Domains → Hosting Settings → Document root* must point at
-   `aster/public`, **not** at `aster/` and not at `httpdocs`.
+   `medicaremini/public`, **not** at `medicaremini/` and not at `httpdocs`.
 
    Everything else — `src/`, `storage/`, `.env`, `vendor/` — then sits *above* the
    document root and is unreachable over HTTP no matter how the vhost is configured.
@@ -389,7 +389,33 @@ iterating. Production ignores this flag.
 ```bash
 php bin/check-sql.php            # repeated SQL placeholders
 php bin/check-translations.php   # EN/AM dictionary drift
+php bin/check-css.php            # @apply utilities Tailwind cannot generate
+php bin/check-pages.php          # every GET route still renders
 ```
+
+`check-pages.php` is the one to run after a refactor, a rename or a dependency bump.
+It starts its own copy of the built-in server on a free port, parses the route table
+out of `public/index.php` so the list cannot go stale, fills `{id}` placeholders from
+real rows, and walks every GET route twice:
+
+- **anonymous** — public pages must render, and every admin page must redirect to the
+  login screen. The second half is an authorisation test: a page answering 200 there
+  is leaking.
+- **signed in** — admin pages must render. Runs only with credentials.
+
+```bash
+php bin/check-pages.php                              # anonymous sweep only
+php bin/check-pages.php --seed-user                  # full sweep, temporary admin
+php bin/check-pages.php --email=you@clinic --password=...
+php bin/check-pages.php --base=https://staging.example --email=... --password=...
+php bin/check-pages.php --only=public --no-color     # for CI logs
+```
+
+`--seed-user` creates a throwaway SuperAdmin and deletes it again, and is **refused
+when `APP_ENV=production`** or against any host that is not loopback — use real
+credentials there. It is GET-only, so it never submits a form or writes domain data,
+and it fails the run if anything lands in the error log while it is walking.
+Exit code is non-zero on any failure, so it drops straight into CI.
 
 ---
 
@@ -412,7 +438,7 @@ time and horizon are all editable in the admin portal. No deploy needed.
 
 - [ ] Replace the placeholder account numbers in `/admin/payments/methods` with the real ones
 - [ ] `APP_ENV=production`, `APP_DEBUG=false`
-- [ ] `TRUSTED_HOSTS=medical.pyramid.biz.et` — **without this every request 400s**
+- [ ] `TRUSTED_HOSTS=medicaremini.radiants.net.et` — **without this every request 400s**
 - [ ] `SESSION_SECURE` matches the scheme in `APP_URL`
 - [ ] Real SMTP credentials, and a `MAIL_FROM_ADDRESS` your relay is authorised to send for
 - [ ] Point `MAIL_ADMIN_INBOX` / `MAIL_FINANCE_INBOX` at mailboxes someone reads daily

@@ -5,13 +5,13 @@
  * Every section below is driven by CMS data. The prototype's hardcoded
  * JavaScript arrays are gone.
  *
- * @var \Aster\Presentation\View\View                  $view
- * @var \Aster\Domain\Enum\Locale                      $locale
- * @var list<\Aster\Domain\Entity\MedicalService>      $services
- * @var list<\Aster\Domain\Entity\Doctor>              $doctors
- * @var list<\Aster\Domain\Entity\HealthPackage>       $packages
- * @var list<\Aster\Domain\Entity\Facility>            $facilities
- * @var list<\Aster\Domain\Entity\Article>             $articles
+ * @var \MediCareMini\Presentation\View\View                  $view
+ * @var \MediCareMini\Domain\Enum\Locale                      $locale
+ * @var list<\MediCareMini\Domain\Entity\MedicalService>      $services
+ * @var list<\MediCareMini\Domain\Entity\Doctor>              $doctors
+ * @var list<\MediCareMini\Domain\Entity\HealthPackage>       $packages
+ * @var list<\MediCareMini\Domain\Entity\Facility>            $facilities
+ * @var list<\MediCareMini\Domain\Entity\Article>             $articles
  * @var list<array{question:string, answer:string}>    $faqs
  */
 

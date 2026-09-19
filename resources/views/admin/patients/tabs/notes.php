@@ -7,18 +7,18 @@
  * exposes no update() to call - a correction is a new note, never a
  * change to an old one.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User $user
- * @var \Aster\Domain\Entity\Patient $patient
- * @var list<\Aster\Domain\Entity\ClinicalNote> $notes
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User $user
+ * @var \MediCareMini\Domain\Entity\Patient $patient
+ * @var list<\MediCareMini\Domain\Entity\ClinicalNote> $notes
  * @var array<int, string> $noteContents id => decrypted plaintext
- * @var list<\Aster\Domain\Entity\Encounter> $openEncounters
- * @var list<\Aster\Domain\Enum\ClinicalNoteType> $noteTypes
+ * @var list<\MediCareMini\Domain\Entity\Encounter> $openEncounters
+ * @var list<\MediCareMini\Domain\Enum\ClinicalNoteType> $noteTypes
  */
 
 declare(strict_types=1);
 
-use Aster\Presentation\Support\PatientDetailAccess;
+use MediCareMini\Presentation\Support\PatientDetailAccess;
 
 $adminPath     = '/' . $view->config->adminPath;
 $allowedTypes  = PatientDetailAccess::allowedNoteTypes($user);

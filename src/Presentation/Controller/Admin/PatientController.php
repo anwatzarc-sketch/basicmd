@@ -2,38 +2,38 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Application\Service\LabReportService;
-use Aster\Application\Service\PatientAuthService;
-use Aster\Domain\DTO\PatientDTO;
-use Aster\Domain\Entity\Patient;
-use Aster\Domain\Entity\User;
-use Aster\Domain\Enum\BloodGroup;
-use Aster\Domain\Enum\ClinicalNoteType;
-use Aster\Domain\Enum\DiagnosticCategory;
-use Aster\Domain\Enum\DiagnosticStatus;
-use Aster\Domain\Enum\Gender;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Exception\PatientException;
-use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Repository\PrescriptionRepositoryInterface;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\Services\PatientDeduplicationService;
-use Aster\Domain\Services\WardScopeService;
-use Aster\Domain\ValueObject\PhoneNumber;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\PatientRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\Support\PatientDetailAccess;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\LabReportService;
+use MediCareMini\Application\Service\PatientAuthService;
+use MediCareMini\Domain\DTO\PatientDTO;
+use MediCareMini\Domain\Entity\Patient;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Enum\BloodGroup;
+use MediCareMini\Domain\Enum\ClinicalNoteType;
+use MediCareMini\Domain\Enum\DiagnosticCategory;
+use MediCareMini\Domain\Enum\DiagnosticStatus;
+use MediCareMini\Domain\Enum\Gender;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\PatientException;
+use MediCareMini\Domain\Repository\ClinicalNoteRepositoryInterface;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Repository\PrescriptionRepositoryInterface;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\Services\PatientDeduplicationService;
+use MediCareMini\Domain\Services\WardScopeService;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\PatientRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\Support\PatientDetailAccess;
+use MediCareMini\Presentation\View\View;
 use DateTimeImmutable;
 
 /**
@@ -91,7 +91,7 @@ final class PatientController extends Controller
         // check spans encounters/ward_locations, not patients.
         $results = array_values(array_filter(
             $results,
-            fn (\Aster\Domain\Entity\Patient $patient): bool => $this->wardScope->isPatientVisible($user, $patient->id),
+            fn (\MediCareMini\Domain\Entity\Patient $patient): bool => $this->wardScope->isPatientVisible($user, $patient->id),
         ));
 
         return $this->renderAdmin('admin/patients/index', [

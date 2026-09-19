@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\EPrescription;
-use Aster\Domain\Repository\PrescriptionRepositoryInterface;
+use MediCareMini\Domain\Entity\EPrescription;
+use MediCareMini\Domain\Repository\PrescriptionRepositoryInterface;
 
 final class PrescriptionRepository implements PrescriptionRepositoryInterface
 {

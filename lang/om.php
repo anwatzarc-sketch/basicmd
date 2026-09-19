@@ -460,13 +460,13 @@ return [
     'email' => [
         'greeting'     => 'Kabajamoo :name,',
         'signoff'      => 'Nagaa wajjin,',
-        'team'         => 'Garee Wiirtuu Yaalaa Aster',
+        'team'         => 'Garee Wiirtuu Yaalaa MediCareMini',
         'auto_note'    => 'Ergaan kun ofumaan kan ergamedha. Maaloo kallattiin deebii hin kenninaa.',
         'contact_note' => 'Gaaffii qabduu? :phone irratti bilbilaa ykn gara :email barreessaa.',
 
         'booked_subject' => 'Beellamni keessan qabameera - :ref',
         'booked_heading' => 'Beellamni keessan qabameera',
-        'booked_intro'   => 'Wiirtuu Yaalaa Aster waan filattaniif galatoomaa. Ibsi beellama keessanii armaan gadii jira.',
+        'booked_intro'   => 'Wiirtuu Yaalaa MediCareMini waan filattaniif galatoomaa. Ibsi beellama keessanii armaan gadii jira.',
 
         'reminder_subject' => 'Yaadachiisa: beellamni keessan bori - :ref',
         'reminder_heading' => 'Beellamni keessan boridha',

@@ -7,11 +7,11 @@
  * summary are enhancements layered on top. A patient on a cheap Android phone
  * with a flaky connection can still book.
  *
- * @var \Aster\Presentation\View\View             $view
- * @var \Aster\Domain\Enum\Locale                 $locale
- * @var list<\Aster\Domain\Entity\MedicalService> $services
- * @var list<\Aster\Domain\Entity\HealthPackage>  $packages
- * @var list<\Aster\Domain\Entity\Doctor>         $doctors
+ * @var \MediCareMini\Presentation\View\View             $view
+ * @var \MediCareMini\Domain\Enum\Locale                 $locale
+ * @var list<\MediCareMini\Domain\Entity\MedicalService> $services
+ * @var list<\MediCareMini\Domain\Entity\HealthPackage>  $packages
+ * @var list<\MediCareMini\Domain\Entity\Doctor>         $doctors
  * @var array                                     $preselected
  * @var array<string,string>                      $old
  * @var array<string,string>                      $errors
@@ -19,7 +19,7 @@
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\TimeSlot;
+use MediCareMini\Domain\Enum\TimeSlot;
 
 $t         = $view->translator;
 $emergency = $settings->string('phone_emergency', $settings->string('phone_primary', ''));

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Support;
+namespace MediCareMini\Infrastructure\Support;
 
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\Locale;
 use DateTimeZone;
 
 /**
@@ -35,7 +35,7 @@ final readonly class Config
         $env = strtolower(Env::get('APP_ENV', 'production') ?? 'production');
 
         return new self(
-            appName:       Env::get('APP_NAME', 'Aster Medical Center') ?? 'Aster Medical Center',
+            appName:       Env::get('APP_NAME', 'MediCareMini') ?? 'MediCareMini',
             appEnv:        $env,
             // Debug output is force-disabled in production regardless of what
             // .env says. A stack trace on a medical site can expose patient
@@ -113,7 +113,7 @@ final readonly class Config
 
     public function sessionName(): string
     {
-        return Env::get('SESSION_NAME', 'aster_session') ?? 'aster_session';
+        return Env::get('SESSION_NAME', 'medicaremini_session') ?? 'medicaremini_session';
     }
 
     public function sessionIdleSeconds(): int

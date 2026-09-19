@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Middleware;
+namespace MediCareMini\Presentation\Middleware;
 
-use Aster\Domain\Entity\User;
-use Aster\Domain\Exception\HttpException;
-use Aster\Infrastructure\Support\Logger;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Infrastructure\Support\Logger;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
 
 /**
  * Permission gate for a route.
@@ -30,7 +30,7 @@ final readonly class Authorize
 
     public function __invoke(Request $request, callable $next): Response
     {
-        $user = $GLOBALS['aster_current_user'] ?? null;
+        $user = $GLOBALS['medicaremini_current_user'] ?? null;
 
         if (!$user instanceof User) {
             // Authenticate should have caught this; reaching here means the

@@ -1,6 +1,6 @@
 {
-    "name": "aster/medical-center",
-    "description": "Aster Medical Center - public website and administration portal (Addis Ababa, Ethiopia)",
+    "name": "radiants/medicaremini",
+    "description": "MediCareMini - public website and administration portal (Addis Ababa, Ethiopia)",
     "type": "project",
     "license": "proprietary",
     "require": {
@@ -19,12 +19,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Aster\\": "src/"
+            "MediCareMini\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Aster\\Tests\\": "tests/"
+            "MediCareMini\\Tests\\": "tests/"
         }
     },
     "scripts": {

@@ -22,9 +22,9 @@ declare(strict_types=1);
  * database that matters.
  */
 
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Database\MigrationRunner;
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Database\MigrationRunner;
+use MediCareMini\Infrastructure\Persistence\Database;
 
 if (PHP_SAPI !== 'cli') {
     http_response_code(403);
@@ -74,7 +74,7 @@ $db     = $container->get(Database::class);
 $runner = new MigrationRunner($db, $basePath . '/database/migrations');
 
 $line();
-$line($paint('  Aster Medical Center - Migrations', C_BOLD));
+$line($paint('  MediCareMini - Migrations', C_BOLD));
 $line($paint('  ' . str_repeat('=', 48), C_DIM));
 $line();
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Database;
+namespace MediCareMini\Infrastructure\Database;
 
 /**
  * Splits a .sql file into individual statements on top-level semicolons.

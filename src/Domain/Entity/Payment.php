@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\PaymentKind;
-use Aster\Domain\Enum\ProofStatus;
-use Aster\Domain\ValueObject\Money;
+use MediCareMini\Domain\Enum\PaymentKind;
+use MediCareMini\Domain\Enum\ProofStatus;
+use MediCareMini\Domain\ValueObject\Money;
 use DateTimeImmutable;
 
 /**

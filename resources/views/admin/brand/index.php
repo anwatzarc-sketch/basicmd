@@ -2,8 +2,8 @@
 /**
  * Brand & Theme editor: the single form over storage/CompanyBrand.json.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\ValueObject\CompanyBrand $brand
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\ValueObject\CompanyBrand $brand
  * @var string $rawJson
  */
 

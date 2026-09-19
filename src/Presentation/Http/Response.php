@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Http;
+namespace MediCareMini\Presentation\Http;
 
 /**
  * An HTTP response, assembled in memory and sent once.

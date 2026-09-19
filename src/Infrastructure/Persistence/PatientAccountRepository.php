@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\PatientAccount;
-use Aster\Domain\Repository\PatientAccountRepositoryInterface;
+use MediCareMini\Domain\Entity\PatientAccount;
+use MediCareMini\Domain\Repository\PatientAccountRepositoryInterface;
 use DateTimeImmutable;
 
 final class PatientAccountRepository implements PatientAccountRepositoryInterface

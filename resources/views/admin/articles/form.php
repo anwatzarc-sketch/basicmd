@@ -6,11 +6,11 @@
  * search traffic, and the schema type plus the focus keyword are what make
  * the difference between a plain blue link and a rich health result.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Article|null $article
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Article|null $article
  * @var array<int,string> $doctors
- * @var list<\Aster\Domain\Enum\ArticleStatus> $statuses
- * @var list<\Aster\Domain\Enum\SchemaType> $schemaTypes
+ * @var list<\MediCareMini\Domain\Enum\ArticleStatus> $statuses
+ * @var list<\MediCareMini\Domain\Enum\SchemaType> $schemaTypes
  * @var list<string> $categories
  * @var bool $canPublish
  * @var array<string,string> $old
@@ -18,8 +18,8 @@
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\ArticleStatus;
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\ArticleStatus;
+use MediCareMini\Domain\Enum\Locale;
 
 $action = $article === null
     ? $view->adminUrl('articles')

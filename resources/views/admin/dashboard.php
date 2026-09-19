@@ -6,19 +6,19 @@
  * controller does not even fetch those figures otherwise, so they never reach
  * the HTML source of a page a receptionist can view.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User $user
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User $user
  * @var array<string,int|string> $headline
  * @var array $attendance
  * @var array $acquisition
  * @var list<array> $doctorLoad
  * @var array<string,int> $bookingTrend
- * @var list<\Aster\Domain\Entity\Appointment> $recent
+ * @var list<\MediCareMini\Domain\Entity\Appointment> $recent
  * @var array{total_patients:int,new_this_period:int,portal_accounts:int}|null $mpi
  * @var array{active_encounters:int,admitted_today:int,discharged_today:int,beds_occupied:int,beds_total:int,pending_clearance:int}|null $clinical
  * @var array<string,int>|null $visitTypeMix
- * @var list<\Aster\Domain\Entity\Encounter>|null $recentEncounters
- * @var array{charges_posted:\Aster\Domain\ValueObject\Money,payments_posted:\Aster\Domain\ValueObject\Money,outstanding:\Aster\Domain\ValueObject\Money,open_balances:int}|null $ledger
+ * @var list<\MediCareMini\Domain\Entity\Encounter>|null $recentEncounters
+ * @var array{charges_posted:\MediCareMini\Domain\ValueObject\Money,payments_posted:\MediCareMini\Domain\ValueObject\Money,outstanding:\MediCareMini\Domain\ValueObject\Money,open_balances:int}|null $ledger
  * @var list<array<string,mixed>>|null $recentAudit
  */
 
@@ -209,7 +209,7 @@ $sparkline = static function (array $series, string $stroke = '#0f8f89'): string
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <h3 class="text-sm font-extrabold text-slate-700">Verified revenue, last 30 days</h3>
                     <a href="<?= $view->adminUrl('payments') ?>" class="rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 border border-amber-100 transition-colors hover:bg-amber-100">
-                        <?= $view->e($t->money(\Aster\Domain\ValueObject\Money::fromMajor(array_sum($revenueTrend)))) ?>
+                        <?= $view->e($t->money(\MediCareMini\Domain\ValueObject\Money::fromMajor(array_sum($revenueTrend)))) ?>
                     </a>
                 </div>
                 <div class="mt-4"><?= $sparkline($revenueTrend, '#d99a32') ?></div>
@@ -509,7 +509,7 @@ $sparkline = static function (array $series, string $stroke = '#0f8f89'): string
                             <td class="px-4 py-3.5 text-xs font-medium capitalize text-slate-500"><?= $view->e(str_replace('_', ' ', (string) $row['channel'])) ?></td>
                             <td class="px-4 py-3.5 text-right font-semibold text-slate-700"><?= (int) $row['count'] ?></td>
                             <td class="px-4 py-3.5 text-right font-black text-medical-700">
-                                <?= $view->e($t->money(\Aster\Domain\ValueObject\Money::fromDatabase($row['total']))) ?>
+                                <?= $view->e($t->money(\MediCareMini\Domain\ValueObject\Money::fromDatabase($row['total']))) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

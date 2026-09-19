@@ -5,7 +5,7 @@
  * Only keys that already exist in system_settings are writable, so adding
  * fields to the POST body cannot inject new configuration.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var array<string, list<array<string,mixed>>> $groups
  * @var array<string,int> $mailStats
  */

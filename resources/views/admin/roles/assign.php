@@ -4,9 +4,9 @@
  * (spec §4.2/§4.5). No selection in the multiselect = unscoped = sees
  * every ward for this grant, unchanged from today.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\User> $users
- * @var list<\Aster\Domain\Entity\Role> $roles (unarchived only)
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\User> $users
+ * @var list<\MediCareMini\Domain\Entity\Role> $roles (unarchived only)
  * @var list<string> $wardNames
  */
 

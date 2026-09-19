@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /**
  * consumption_ledger.mode (FRS 7.1) - deliberately its own 2-case enum

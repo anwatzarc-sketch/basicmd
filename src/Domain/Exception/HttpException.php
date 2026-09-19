@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Exception;
+namespace MediCareMini\Domain\Exception;
 
 use RuntimeException;
 use Throwable;

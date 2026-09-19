@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\Entity\Patient;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\Repository\PatientAccountRepositoryInterface;
-use Aster\Domain\Repository\PatientRepositoryInterface;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Security\PasswordHasher;
-use Aster\Infrastructure\Security\RateLimiter;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Domain\Entity\Patient;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\Repository\PatientAccountRepositoryInterface;
+use MediCareMini\Domain\Repository\PatientRepositoryInterface;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Security\PasswordHasher;
+use MediCareMini\Infrastructure\Security\RateLimiter;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Logger;
 use SensitiveParameter;
 
 /**

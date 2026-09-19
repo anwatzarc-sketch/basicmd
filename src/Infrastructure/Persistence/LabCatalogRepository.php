@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\LabPanel;
-use Aster\Domain\Entity\LabPanelParameter;
-use Aster\Domain\Repository\LabCatalogRepositoryInterface;
+use MediCareMini\Domain\Entity\LabPanel;
+use MediCareMini\Domain\Entity\LabPanelParameter;
+use MediCareMini\Domain\Repository\LabCatalogRepositoryInterface;
 
 /**
  * The master test directory (migration 012).

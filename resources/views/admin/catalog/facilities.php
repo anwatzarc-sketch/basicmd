@@ -2,9 +2,9 @@
 /**
  * Facility management.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\Facility> $facilities
- * @var list<\Aster\Domain\Enum\FacilityStatus> $statuses
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\Facility> $facilities
+ * @var list<\MediCareMini\Domain\Enum\FacilityStatus> $statuses
  * @var array<string,int> $counts
  */
 

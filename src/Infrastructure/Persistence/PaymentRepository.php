@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\Payment;
-use Aster\Domain\Entity\PaymentMethod;
-use Aster\Domain\Enum\ProofStatus;
-use Aster\Domain\Exception\BookingException;
+use MediCareMini\Domain\Entity\Payment;
+use MediCareMini\Domain\Entity\PaymentMethod;
+use MediCareMini\Domain\Enum\ProofStatus;
+use MediCareMini\Domain\Exception\BookingException;
 
 /**
  * Proof-of-payment records and the transfer instructions behind them.

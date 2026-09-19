@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Unit\Infrastructure\Database;
+namespace MediCareMini\Tests\Unit\Infrastructure\Database;
 
-use Aster\Infrastructure\Database\SqlStatementSplitter;
+use MediCareMini\Infrastructure\Database\SqlStatementSplitter;
 use PHPUnit\Framework\TestCase;
 
 final class SqlStatementSplitterTest extends TestCase

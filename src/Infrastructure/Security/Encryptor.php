@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Security;
+namespace MediCareMini\Infrastructure\Security;
 
-use Aster\Domain\Exception\EncryptionException;
+use MediCareMini\Domain\Exception\EncryptionException;
 
 /**
  * AES-256-GCM field-level encryption for clinical text.

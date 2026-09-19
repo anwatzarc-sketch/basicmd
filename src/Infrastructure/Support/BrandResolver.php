@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Support;
+namespace MediCareMini\Infrastructure\Support;
 
-use Aster\Domain\ValueObject\CompanyBrand;
-use Aster\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Domain\ValueObject\CompanyBrand;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
 use Throwable;
 
 /**

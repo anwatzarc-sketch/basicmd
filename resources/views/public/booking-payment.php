@@ -5,10 +5,10 @@
  * This page is the whole payment integration: show the patient where to send
  * the money, then take a photo of the receipt back.
  *
- * @var \Aster\Presentation\View\View            $view
- * @var \Aster\Domain\Entity\Appointment         $appointment
- * @var list<\Aster\Domain\Entity\PaymentMethod> $paymentMethods
- * @var list<\Aster\Domain\Entity\Payment>       $payments
+ * @var \MediCareMini\Presentation\View\View            $view
+ * @var \MediCareMini\Domain\Entity\Appointment         $appointment
+ * @var list<\MediCareMini\Domain\Entity\PaymentMethod> $paymentMethods
+ * @var list<\MediCareMini\Domain\Entity\Payment>       $payments
  * @var bool                                     $canSubmit
  */
 

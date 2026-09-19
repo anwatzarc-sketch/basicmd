@@ -6,11 +6,11 @@
  * claims to have sent and the amount actually owed, so the two can be
  * compared without leaving the page.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Payment $payment
- * @var \Aster\Domain\Entity\Appointment|null $appointment
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Payment $payment
+ * @var \MediCareMini\Domain\Entity\Appointment|null $appointment
  * @var list<array<string,mixed>> $duplicates
- * @var list<\Aster\Domain\Entity\Payment> $otherPayments
+ * @var list<\MediCareMini\Domain\Entity\Payment> $otherPayments
  * @var list<array<string,mixed>> $history
  * @var bool $canVerify
  */

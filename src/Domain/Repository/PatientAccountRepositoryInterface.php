@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
-use Aster\Domain\Entity\PatientAccount;
+use MediCareMini\Domain\Entity\PatientAccount;
 
 /** patient_accounts persistence (FRS 5.3). */
 interface PatientAccountRepositoryInterface

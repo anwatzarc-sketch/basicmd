@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\Entity\Appointment;
-use Aster\Domain\Entity\Payment;
-use Aster\Domain\Enum\PaymentKind;
-use Aster\Domain\Enum\ProofStatus;
-use Aster\Domain\Exception\BookingException;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\ValueObject\Money;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\PaymentRepository;
-use Aster\Infrastructure\Storage\FileUploader;
-use Aster\Infrastructure\Support\Logger;
-use Aster\Presentation\Http\Request;
+use MediCareMini\Domain\Entity\Appointment;
+use MediCareMini\Domain\Entity\Payment;
+use MediCareMini\Domain\Enum\PaymentKind;
+use MediCareMini\Domain\Enum\ProofStatus;
+use MediCareMini\Domain\Exception\BookingException;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\ValueObject\Money;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\PaymentRepository;
+use MediCareMini\Infrastructure\Storage\FileUploader;
+use MediCareMini\Infrastructure\Support\Logger;
+use MediCareMini\Presentation\Http\Request;
 use DateTimeImmutable;
 use Throwable;
 

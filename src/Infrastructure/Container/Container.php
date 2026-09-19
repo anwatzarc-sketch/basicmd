@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Container;
+namespace MediCareMini\Infrastructure\Container;
 
 use Closure;
 use RuntimeException;

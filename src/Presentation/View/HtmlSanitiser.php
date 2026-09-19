@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\View;
+namespace MediCareMini\Presentation\View;
 
 use DOMAttr;
 use DOMDocument;
@@ -79,7 +79,7 @@ final class HtmlSanitiser
         // The XML declaration forces UTF-8 interpretation. Without it
         // DOMDocument assumes ISO-8859-1 and mangles every Ge'ez character.
         $loaded = $document->loadHTML(
-            '<?xml encoding="UTF-8"?><div id="aster-root">' . $html . '</div>',
+            '<?xml encoding="UTF-8"?><div id="medicaremini-root">' . $html . '</div>',
             LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET,
         );
 
@@ -92,10 +92,10 @@ final class HtmlSanitiser
         }
 
         $xpath = new DOMXPath($document);
-        $root  = $document->getElementById('aster-root');
+        $root  = $document->getElementById('medicaremini-root');
 
         if (!$root instanceof DOMElement) {
-            $found = $xpath->query('//div[@id="aster-root"]');
+            $found = $xpath->query('//div[@id="medicaremini-root"]');
             $root  = $found !== false && $found->length > 0 ? $found->item(0) : null;
         }
 

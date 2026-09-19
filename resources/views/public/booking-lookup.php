@@ -6,7 +6,7 @@
  * but it travels in an email that can be forwarded, so it is not treated as
  * sufficient authorisation on its own.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  */
 
 declare(strict_types=1);

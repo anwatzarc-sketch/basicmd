@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Persistence;
+namespace MediCareMini\Tests\Feature\Persistence;
 
-use Aster\Domain\Entity\ClinicalNote;
-use Aster\Domain\Entity\DiagnosticOrder;
-use Aster\Domain\Enum\ClinicalNoteType;
-use Aster\Domain\Enum\DiagnosticCategory;
-use Aster\Domain\Enum\DiagnosticStatus;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Domain\Repository\PrescriptionRepositoryInterface;
-use Aster\Domain\Services\EncounterService;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Domain\Entity\ClinicalNote;
+use MediCareMini\Domain\Entity\DiagnosticOrder;
+use MediCareMini\Domain\Enum\ClinicalNoteType;
+use MediCareMini\Domain\Enum\DiagnosticCategory;
+use MediCareMini\Domain\Enum\DiagnosticStatus;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Repository\ClinicalNoteRepositoryInterface;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Domain\Repository\PrescriptionRepositoryInterface;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 use PDOException;
 
 /**
@@ -27,7 +27,7 @@ final class ClinicalRecordsTest extends DatabaseTestCase
     private DiagnosticOrderRepositoryInterface $orders;
     private PrescriptionRepositoryInterface $prescriptions;
 
-    /** dawit@astermedical.et, seeded physician. */
+    /** dawit@medicaremini.radiants.net.et, seeded physician. */
     private const int PHYSICIAN_ID = 4;
 
     protected function setUp(): void

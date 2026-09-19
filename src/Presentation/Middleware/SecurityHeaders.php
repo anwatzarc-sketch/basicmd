@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Middleware;
+namespace MediCareMini\Presentation\Middleware;
 
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
 
 /**
  * Applies security response headers to every page.
@@ -37,7 +37,7 @@ final readonly class SecurityHeaders
     {
         $response = $next($request);
 
-        $nonce = $GLOBALS['aster_csp_nonce'] ?? '';
+        $nonce = $GLOBALS['medicaremini_csp_nonce'] ?? '';
 
         $headers = [
             // Blocks MIME sniffing, which is what turns an uploaded image

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\Locale;
 
 /**
  * Runtime configuration from the system_settings table.

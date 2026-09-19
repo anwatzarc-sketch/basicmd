@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Http;
+namespace MediCareMini\Presentation\Http;
 
-use Aster\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\HttpException;
 
 /**
  * Route table and dispatcher.

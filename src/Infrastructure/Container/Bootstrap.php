@@ -2,82 +2,82 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Container;
+namespace MediCareMini\Infrastructure\Container;
 
-use Aster\Application\Service\AuthService;
-use Aster\Application\Service\BookingService;
-use Aster\Application\Service\DashboardService;
-use Aster\Application\Service\LabReportService;
-use Aster\Application\Service\NotificationService;
-use Aster\Application\Service\PatientAuthService;
-use Aster\Application\Service\PaymentService;
-use Aster\Application\Service\PricingService;
-use Aster\Application\Service\SeoService;
-use Aster\Domain\Repository\AdvisoryLockInterface;
-use Aster\Domain\Repository\AuditLoggerInterface;
-use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LabCatalogRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Repository\NumberSequenceInterface;
-use Aster\Domain\Repository\PatientAccountRepositoryInterface;
-use Aster\Domain\Repository\PatientRepositoryInterface;
-use Aster\Domain\Repository\PrescriptionRepositoryInterface;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\Repository\StaffDirectoryInterface;
-use Aster\Domain\Repository\TransactionManagerInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\Repository\WardScopeRepositoryInterface;
-use Aster\Domain\Services\BillingService;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\Services\PatientDeduplicationService;
-use Aster\Domain\Services\WardScopeService;
-use Aster\Domain\Services\QueueService;
-use Aster\Infrastructure\Mail\Mailer;
-use Aster\Infrastructure\Mail\MailQueue;
-use Aster\Infrastructure\Mail\MailRenderer;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Persistence\ArticleRepository;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\ClinicalNoteRepository;
-use Aster\Infrastructure\Persistence\Database;
-use Aster\Infrastructure\Persistence\DiagnosticOrderRepository;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\EncounterRepository;
-use Aster\Infrastructure\Persistence\FacilityRepository;
-use Aster\Infrastructure\Persistence\InquiryRepository;
-use Aster\Infrastructure\Persistence\LabCatalogRepository;
-use Aster\Infrastructure\Persistence\LedgerRepository;
-use Aster\Infrastructure\Persistence\PackageRepository;
-use Aster\Infrastructure\Persistence\PatientAccountRepository;
-use Aster\Infrastructure\Persistence\PatientRepository;
-use Aster\Infrastructure\Persistence\PaymentRepository;
-use Aster\Infrastructure\Persistence\PdoAdvisoryLock;
-use Aster\Infrastructure\Persistence\PdoNumberSequence;
-use Aster\Infrastructure\Persistence\PdoTransactionManager;
-use Aster\Infrastructure\Persistence\PrescriptionRepository;
-use Aster\Infrastructure\Persistence\ReceivablePaymentRepository;
-use Aster\Infrastructure\Persistence\RoleRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Persistence\StaffDirectory;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Persistence\WardLocationRepository;
-use Aster\Infrastructure\Persistence\WardScopeRepository;
-use Aster\Infrastructure\Security\Csrf;
-use Aster\Infrastructure\Security\Encryptor;
-use Aster\Infrastructure\Security\PasswordHasher;
-use Aster\Infrastructure\Security\RateLimiter;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Storage\FileUploader;
-use Aster\Infrastructure\Support\BrandResolver;
-use Aster\Infrastructure\Support\BrandWriter;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Env;
-use Aster\Infrastructure\Support\Logger;
-use Aster\Infrastructure\Support\Translator;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\AuthService;
+use MediCareMini\Application\Service\BookingService;
+use MediCareMini\Application\Service\DashboardService;
+use MediCareMini\Application\Service\LabReportService;
+use MediCareMini\Application\Service\NotificationService;
+use MediCareMini\Application\Service\PatientAuthService;
+use MediCareMini\Application\Service\PaymentService;
+use MediCareMini\Application\Service\PricingService;
+use MediCareMini\Application\Service\SeoService;
+use MediCareMini\Domain\Repository\AdvisoryLockInterface;
+use MediCareMini\Domain\Repository\AuditLoggerInterface;
+use MediCareMini\Domain\Repository\ClinicalNoteRepositoryInterface;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LabCatalogRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Repository\NumberSequenceInterface;
+use MediCareMini\Domain\Repository\PatientAccountRepositoryInterface;
+use MediCareMini\Domain\Repository\PatientRepositoryInterface;
+use MediCareMini\Domain\Repository\PrescriptionRepositoryInterface;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\Repository\StaffDirectoryInterface;
+use MediCareMini\Domain\Repository\TransactionManagerInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\Repository\WardScopeRepositoryInterface;
+use MediCareMini\Domain\Services\BillingService;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\Services\PatientDeduplicationService;
+use MediCareMini\Domain\Services\WardScopeService;
+use MediCareMini\Domain\Services\QueueService;
+use MediCareMini\Infrastructure\Mail\Mailer;
+use MediCareMini\Infrastructure\Mail\MailQueue;
+use MediCareMini\Infrastructure\Mail\MailRenderer;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Persistence\ArticleRepository;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\ClinicalNoteRepository;
+use MediCareMini\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Persistence\DiagnosticOrderRepository;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\EncounterRepository;
+use MediCareMini\Infrastructure\Persistence\FacilityRepository;
+use MediCareMini\Infrastructure\Persistence\InquiryRepository;
+use MediCareMini\Infrastructure\Persistence\LabCatalogRepository;
+use MediCareMini\Infrastructure\Persistence\LedgerRepository;
+use MediCareMini\Infrastructure\Persistence\PackageRepository;
+use MediCareMini\Infrastructure\Persistence\PatientAccountRepository;
+use MediCareMini\Infrastructure\Persistence\PatientRepository;
+use MediCareMini\Infrastructure\Persistence\PaymentRepository;
+use MediCareMini\Infrastructure\Persistence\PdoAdvisoryLock;
+use MediCareMini\Infrastructure\Persistence\PdoNumberSequence;
+use MediCareMini\Infrastructure\Persistence\PdoTransactionManager;
+use MediCareMini\Infrastructure\Persistence\PrescriptionRepository;
+use MediCareMini\Infrastructure\Persistence\ReceivablePaymentRepository;
+use MediCareMini\Infrastructure\Persistence\RoleRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Persistence\StaffDirectory;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Persistence\WardLocationRepository;
+use MediCareMini\Infrastructure\Persistence\WardScopeRepository;
+use MediCareMini\Infrastructure\Security\Csrf;
+use MediCareMini\Infrastructure\Security\Encryptor;
+use MediCareMini\Infrastructure\Security\PasswordHasher;
+use MediCareMini\Infrastructure\Security\RateLimiter;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Storage\FileUploader;
+use MediCareMini\Infrastructure\Support\BrandResolver;
+use MediCareMini\Infrastructure\Support\BrandWriter;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Env;
+use MediCareMini\Infrastructure\Support\Logger;
+use MediCareMini\Infrastructure\Support\Translator;
+use MediCareMini\Presentation\View\View;
 
 /**
  * Wires the application.
@@ -444,21 +444,21 @@ final class Bootstrap
         // --- Site assistant ----------------------------------------------
 
         $container->singleton(
-            \Aster\Infrastructure\Ai\ChatProvider::class,
-            static fn (Container $c): \Aster\Infrastructure\Ai\ChatProvider => new \Aster\Infrastructure\Ai\ChatProvider(
+            \MediCareMini\Infrastructure\Ai\ChatProvider::class,
+            static fn (Container $c): \MediCareMini\Infrastructure\Ai\ChatProvider => new \MediCareMini\Infrastructure\Ai\ChatProvider(
                 logger:         $c->get(Logger::class)->withChannel('ai'),
-                baseUrl:        \Aster\Infrastructure\Support\Env::bool('AI_ENABLED', false)
-                    ? (\Aster\Infrastructure\Support\Env::get('AI_BASE_URL') ?? '')
+                baseUrl:        \MediCareMini\Infrastructure\Support\Env::bool('AI_ENABLED', false)
+                    ? (\MediCareMini\Infrastructure\Support\Env::get('AI_BASE_URL') ?? '')
                     : '',
-                apiKey:         \Aster\Infrastructure\Support\Env::get('AI_API_KEY') ?? '',
-                model:          \Aster\Infrastructure\Support\Env::get('AI_MODEL') ?? '',
-                timeoutSeconds: \Aster\Infrastructure\Support\Env::int('AI_TIMEOUT', 20),
+                apiKey:         \MediCareMini\Infrastructure\Support\Env::get('AI_API_KEY') ?? '',
+                model:          \MediCareMini\Infrastructure\Support\Env::get('AI_MODEL') ?? '',
+                timeoutSeconds: \MediCareMini\Infrastructure\Support\Env::int('AI_TIMEOUT', 20),
             ),
         );
 
         $container->singleton(
-            \Aster\Application\Service\SiteGuide::class,
-            static fn (Container $c): \Aster\Application\Service\SiteGuide => new \Aster\Application\Service\SiteGuide(
+            \MediCareMini\Application\Service\SiteGuide::class,
+            static fn (Container $c): \MediCareMini\Application\Service\SiteGuide => new \MediCareMini\Application\Service\SiteGuide(
                 $c->get(ServiceRepository::class),
                 $c->get(DoctorRepository::class),
                 $c->get(PackageRepository::class),
@@ -472,10 +472,10 @@ final class Bootstrap
         );
 
         $container->singleton(
-            \Aster\Application\Service\ChatService::class,
-            static fn (Container $c): \Aster\Application\Service\ChatService => new \Aster\Application\Service\ChatService(
-                $c->get(\Aster\Infrastructure\Ai\ChatProvider::class),
-                $c->get(\Aster\Application\Service\SiteGuide::class),
+            \MediCareMini\Application\Service\ChatService::class,
+            static fn (Container $c): \MediCareMini\Application\Service\ChatService => new \MediCareMini\Application\Service\ChatService(
+                $c->get(\MediCareMini\Infrastructure\Ai\ChatProvider::class),
+                $c->get(\MediCareMini\Application\Service\SiteGuide::class),
                 $c->get(SettingsRepository::class),
                 $c->get(Translator::class),
             ),

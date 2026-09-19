@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\Enum\PaymentChannel;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\PaymentChannel;
 
 /**
  * A transfer destination and its instructions, as shown at checkout.

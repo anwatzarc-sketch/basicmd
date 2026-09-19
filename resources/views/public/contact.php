@@ -2,7 +2,7 @@
 /**
  * Contact page.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var array<string,string> $old
  * @var array<string,string> $errors
  */

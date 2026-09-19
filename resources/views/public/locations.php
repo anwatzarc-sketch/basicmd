@@ -6,7 +6,7 @@
  * to an OpenStreetMap iframe, which needs no key and no billing account. A
  * clinic without a Maps contract still gets a working map.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var array{lat:string,lng:string,zoom:int} $map
  * @var string $mapKey
  */

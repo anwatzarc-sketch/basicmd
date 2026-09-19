@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Services;
+namespace MediCareMini\Tests\Feature\Services;
 
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Persistence\Database;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,7 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class BedAllocationConcurrencyTest extends TestCase
 {
-    private const int PHYSICIAN_ID = 4; // dawit@astermedical.et, seeded
+    private const int PHYSICIAN_ID = 4; // dawit@medicaremini.radiants.net.et, seeded
 
     public function test_two_concurrent_upgrades_to_the_same_bed_exactly_one_succeeds(): void
     {
@@ -56,7 +56,7 @@ final class BedAllocationConcurrencyTest extends TestCase
         try {
             // --- Race: both encounters, both targeting the SAME bed -----
             $workerScript = __DIR__ . '/../Support/bed_allocation_race_worker.php';
-            $outputDir    = sys_get_temp_dir() . '/aster_bed_race_' . $stamp;
+            $outputDir    = sys_get_temp_dir() . '/medicaremini_bed_race_' . $stamp;
             mkdir($outputDir);
 
             $outA = $outputDir . '/worker_a.txt';

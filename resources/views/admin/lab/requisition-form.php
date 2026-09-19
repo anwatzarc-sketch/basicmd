@@ -8,12 +8,12 @@
  * a form that lets you fill in nine fields before telling you that is a
  * form that wastes a technician's time at the bench.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Encounter|null $encounter
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Encounter|null $encounter
  * @var bool $notFound
  * @var string $searchTerm
- * @var list<\Aster\Domain\Entity\Encounter> $active
- * @var list<\Aster\Domain\Entity\LabPanel> $panels
+ * @var list<\MediCareMini\Domain\Entity\Encounter> $active
+ * @var list<\MediCareMini\Domain\Entity\LabPanel> $panels
  * @var array<string,string> $old
  */
 

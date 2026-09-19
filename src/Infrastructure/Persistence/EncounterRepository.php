@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\Encounter;
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\ValueObject\VisitNumber;
+use MediCareMini\Domain\Entity\Encounter;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\ValueObject\VisitNumber;
 
 final class EncounterRepository implements EncounterRepositoryInterface
 {

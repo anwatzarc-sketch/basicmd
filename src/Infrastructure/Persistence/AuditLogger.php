@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\User;
-use Aster\Domain\Repository\AuditLoggerInterface;
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Repository\AuditLoggerInterface;
+use MediCareMini\Infrastructure\Support\Logger;
 use Throwable;
 
 /**

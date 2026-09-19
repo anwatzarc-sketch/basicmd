@@ -3,21 +3,21 @@
  * Encounter detail: identity, ledger, payments, and the applicable
  * workflow actions (FRS 10.2/10.3).
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Encounter $encounter
- * @var \Aster\Domain\Entity\Patient|null $patient
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Encounter $encounter
+ * @var \MediCareMini\Domain\Entity\Patient|null $patient
  * @var float $balance
  * @var bool $cleared
- * @var list<\Aster\Domain\Entity\LedgerEntry> $ledgerEntries
- * @var list<\Aster\Domain\Entity\ReceivablePayment> $paymentEntries
- * @var list<\Aster\Domain\Entity\WardLocation> $availableBeds
- * @var list<\Aster\Domain\Entity\User> $physicians
+ * @var list<\MediCareMini\Domain\Entity\LedgerEntry> $ledgerEntries
+ * @var list<\MediCareMini\Domain\Entity\ReceivablePayment> $paymentEntries
+ * @var list<\MediCareMini\Domain\Entity\WardLocation> $availableBeds
+ * @var list<\MediCareMini\Domain\Entity\User> $physicians
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Enum\VisitType;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Enum\VisitType;
 
 $adminPath = '/' . $view->config->adminPath;
 $encounterPath = $adminPath . '/encounters/' . $encounter->id;

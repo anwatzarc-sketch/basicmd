@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Support;
+namespace MediCareMini\Tests\Support;
 
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Persistence\Database;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  * test gets its own throwaway database, created fresh in setUp() and dropped
  * in tearDown(), using the same connection credentials as the real app but a
  * disposable schema name so a failed test run cannot collide with (or ever
- * touch) aster_medical.
+ * touch) MediCareMini.
  */
 abstract class MigrationTestCase extends TestCase
 {
@@ -29,7 +29,7 @@ abstract class MigrationTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->testDatabaseName = 'aster_migration_test_' . bin2hex(random_bytes(4));
+        $this->testDatabaseName = 'medicaremini_migration_test_' . bin2hex(random_bytes(4));
 
         $this->pdo = new PDO(
             'mysql:host=127.0.0.1;charset=utf8mb4',
@@ -69,7 +69,7 @@ abstract class MigrationTestCase extends TestCase
     /** Write a temporary migration file under a fresh temp directory and return its dir. */
     protected function writeMigrationDir(array $filesByName): string
     {
-        $dir = sys_get_temp_dir() . '/aster_migrations_test_' . bin2hex(random_bytes(4));
+        $dir = sys_get_temp_dir() . '/medicaremini_migrations_test_' . bin2hex(random_bytes(4));
         mkdir($dir, 0777, true);
 
         foreach ($filesByName as $filename => $contents) {

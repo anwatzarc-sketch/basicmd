@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\MedicalService;
+use MediCareMini\Domain\Entity\MedicalService;
 
 final class ServiceRepository
 {

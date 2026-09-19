@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Support;
+namespace MediCareMini\Domain\Support;
 
 /**
  * Groups the live `permissions` table by the natural `resource.` prefix

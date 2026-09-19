@@ -2,26 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Domain\Enum\LedgerCategory;
-use Aster\Domain\Enum\LedgerMode;
-use Aster\Domain\Enum\ReceivablePaymentMethod;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Repository\NumberSequenceInterface;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\Services\BillingService;
-use Aster\Domain\ValueObject\ReceiptId;
-use Aster\Domain\ValueObject\VisitNumber;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Domain\Enum\LedgerCategory;
+use MediCareMini\Domain\Enum\LedgerMode;
+use MediCareMini\Domain\Enum\ReceivablePaymentMethod;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Repository\NumberSequenceInterface;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\Services\BillingService;
+use MediCareMini\Domain\ValueObject\ReceiptId;
+use MediCareMini\Domain\ValueObject\VisitNumber;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 use DateTimeImmutable;
 
 /**

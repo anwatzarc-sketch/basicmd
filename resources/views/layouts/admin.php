@@ -7,8 +7,8 @@
  * usability decision as much as a security one - the permission check in the
  * middleware is what actually enforces access.
  *
- * @var \Aster\Presentation\View\View  $view
- * @var \Aster\Domain\Entity\User|null $user
+ * @var \MediCareMini\Presentation\View\View  $view
+ * @var \MediCareMini\Domain\Entity\User|null $user
  * @var string                         $content
  * @var array                          $meta
  * @var string                         $cspNonce

@@ -2,16 +2,16 @@
 /**
  * Patient Detail - Overview tab.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User $user
- * @var \Aster\Domain\Entity\Patient $patient
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User $user
+ * @var \MediCareMini\Domain\Entity\Patient $patient
  * @var list<string> $allergies
- * @var list<\Aster\Domain\Entity\Encounter> $encounters
+ * @var list<\MediCareMini\Domain\Entity\Encounter> $encounters
  */
 
 declare(strict_types=1);
 
-use Aster\Presentation\Support\PatientDetailAccess;
+use MediCareMini\Presentation\Support\PatientDetailAccess;
 
 $adminPath = '/' . $view->config->adminPath;
 ?>

@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Domain\Enum\FacilityStatus;
-use Aster\Domain\Enum\ServiceCategory;
-use Aster\Domain\Exception\HttpException;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\FacilityRepository;
-use Aster\Infrastructure\Persistence\PackageRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Storage\FileUploader;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Domain\Enum\FacilityStatus;
+use MediCareMini\Domain\Enum\ServiceCategory;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\FacilityRepository;
+use MediCareMini\Infrastructure\Persistence\PackageRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Storage\FileUploader;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * CMS for the three simple catalogue resources: services, health packages and

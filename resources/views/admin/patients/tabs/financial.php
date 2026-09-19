@@ -13,13 +13,13 @@
  * (SUM() across every encounter this patient has ever had) - never
  * stored, never cached, per spec §5.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Patient $patient
- * @var \Aster\Domain\ValueObject\Balance $charges
- * @var \Aster\Domain\ValueObject\Balance $paid
- * @var \Aster\Domain\ValueObject\Balance $outstanding
- * @var list<\Aster\Domain\Entity\LedgerEntry> $ledger
- * @var list<\Aster\Domain\Entity\ReceivablePayment> $payments
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Patient $patient
+ * @var \MediCareMini\Domain\ValueObject\Balance $charges
+ * @var \MediCareMini\Domain\ValueObject\Balance $paid
+ * @var \MediCareMini\Domain\ValueObject\Balance $outstanding
+ * @var list<\MediCareMini\Domain\Entity\LedgerEntry> $ledger
+ * @var list<\MediCareMini\Domain\Entity\ReceivablePayment> $payments
  */
 
 declare(strict_types=1);

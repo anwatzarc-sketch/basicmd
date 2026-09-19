@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\DTO;
+namespace MediCareMini\Application\DTO;
 
-use Aster\Domain\Enum\BookingSource;
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\Enum\QueueTier;
-use Aster\Domain\Enum\TimeSlot;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\ValueObject\PhoneNumber;
-use Aster\Presentation\Http\Request;
+use MediCareMini\Domain\Enum\BookingSource;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\QueueTier;
+use MediCareMini\Domain\Enum\TimeSlot;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Presentation\Http\Request;
 use DateTimeImmutable;
 
 /**

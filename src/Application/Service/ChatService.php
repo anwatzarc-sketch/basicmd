@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Infrastructure\Ai\ChatProvider;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Support\Translator;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Infrastructure\Ai\ChatProvider;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Support\Translator;
 
 /**
  * The site assistant: answers questions about this clinic and this website.

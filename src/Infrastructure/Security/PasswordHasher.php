@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Security;
+namespace MediCareMini\Infrastructure\Security;
 
-use Aster\Domain\Exception\ValidationException;
+use MediCareMini\Domain\Exception\ValidationException;
 use SensitiveParameter;
 
 /**
@@ -104,7 +104,7 @@ final readonly class PasswordHasher
         $lowered = strtolower($plain);
         $common  = [
             'password', 'passw0rd', 'qwerty', '123456', '12345678', 'letmein',
-            'welcome', 'admin', 'administrator', 'aster', 'astermedical',
+            'welcome', 'admin', 'administrator', 'medicaremini', 'radiants',
             'medical', 'clinic', 'hospital', 'addisababa', 'ethiopia',
         ];
 

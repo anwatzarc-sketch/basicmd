@@ -6,7 +6,7 @@
  * when APP_DEBUG is on AND APP_ENV is not production - Config forces
  * appDebug to false in production regardless of the .env value.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var int $status
  * @var string $title
  * @var string $message

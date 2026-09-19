@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Presentation;
+namespace MediCareMini\Tests\Feature\Presentation;
 
-use Aster\Domain\Enum\ClinicalNoteType;
-use Aster\Domain\Enum\DiagnosticCategory;
-use Aster\Domain\Enum\UserRole;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Presentation\Support\PatientDetailAccess;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Domain\Enum\ClinicalNoteType;
+use MediCareMini\Domain\Enum\DiagnosticCategory;
+use MediCareMini\Domain\Enum\UserRole;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Presentation\Support\PatientDetailAccess;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 
 /**
  * The permission-mapping test the implementation prompt requires per real
@@ -29,7 +29,7 @@ final class PatientDetailAccessTest extends DatabaseTestCase
         $this->users = $this->container->get(UserRepository::class);
     }
 
-    private function makeUser(UserRole $role): \Aster\Domain\Entity\User
+    private function makeUser(UserRole $role): \MediCareMini\Domain\Entity\User
     {
         $id = $this->users->create(
             fullName:     'Test ' . $role->value,
@@ -45,7 +45,7 @@ final class PatientDetailAccessTest extends DatabaseTestCase
     }
 
     /** @return list<string> */
-    private function tabKeys(\Aster\Domain\Entity\User $user): array
+    private function tabKeys(\MediCareMini\Domain\Entity\User $user): array
     {
         return array_column(PatientDetailAccess::visibleTabs($user), 'key');
     }

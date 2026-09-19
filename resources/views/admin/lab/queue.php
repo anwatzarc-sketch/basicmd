@@ -11,10 +11,10 @@
  * in the record's own vocabulary: a technician is waiting on a specimen,
  * not on an "ORDERED" row.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\DiagnosticOrder> $orders
- * @var list<\Aster\Domain\Enum\DiagnosticStatus> $statuses
- * @var \Aster\Domain\Enum\DiagnosticStatus|null $activeStatus
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\DiagnosticOrder> $orders
+ * @var list<\MediCareMini\Domain\Enum\DiagnosticStatus> $statuses
+ * @var \MediCareMini\Domain\Enum\DiagnosticStatus|null $activeStatus
  * @var string $searchTerm
  * @var array<string, int> $counts
  * @var bool $canOrder
@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\DiagnosticStatus;
+use MediCareMini\Domain\Enum\DiagnosticStatus;
 
 $total = array_sum($counts);
 ?>

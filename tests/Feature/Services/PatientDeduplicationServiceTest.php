@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Services;
+namespace MediCareMini\Tests\Feature\Services;
 
-use Aster\Domain\DTO\PatientDTO;
-use Aster\Domain\Enum\Gender;
-use Aster\Domain\Exception\PatientException;
-use Aster\Domain\Services\PatientDeduplicationService;
-use Aster\Domain\ValueObject\PhoneNumber;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Domain\DTO\PatientDTO;
+use MediCareMini\Domain\Enum\Gender;
+use MediCareMini\Domain\Exception\PatientException;
+use MediCareMini\Domain\Services\PatientDeduplicationService;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 use DateTimeImmutable;
 
 /**

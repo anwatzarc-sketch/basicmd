@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Storage;
+namespace MediCareMini\Infrastructure\Storage;
 
 /**
  * Metadata for a file that has been accepted and written to disk.

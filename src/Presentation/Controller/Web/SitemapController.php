@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Web;
+namespace MediCareMini\Presentation\Controller\Web;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\Exception\HttpException;
-use Aster\Infrastructure\Persistence\ArticleRepository;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Support\BrandResolver;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Storage\FileUploader;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Infrastructure\Persistence\ArticleRepository;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Support\BrandResolver;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Storage\FileUploader;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
 
 /**
  * sitemap.xml, robots.txt, the PWA manifest, and media file serving.

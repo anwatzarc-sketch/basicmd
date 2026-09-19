@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\Role;
+use MediCareMini\Domain\Entity\Role;
 
 /**
  * Role Management persistence (spec §4.2).

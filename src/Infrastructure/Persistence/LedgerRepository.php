@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\LedgerEntry;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\ValueObject\Balance;
+use MediCareMini\Domain\Entity\LedgerEntry;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\ValueObject\Balance;
 
 final class LedgerRepository implements LedgerRepositoryInterface
 {

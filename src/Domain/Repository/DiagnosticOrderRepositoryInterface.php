@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
-use Aster\Domain\Entity\DiagnosticOrder;
-use Aster\Domain\Enum\DiagnosticCategory;
-use Aster\Domain\Enum\DiagnosticStatus;
+use MediCareMini\Domain\Entity\DiagnosticOrder;
+use MediCareMini\Domain\Enum\DiagnosticCategory;
+use MediCareMini\Domain\Enum\DiagnosticStatus;
 
 interface DiagnosticOrderRepositoryInterface
 {

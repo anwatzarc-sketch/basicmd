@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /**
  * Staff roles and the permission matrix behind RBAC.
@@ -94,6 +94,14 @@ enum UserRole: string
                 'prescriptions.view', 'prescriptions.write', 'prescriptions.dispense',
                 'brand.manage',
                 'lab_catalog.manage',
+                // Migration 008 granted these to the super_admin ROLE in
+                // the database but never added them here, so a SuperAdmin
+                // holding no relational grant - which is every SuperAdmin
+                // on an install that has not used Role Management yet -
+                // fell back to this list and got 403 on the two screens
+                // that manage roles and wards. The fallback now says what
+                // the seeded role actually holds.
+                'roles.manage', 'wards.manage',
             ],
 
             // Clinical staff: their own queue plus the articles they author.

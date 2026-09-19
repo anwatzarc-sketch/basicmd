@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Support;
+namespace MediCareMini\Tests\Support;
 
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Container\Container;
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Container\Container;
+use MediCareMini\Infrastructure\Persistence\Database;
 use PHPUnit\Framework\TestCase;
 
 /**

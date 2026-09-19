@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Storage\FileUploader;
-use Aster\Infrastructure\Support\BrandPalette;
-use Aster\Infrastructure\Support\BrandResolver;
-use Aster\Infrastructure\Support\BrandWriter;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Storage\FileUploader;
+use MediCareMini\Infrastructure\Support\BrandPalette;
+use MediCareMini\Infrastructure\Support\BrandResolver;
+use MediCareMini\Infrastructure\Support\BrandWriter;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 use RuntimeException;
 
 /**
@@ -71,7 +71,7 @@ final class BrandController extends Controller
             if ($hero !== null) {
                 $identity['heroImage'] = $this->uploader->storeMedia($hero, 'brand', 1600)->relativePath;
             }
-        } catch (\Aster\Domain\Exception\ValidationException $e) {
+        } catch (\MediCareMini\Domain\Exception\ValidationException $e) {
             return $this->redirectWithError($this->config->adminPath . '/brand', $e->getMessage());
         }
 

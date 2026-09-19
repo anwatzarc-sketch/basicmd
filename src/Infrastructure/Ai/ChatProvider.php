@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Ai;
+namespace MediCareMini\Infrastructure\Ai;
 
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Infrastructure\Support\Logger;
 
 /**
  * Minimal client for an OpenAI-compatible /chat/completions endpoint.

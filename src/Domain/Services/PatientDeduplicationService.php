@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Services;
+namespace MediCareMini\Domain\Services;
 
-use Aster\Domain\DTO\PatientDTO;
-use Aster\Domain\Entity\Patient;
-use Aster\Domain\Exception\PatientException;
-use Aster\Domain\Repository\AdvisoryLockInterface;
-use Aster\Domain\Repository\AuditLoggerInterface;
-use Aster\Domain\Repository\NumberSequenceInterface;
-use Aster\Domain\Repository\PatientRepositoryInterface;
-use Aster\Domain\ValueObject\PatientId;
+use MediCareMini\Domain\DTO\PatientDTO;
+use MediCareMini\Domain\Entity\Patient;
+use MediCareMini\Domain\Exception\PatientException;
+use MediCareMini\Domain\Repository\AdvisoryLockInterface;
+use MediCareMini\Domain\Repository\AuditLoggerInterface;
+use MediCareMini\Domain\Repository\NumberSequenceInterface;
+use MediCareMini\Domain\Repository\PatientRepositoryInterface;
+use MediCareMini\Domain\ValueObject\PatientId;
 use DateTimeImmutable;
 use RuntimeException;
 

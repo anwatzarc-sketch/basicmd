@@ -11,8 +11,8 @@
  * What DOES render here and nowhere else is the action bar - it carries
  * .no-print, so it exists on screen and is absent from paper.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User|null $user
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User|null $user
  * @var string $content
  * @var array $meta
  * @var array $flash

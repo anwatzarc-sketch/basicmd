@@ -22,7 +22,7 @@
  * - never as a shortcut to avoid asking the server what's true right now.
  */
 
-const SHELL_CACHE = 'aster-shell-v1';
+const SHELL_CACHE = 'medicaremini-shell-v1';
 
 const PRECACHE_URLS = [
     '/offline.html',

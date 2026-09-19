@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\LedgerCategory;
-use Aster\Domain\Enum\LedgerMode;
-use Aster\Domain\ValueObject\Balance;
+use MediCareMini\Domain\Enum\LedgerCategory;
+use MediCareMini\Domain\Enum\LedgerMode;
+use MediCareMini\Domain\ValueObject\Balance;
 use DateTimeImmutable;
 
 /**

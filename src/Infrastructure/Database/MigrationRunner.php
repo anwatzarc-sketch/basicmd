@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Database;
+namespace MediCareMini\Infrastructure\Database;
 
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Persistence\Database;
 use RuntimeException;
 
 /**

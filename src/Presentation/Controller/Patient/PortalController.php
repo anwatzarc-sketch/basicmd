@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Patient;
+namespace MediCareMini\Presentation\Controller\Patient;
 
-use Aster\Application\Service\PatientAuthService;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Services\BillingService;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\PatientAuthService;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Services\BillingService;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * Patient self-service portal (FRS 10.6).

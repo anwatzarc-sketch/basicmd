@@ -2,10 +2,10 @@
 /**
  * Doctor profile page.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale $locale
- * @var \Aster\Domain\Entity\Doctor $doctor
- * @var list<\Aster\Domain\Entity\Article> $articles
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale $locale
+ * @var \MediCareMini\Domain\Entity\Doctor $doctor
+ * @var list<\MediCareMini\Domain\Entity\Article> $articles
  */
 
 declare(strict_types=1);

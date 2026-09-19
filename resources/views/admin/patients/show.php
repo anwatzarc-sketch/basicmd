@@ -5,16 +5,16 @@
  * determined by PatientDetailAccess, resolved from the real permission
  * set of whichever role is signed in - not a hardcoded per-role branch.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\User $user
- * @var \Aster\Domain\Entity\Patient $patient
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\User $user
+ * @var \MediCareMini\Domain\Entity\Patient $patient
  * @var string $tab
  * @var list<array{key:string,label:string}> $tabs
  */
 
 declare(strict_types=1);
 
-use Aster\Presentation\Support\PatientDetailAccess;
+use MediCareMini\Presentation\Support\PatientDetailAccess;
 
 // Leading slash matters: config->adminPath is "admin", and every link
 // below is built from it. Without it the browser resolves them RELATIVE

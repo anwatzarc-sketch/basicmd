@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Support;
+namespace MediCareMini\Tests\Feature\Support;
 
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Persistence\Database;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,7 +28,7 @@ final class NumberSequenceConcurrencyTest extends TestCase
     public function test_concurrent_processes_never_receive_the_same_number(): void
     {
         $scope     = 'test-race-' . bin2hex(random_bytes(4));
-        $outputDir = sys_get_temp_dir() . '/aster_seq_race_' . bin2hex(random_bytes(4));
+        $outputDir = sys_get_temp_dir() . '/medicaremini_seq_race_' . bin2hex(random_bytes(4));
         mkdir($outputDir);
 
         $workerScript = __DIR__ . '/number_sequence_race_worker.php';

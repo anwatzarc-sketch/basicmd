@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Middleware;
+namespace MediCareMini\Presentation\Middleware;
 
-use Aster\Domain\Exception\HttpException;
-use Aster\Infrastructure\Security\Csrf;
-use Aster\Infrastructure\Support\Logger;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Infrastructure\Security\Csrf;
+use MediCareMini\Infrastructure\Support\Logger;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
 
 /**
  * Rejects state-changing requests without a valid CSRF token.

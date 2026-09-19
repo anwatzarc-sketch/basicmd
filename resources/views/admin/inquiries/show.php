@@ -2,9 +2,9 @@
 /**
  * Enquiry detail and response tracking.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\ContactInquiry $inquiry
- * @var list<\Aster\Domain\Enum\InquiryStatus> $statuses
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\ContactInquiry $inquiry
+ * @var list<\MediCareMini\Domain\Enum\InquiryStatus> $statuses
  * @var list<array<string,mixed>> $history
  */
 

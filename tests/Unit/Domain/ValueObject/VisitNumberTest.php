@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Unit\Domain\ValueObject;
+namespace MediCareMini\Tests\Unit\Domain\ValueObject;
 
-use Aster\Domain\ValueObject\VisitNumber;
+use MediCareMini\Domain\ValueObject\VisitNumber;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;

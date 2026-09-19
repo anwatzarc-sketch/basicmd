@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Services;
+namespace MediCareMini\Tests\Feature\Services;
 
-use Aster\Application\Service\PatientAuthService;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\Repository\PatientAccountRepositoryInterface;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Application\Service\PatientAuthService;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\Repository\PatientAccountRepositoryInterface;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 
 /**
  * Patient portal authentication (FRS 5.3, 10.6, 11.1), against the real

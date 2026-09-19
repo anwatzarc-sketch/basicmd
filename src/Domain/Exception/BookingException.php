@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Exception;
+namespace MediCareMini\Domain\Exception;
 
-use Aster\Domain\Enum\AppointmentStatus;
-use Aster\Domain\Enum\ProofStatus;
+use MediCareMini\Domain\Enum\AppointmentStatus;
+use MediCareMini\Domain\Enum\ProofStatus;
 use RuntimeException;
 
 /**

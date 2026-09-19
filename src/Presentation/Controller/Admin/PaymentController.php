@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Application\Service\PaymentService;
-use Aster\Domain\Enum\PaymentChannel;
-use Aster\Domain\Enum\ProofStatus;
-use Aster\Domain\Exception\BookingException;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\PaymentRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\PaymentService;
+use MediCareMini\Domain\Enum\PaymentChannel;
+use MediCareMini\Domain\Enum\ProofStatus;
+use MediCareMini\Domain\Exception\BookingException;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\PaymentRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * Finance: proof-of-payment verification and transfer-method management.

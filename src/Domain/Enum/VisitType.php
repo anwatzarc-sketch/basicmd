@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /** The three kinds of encounter FRS 5.5 defines. */
 enum VisitType: string

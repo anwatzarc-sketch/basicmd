@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Infrastructure\Support\Env;
+use MediCareMini\Infrastructure\Support\Env;
 use PDO;
 use PDOException;
 use PDOStatement;

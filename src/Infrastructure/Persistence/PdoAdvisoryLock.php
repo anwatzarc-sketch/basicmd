@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Repository\AdvisoryLockInterface;
+use MediCareMini\Domain\Repository\AdvisoryLockInterface;
 use RuntimeException;
 
 /**
@@ -32,7 +32,7 @@ final readonly class PdoAdvisoryLock implements AdvisoryLockInterface
         // this safe regardless of what the caller passes (a phone number,
         // a composite string, etc.) without silently truncating two
         // different long keys down to the same lock.
-        $lockName = 'aster:' . substr(hash('sha256', $key), 0, 40);
+        $lockName = 'medicaremini:' . substr(hash('sha256', $key), 0, 40);
 
         $acquired = $this->db->fetchValue(
             'SELECT GET_LOCK(:name, :timeout)',

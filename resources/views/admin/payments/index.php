@@ -2,11 +2,11 @@
 /**
  * Finance verification queue.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\Payment> $payments
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\Payment> $payments
  * @var array $filters
- * @var list<\Aster\Domain\Enum\ProofStatus> $statuses
- * @var list<\Aster\Domain\Entity\PaymentMethod> $methods
+ * @var list<\MediCareMini\Domain\Enum\ProofStatus> $statuses
+ * @var list<\MediCareMini\Domain\Entity\PaymentMethod> $methods
  * @var int $pendingCount
  * @var array<string,int|bool> $pagination
  * @var bool $canVerify

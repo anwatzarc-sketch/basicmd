@@ -2,38 +2,38 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Application\DTO\BookingRequest;
-use Aster\Application\Service\BookingService;
-use Aster\Domain\DTO\PatientDTO;
-use Aster\Domain\Enum\AppointmentStatus;
-use Aster\Domain\Enum\BookingSource;
-use Aster\Domain\Enum\Gender;
-use Aster\Domain\Enum\QueueTier;
-use Aster\Domain\Enum\TimeSlot;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Exception\BookingException;
-use Aster\Domain\Exception\EncounterException;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Exception\PatientException;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\Services\PatientDeduplicationService;
-use Aster\Domain\ValueObject\PhoneNumber;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\PackageRepository;
-use Aster\Infrastructure\Persistence\PaymentRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\DTO\BookingRequest;
+use MediCareMini\Application\Service\BookingService;
+use MediCareMini\Domain\DTO\PatientDTO;
+use MediCareMini\Domain\Enum\AppointmentStatus;
+use MediCareMini\Domain\Enum\BookingSource;
+use MediCareMini\Domain\Enum\Gender;
+use MediCareMini\Domain\Enum\QueueTier;
+use MediCareMini\Domain\Enum\TimeSlot;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Exception\BookingException;
+use MediCareMini\Domain\Exception\EncounterException;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\PatientException;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\Services\PatientDeduplicationService;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\PackageRepository;
+use MediCareMini\Infrastructure\Persistence\PaymentRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 use DateTimeImmutable;
 
 /**
@@ -409,7 +409,7 @@ final class AppointmentController extends Controller
      * The list query already filters, but a doctor could still type another
      * appointment's id into the URL. This is the check that stops them.
      */
-    private function assertVisibleTo(\Aster\Domain\Entity\User $user, \Aster\Domain\Entity\Appointment $appointment): void
+    private function assertVisibleTo(\MediCareMini\Domain\Entity\User $user, \MediCareMini\Domain\Entity\Appointment $appointment): void
     {
         if (!$user->isScopedToOwnQueue()) {
             return;

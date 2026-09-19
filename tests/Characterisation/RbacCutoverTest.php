@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Characterisation;
+namespace MediCareMini\Tests\Characterisation;
 
-use Aster\Domain\Entity\User;
-use Aster\Domain\Enum\UserRole;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Enum\UserRole;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 
 /**
  * Pins the exact behaviour the RBAC cutover (migration 002_rbac.sql, the

@@ -1,5 +1,5 @@
 # =====================================================================
-#  Aster Medical Center - Apache configuration for public/
+#  MediCareMini - Apache configuration for public/
 #
 #  Only needed on Apache / cPanel hosting. nginx users: see deploy/nginx.conf.
 #

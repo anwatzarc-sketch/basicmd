@@ -1,5 +1,5 @@
 /**
- * Tailwind configuration for Aster Medical Center.
+ * Tailwind configuration for MediCareMini.
  *
  * The `medical` palette is carried over verbatim from the approved prototype
  * so the production build is visually identical to the design that was signed

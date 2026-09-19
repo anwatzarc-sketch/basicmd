@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
-use Aster\Domain\Entity\Encounter;
-use Aster\Domain\ValueObject\VisitNumber;
+use MediCareMini\Domain\Entity\Encounter;
+use MediCareMini\Domain\ValueObject\VisitNumber;
 
 interface EncounterRepositoryInterface
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\Doctor;
-use Aster\Infrastructure\Support\Slug;
+use MediCareMini\Domain\Entity\Doctor;
+use MediCareMini\Infrastructure\Support\Slug;
 
 final class DoctorRepository
 {

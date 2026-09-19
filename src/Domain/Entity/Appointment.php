@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\AppointmentStatus;
-use Aster\Domain\Enum\BookingSource;
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\Enum\PaymentStatus;
-use Aster\Domain\Enum\QueueTier;
-use Aster\Domain\Enum\TimeSlot;
-use Aster\Domain\ValueObject\BookingReference;
-use Aster\Domain\ValueObject\EthiopianDate;
-use Aster\Domain\ValueObject\Money;
-use Aster\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Domain\Enum\AppointmentStatus;
+use MediCareMini\Domain\Enum\BookingSource;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\PaymentStatus;
+use MediCareMini\Domain\Enum\QueueTier;
+use MediCareMini\Domain\Enum\TimeSlot;
+use MediCareMini\Domain\ValueObject\BookingReference;
+use MediCareMini\Domain\ValueObject\EthiopianDate;
+use MediCareMini\Domain\ValueObject\Money;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
 use DateTimeImmutable;
 use DateTimeZone;
 

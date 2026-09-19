@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Unit\Domain\DTO;
+namespace MediCareMini\Tests\Unit\Domain\DTO;
 
-use Aster\Domain\DTO\LabReport;
-use Aster\Domain\DTO\LabResultLine;
-use Aster\Domain\Enum\LabResultFlag;
+use MediCareMini\Domain\DTO\LabReport;
+use MediCareMini\Domain\DTO\LabResultLine;
+use MediCareMini\Domain\Enum\LabResultFlag;
 use PHPUnit\Framework\TestCase;
 
 /**

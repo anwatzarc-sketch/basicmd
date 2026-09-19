@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\DTO;
+namespace MediCareMini\Application\DTO;
 
-use Aster\Domain\ValueObject\Money;
+use MediCareMini\Domain\ValueObject\Money;
 
 /**
  * An immutable price breakdown.

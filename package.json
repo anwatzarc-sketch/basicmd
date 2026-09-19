@@ -1,7 +1,7 @@
 {
-  "name": "aster-medical-center",
+  "name": "medicaremini",
   "version": "1.0.0",
-  "description": "Frontend build for Aster Medical Center (Addis Ababa)",
+  "description": "Frontend build for MediCareMini (Addis Ababa)",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

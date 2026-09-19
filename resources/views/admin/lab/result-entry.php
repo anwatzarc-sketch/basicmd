@@ -14,17 +14,17 @@
  * by LabResultFlag::evaluate(), so a browser with JavaScript disabled
  * loses the preview and nothing else.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\DiagnosticOrder $order
- * @var \Aster\Domain\DTO\LabReport $report
- * @var \Aster\Domain\Entity\LabPanel|null $panel
- * @var list<\Aster\Domain\Entity\LabPanel> $panels
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\DiagnosticOrder $order
+ * @var \MediCareMini\Domain\DTO\LabReport $report
+ * @var \MediCareMini\Domain\Entity\LabPanel|null $panel
+ * @var list<\MediCareMini\Domain\Entity\LabPanel> $panels
  * @var bool $released
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Entity\LabPanelParameter;
+use MediCareMini\Domain\Entity\LabPanelParameter;
 
 $number = static fn (?float $value): string => $value === null ? '' : LabPanelParameter::number($value);
 

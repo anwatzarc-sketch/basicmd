@@ -2,33 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Web;
+namespace MediCareMini\Presentation\Controller\Web;
 
-use Aster\Application\DTO\BookingRequest;
-use Aster\Application\Service\BookingService;
-use Aster\Application\Service\PaymentService;
-use Aster\Application\Service\SeoService;
-use Aster\Domain\Enum\BookingSource;
-use Aster\Domain\Enum\QueueTier;
-use Aster\Domain\Exception\BookingException;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\ValueObject\BookingReference;
-use Aster\Domain\ValueObject\PhoneNumber;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\PackageRepository;
-use Aster\Infrastructure\Persistence\PaymentRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Security\RateLimiter;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Env;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\DTO\BookingRequest;
+use MediCareMini\Application\Service\BookingService;
+use MediCareMini\Application\Service\PaymentService;
+use MediCareMini\Application\Service\SeoService;
+use MediCareMini\Domain\Enum\BookingSource;
+use MediCareMini\Domain\Enum\QueueTier;
+use MediCareMini\Domain\Exception\BookingException;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\ValueObject\BookingReference;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\PackageRepository;
+use MediCareMini\Infrastructure\Persistence\PaymentRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Security\RateLimiter;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Env;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * The patient booking journey.
@@ -400,7 +400,7 @@ final class BookingController extends Controller
      * response, so the endpoint cannot be used to test which references are
      * real.
      */
-    private function findByReference(string $raw): \Aster\Domain\Entity\Appointment
+    private function findByReference(string $raw): \MediCareMini\Domain\Entity\Appointment
     {
         $reference = BookingReference::tryFrom($raw);
 

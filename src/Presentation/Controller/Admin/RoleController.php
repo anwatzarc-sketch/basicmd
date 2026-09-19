@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Support\PermissionCatalog;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\RoleRepository;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Persistence\WardLocationRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Support\PermissionCatalog;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\RoleRepository;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Persistence\WardLocationRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * Role Management (spec §4.2) - list/create/edit/archive roles, and

@@ -2,8 +2,8 @@
 /**
  * Public site layout.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale     $locale
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale     $locale
  * @var string                        $content
  * @var array                         $meta
  * @var array                         $flash
@@ -48,7 +48,7 @@ $clinicName = $settings?->localized('clinic_name', $locale, $view->brand->busine
     <meta property="og:title" content="<?= $view->e($meta['title'] ?? $clinicName) ?>">
     <meta property="og:description" content="<?= $view->e($meta['description'] ?? '') ?>">
     <meta property="og:type" content="<?= $view->e($meta['type'] ?? 'website') ?>">
-    <meta property="og:locale" content="<?= $view->e($locale === \Aster\Domain\Enum\Locale::AM ? 'am_ET' : 'en_US') ?>">
+    <meta property="og:locale" content="<?= $view->e($locale === \MediCareMini\Domain\Enum\Locale::AM ? 'am_ET' : 'en_US') ?>">
     <?php if (!empty($meta['canonical'])): ?>
         <meta property="og:url" content="<?= $view->e($meta['canonical']) ?>">
     <?php endif; ?>
@@ -110,7 +110,7 @@ $clinicName = $settings?->localized('clinic_name', $locale, $view->brand->busine
     <script nonce="<?= $view->e($cspNonce) ?>">
       // Saved choice wins; otherwise follow the operating system.
       try {
-        var stored = localStorage.getItem('aster-theme');
+        var stored = localStorage.getItem('medicaremini-theme');
         if (stored === 'dark' || (stored === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.documentElement.classList.add('dark');
         } else {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Mail;
+namespace MediCareMini\Infrastructure\Mail;
 
 use RuntimeException;
 

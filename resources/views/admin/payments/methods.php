@@ -10,9 +10,9 @@
  * so the edit button carries its data in a data-* attribute and app.js binds
  * the behaviour.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\PaymentMethod> $methods
- * @var list<\Aster\Domain\Enum\PaymentChannel> $channels
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\PaymentMethod> $methods
+ * @var list<\MediCareMini\Domain\Enum\PaymentChannel> $channels
  */
 
 declare(strict_types=1);

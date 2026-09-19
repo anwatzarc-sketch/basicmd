@@ -2,14 +2,14 @@
 /**
  * Change own password.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var bool $forced
  * @var array<string,string> $errors
  */
 
 declare(strict_types=1);
 
-use Aster\Infrastructure\Security\PasswordHasher;
+use MediCareMini\Infrastructure\Security\PasswordHasher;
 ?>
 <div class="mx-auto max-w-lg">
     <?php if ($forced): ?>

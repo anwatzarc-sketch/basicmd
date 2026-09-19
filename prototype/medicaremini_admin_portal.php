@@ -4,11 +4,11 @@ declare(strict_types=1);
 session_start();
 
 /**
- * Aster Medical Center - Administration System
+ * MediCareMini - Administration System
  * Built for PHP 8.3+
  */
 class AdminConfig {
-    public const string APP_NAME = 'Aster Medical Center Admin';
+    public const string APP_NAME = 'MediCareMini Admin';
     public const string APP_VERSION = '2.4.0-PHP8.3';
     public const string DEFAULT_LOCATION = 'Bole Sub-city, Addis Ababa, Ethiopia';
     public const string TIMEZONE = 'Africa/Addis_Ababa';
@@ -66,8 +66,8 @@ readonly class UserSession {
     ) {}
 }
 
-if (!isset($_SESSION['aster_db'])) {
-    $_SESSION['aster_db'] = [
+if (!isset($_SESSION['medicaremini_db'])) {
+    $_SESSION['medicaremini_db'] = [
         'doctors' => [
             ['id' => 'DOC-101', 'name' => 'Dr. Hana Tesfaye', 'department' => 'Internal Medicine', 'qualification' => 'MD, Internal Med', 'experience' => '12 Yrs', 'phone' => '+251 911 234 567', 'active' => true, 'avatar' => 'HT'],
             ['id' => 'DOC-102', 'name' => 'Dr. Dawit Bekele', 'department' => 'Cardiology', 'qualification' => 'MD, FACC', 'experience' => '10 Yrs', 'phone' => '+251 911 345 678', 'active' => true, 'avatar' => 'DB'],
@@ -103,12 +103,12 @@ if (!isset($_SESSION['aster_db'])) {
             ['id' => 'INQ-502', 'name' => 'Bethlehem Worku', 'phone' => '+251 922 111 222', 'email' => 'bety@example.com', 'message' => 'What are the visiting hours for specialist consultations?', 'status' => 'responded', 'date' => date('Y-m-d H:i', strtotime('-2 days'))],
         ],
         'settings' => [
-            'clinic_name' => 'Aster Medical Center',
+            'clinic_name' => 'MediCareMini',
             'city' => 'Addis Ababa',
             'country' => 'Ethiopia',
             'phone_primary' => '+251 911 123 456',
             'phone_emergency' => '+251 911 999 000',
-            'email' => 'hello@astermedical.et',
+            'email' => 'hello@medicaremini.radiants.net.et',
             'operating_hours' => 'Mon–Sat: 08:00 – 18:00 (Emergency 24/7)',
             'ethiopian_calendar' => true,
             'default_lang' => 'en'
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'update_appointment_status':
             $apt_id = $_POST['appointment_id'] ?? '';
             $new_status = $_POST['new_status'] ?? '';
-            foreach ($_SESSION['aster_db']['appointments'] as &$apt) {
+            foreach ($_SESSION['medicaremini_db']['appointments'] as &$apt) {
                 if ($apt['id'] === $apt_id) {
                     $apt['status'] = $new_status;
                     $flash_message = "Appointment {$apt_id} status updated to '{$new_status}'.";
@@ -150,9 +150,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $qual = trim($_POST['qualification'] ?? '');
             $phone = trim($_POST['phone'] ?? '');
             if ($name !== '' && $dept !== '') {
-                $new_id = 'DOC-' . (count($_SESSION['aster_db']['doctors']) + 101);
+                $new_id = 'DOC-' . (count($_SESSION['medicaremini_db']['doctors']) + 101);
                 $initials = strtoupper(substr($name, 4, 1) . substr(explode(' ', $name)[1] ?? 'T', 0, 1));
-                $_SESSION['aster_db']['doctors'][] = [
+                $_SESSION['medicaremini_db']['doctors'][] = [
                     'id' => $new_id,
                     'name' => $name,
                     'department' => $dept,
@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'toggle_doctor_status':
             $doc_id = $_POST['doctor_id'] ?? '';
-            foreach ($_SESSION['aster_db']['doctors'] as &$doc) {
+            foreach ($_SESSION['medicaremini_db']['doctors'] as &$doc) {
                 if ($doc['id'] === $doc_id) {
                     $doc['active'] = !$doc['active'];
                     $status_str = $doc['active'] ? 'activated' : 'deactivated';
@@ -185,8 +185,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $s_desc = trim($_POST['description'] ?? '');
             $s_icon = $_POST['icon'] ?? '🩺';
             if ($s_name !== '') {
-                $s_id = 'SRV-0' . (count($_SESSION['aster_db']['services']) + 1);
-                $_SESSION['aster_db']['services'][] = [
+                $s_id = 'SRV-0' . (count($_SESSION['medicaremini_db']['services']) + 1);
+                $_SESSION['medicaremini_db']['services'][] = [
                     'id' => $s_id,
                     'name' => $s_name,
                     'category' => $s_cat,
@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $time = $_POST['time'] ?? '10:00–12:00';
             if ($p_name !== '') {
                 $a_id = 'APT-' . rand(805, 999);
-                $_SESSION['aster_db']['appointments'][] = [
+                $_SESSION['medicaremini_db']['appointments'][] = [
                     'id' => $a_id,
                     'patient' => $p_name,
                     'phone' => $p_phone,
@@ -229,8 +229,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $author = $_POST['author'] ?? 'Medical Team';
             $status = $_POST['status'] ?? 'Draft';
             if ($title !== '') {
-                $art_id = 'ART-0' . (count($_SESSION['aster_db']['articles']) + 1);
-                $_SESSION['aster_db']['articles'][] = [
+                $art_id = 'ART-0' . (count($_SESSION['medicaremini_db']['articles']) + 1);
+                $_SESSION['medicaremini_db']['articles'][] = [
                     'id' => $art_id,
                     'title' => $title,
                     'category' => $cat,
@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'toggle_inquiry_status':
             $inq_id = $_POST['inquiry_id'] ?? '';
-            foreach ($_SESSION['aster_db']['inquiries'] as &$inq) {
+            foreach ($_SESSION['medicaremini_db']['inquiries'] as &$inq) {
                 if ($inq['id'] === $inq_id) {
                     $inq['status'] = $inq['status'] === 'unread' ? 'responded' : 'unread';
                     $flash_message = "Inquiry {$inq_id} status toggled.";
@@ -255,12 +255,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
 
         case 'save_settings':
-            $_SESSION['aster_db']['settings']['clinic_name'] = trim($_POST['clinic_name'] ?? 'Aster Medical Center');
-            $_SESSION['aster_db']['settings']['phone_primary'] = trim($_POST['phone_primary'] ?? '');
-            $_SESSION['aster_db']['settings']['phone_emergency'] = trim($_POST['phone_emergency'] ?? '');
-            $_SESSION['aster_db']['settings']['email'] = trim($_POST['email'] ?? '');
-            $_SESSION['aster_db']['settings']['operating_hours'] = trim($_POST['operating_hours'] ?? '');
-            $_SESSION['aster_db']['settings']['ethiopian_calendar'] = isset($_POST['ethiopian_calendar']);
+            $_SESSION['medicaremini_db']['settings']['clinic_name'] = trim($_POST['clinic_name'] ?? 'MediCareMini');
+            $_SESSION['medicaremini_db']['settings']['phone_primary'] = trim($_POST['phone_primary'] ?? '');
+            $_SESSION['medicaremini_db']['settings']['phone_emergency'] = trim($_POST['phone_emergency'] ?? '');
+            $_SESSION['medicaremini_db']['settings']['email'] = trim($_POST['email'] ?? '');
+            $_SESSION['medicaremini_db']['settings']['operating_hours'] = trim($_POST['operating_hours'] ?? '');
+            $_SESSION['medicaremini_db']['settings']['ethiopian_calendar'] = isset($_POST['ethiopian_calendar']);
             $flash_message = "Clinic settings and localization configurations saved.";
             break;
     }
@@ -270,16 +270,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $current_tab = $_GET['tab'] ?? 'dashboard';
 
 // Compute Overview Metrics
-$total_appointments = count($_SESSION['aster_db']['appointments']);
-$pending_appointments = count(array_filter($_SESSION['aster_db']['appointments'], fn($a) => $a['status'] === 'pending'));
-$active_doctors = count(array_filter($_SESSION['aster_db']['doctors'], fn($d) => $d['active']));
-$active_services = count(array_filter($_SESSION['aster_db']['services'], fn($s) => $s['active']));
-$unread_inquiries = count(array_filter($_SESSION['aster_db']['inquiries'], fn($i) => $i['status'] === 'unread'));
+$total_appointments = count($_SESSION['medicaremini_db']['appointments']);
+$pending_appointments = count(array_filter($_SESSION['medicaremini_db']['appointments'], fn($a) => $a['status'] === 'pending'));
+$active_doctors = count(array_filter($_SESSION['medicaremini_db']['doctors'], fn($d) => $d['active']));
+$active_services = count(array_filter($_SESSION['medicaremini_db']['services'], fn($s) => $s['active']));
+$unread_inquiries = count(array_filter($_SESSION['medicaremini_db']['inquiries'], fn($i) => $i['status'] === 'unread'));
 
 $currentUser = new UserSession(
     id: 'ADM-001',
     name: 'Dr. Bethlehem Tadesse',
-    email: 'admin@astermedical.et',
+    email: 'admin@medicaremini.radiants.net.et',
     role: 'Medical Director',
     avatar: 'BT'
 );
@@ -334,7 +334,7 @@ $currentUser = new UserSession(
                     A
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-base tracking-tight leading-none text-white"><?= htmlspecialchars($_SESSION['aster_db']['settings']['clinic_name']) ?></h1>
+                    <h1 class="font-extrabold text-base tracking-tight leading-none text-white"><?= htmlspecialchars($_SESSION['medicaremini_db']['settings']['clinic_name']) ?></h1>
                     <span class="text-[10px] uppercase font-bold tracking-widest text-teal-300">ADMIN CONTROL CENTER</span>
                 </div>
             </div>
@@ -405,7 +405,7 @@ $currentUser = new UserSession(
                     <?= str_replace('_', ' ', $current_tab) ?>
                 </h2>
                 <p class="text-xs text-slate-500 font-medium">
-                    Aster Medical Center · System Status: <span class="text-emerald-600 font-bold">Online (PHP 8.3)</span>
+                    MediCareMini · System Status: <span class="text-emerald-600 font-bold">Online (PHP 8.3)</span>
                 </p>
             </div>
             
@@ -473,7 +473,7 @@ $currentUser = new UserSession(
                             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Patient Inquiries</span>
                             <span class="text-xl">💬</span>
                         </div>
-                        <strong class="text-3xl font-extrabold text-medical-900 mt-2 block"><?= count($_SESSION['aster_db']['inquiries']) ?></strong>
+                        <strong class="text-3xl font-extrabold text-medical-900 mt-2 block"><?= count($_SESSION['medicaremini_db']['inquiries']) ?></strong>
                         <span class="text-xs text-teal-700 font-semibold mt-1 block"><?= $unread_inquiries ?> unread messages</span>
                     </div>
                 </div>
@@ -486,7 +486,7 @@ $currentUser = new UserSession(
                             <a href="?tab=appointments" class="text-xs font-bold text-medical-600 hover:underline">View All →</a>
                         </div>
                         <div class="divide-y divide-slate-100">
-                            <?php foreach (array_slice($_SESSION['aster_db']['appointments'], 0, 4) as $apt): 
+                            <?php foreach (array_slice($_SESSION['medicaremini_db']['appointments'], 0, 4) as $apt): 
                                 $statusEnum = AppointmentStatus::from($apt['status']);
                             ?>
                                 <div class="py-3.5 flex items-center justify-between gap-4">
@@ -509,7 +509,7 @@ $currentUser = new UserSession(
                             <a href="?tab=facilities" class="text-xs font-bold text-medical-600 hover:underline">Manage</a>
                         </div>
                         <div class="space-y-3">
-                            <?php foreach ($_SESSION['aster_db']['facilities'] as $fac): 
+                            <?php foreach ($_SESSION['medicaremini_db']['facilities'] as $fac): 
                                 $fStatus = FacilityStatus::from($fac['status']);
                             ?>
                                 <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
@@ -554,7 +554,7 @@ $currentUser = new UserSession(
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 font-medium">
-                                <?php foreach ($_SESSION['aster_db']['appointments'] as $apt): 
+                                <?php foreach ($_SESSION['medicaremini_db']['appointments'] as $apt): 
                                     $st = AppointmentStatus::from($apt['status']);
                                 ?>
                                     <tr class="hover:bg-slate-50/80 transition">
@@ -617,7 +617,7 @@ $currentUser = new UserSession(
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                        <?php foreach ($_SESSION['aster_db']['doctors'] as $doc): ?>
+                        <?php foreach ($_SESSION['medicaremini_db']['doctors'] as $doc): ?>
                             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex flex-col justify-between">
                                 <div>
                                     <div class="flex items-center justify-between mb-4">
@@ -663,7 +663,7 @@ $currentUser = new UserSession(
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <?php foreach ($_SESSION['aster_db']['services'] as $srv): ?>
+                        <?php foreach ($_SESSION['medicaremini_db']['services'] as $srv): ?>
                             <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
                                 <div class="text-3xl mb-3"><?= $srv['icon'] ?></div>
                                 <h4 class="font-extrabold text-slate-900 text-lg"><?= htmlspecialchars($srv['name']) ?></h4>
@@ -692,7 +692,7 @@ $currentUser = new UserSession(
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <?php foreach ($_SESSION['aster_db']['facilities'] as $fac): 
+                        <?php foreach ($_SESSION['medicaremini_db']['facilities'] as $fac): 
                             $fStatus = FacilityStatus::from($fac['status']);
                         ?>
                             <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">
@@ -740,7 +740,7 @@ $currentUser = new UserSession(
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 font-medium">
-                                <?php foreach ($_SESSION['aster_db']['articles'] as $art): ?>
+                                <?php foreach ($_SESSION['medicaremini_db']['articles'] as $art): ?>
                                     <tr class="hover:bg-slate-50/80">
                                         <td class="px-6 py-4 font-bold text-slate-900"><?= htmlspecialchars($art['title']) ?></td>
                                         <td class="px-6 py-4 text-xs font-bold text-medical-600"><?= htmlspecialchars($art['category']) ?></td>
@@ -769,7 +769,7 @@ $currentUser = new UserSession(
                     </div>
 
                     <div class="space-y-3">
-                        <?php foreach ($_SESSION['aster_db']['inquiries'] as $inq): ?>
+                        <?php foreach ($_SESSION['medicaremini_db']['inquiries'] as $inq): ?>
                             <div class="p-4 rounded-xl border <?= $inq['status'] === 'unread' ? 'border-teal-300 bg-teal-50/30' : 'border-slate-200 bg-white' ?> flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div>
                                     <div class="flex items-center gap-2">
@@ -807,32 +807,32 @@ $currentUser = new UserSession(
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <label class="block space-y-1">
                             <span class="text-xs font-bold text-slate-700">Clinic Name</span>
-                            <input name="clinic_name" value="<?= htmlspecialchars($_SESSION['aster_db']['settings']['clinic_name']) ?>" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
+                            <input name="clinic_name" value="<?= htmlspecialchars($_SESSION['medicaremini_db']['settings']['clinic_name']) ?>" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
                         </label>
 
                         <label class="block space-y-1">
                             <span class="text-xs font-bold text-slate-700">Primary Phone</span>
-                            <input name="phone_primary" value="<?= htmlspecialchars($_SESSION['aster_db']['settings']['phone_primary']) ?>" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
+                            <input name="phone_primary" value="<?= htmlspecialchars($_SESSION['medicaremini_db']['settings']['phone_primary']) ?>" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
                         </label>
 
                         <label class="block space-y-1">
                             <span class="text-xs font-bold text-slate-700">24/7 Emergency Line</span>
-                            <input name="phone_emergency" value="<?= htmlspecialchars($_SESSION['aster_db']['settings']['phone_emergency']) ?>" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
+                            <input name="phone_emergency" value="<?= htmlspecialchars($_SESSION['medicaremini_db']['settings']['phone_emergency']) ?>" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
                         </label>
 
                         <label class="block space-y-1">
                             <span class="text-xs font-bold text-slate-700">Official Contact Email</span>
-                            <input name="email" type="email" value="<?= htmlspecialchars($_SESSION['aster_db']['settings']['email']) ?>" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
+                            <input name="email" type="email" value="<?= htmlspecialchars($_SESSION['medicaremini_db']['settings']['email']) ?>" required class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
                         </label>
 
                         <label class="block sm:col-span-2 space-y-1">
                             <span class="text-xs font-bold text-slate-700">Operating Hours Description</span>
-                            <input name="operating_hours" value="<?= htmlspecialchars($_SESSION['aster_db']['settings']['operating_hours']) ?>" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
+                            <input name="operating_hours" value="<?= htmlspecialchars($_SESSION['medicaremini_db']['settings']['operating_hours']) ?>" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:border-medical-500 outline-none">
                         </label>
                     </div>
 
                     <div class="pt-4 border-t border-slate-100 flex items-center gap-3">
-                        <input type="checkbox" id="ethiopian_calendar" name="ethiopian_calendar" <?= $_SESSION['aster_db']['settings']['ethiopian_calendar'] ? 'checked' : '' ?> class="h-4 w-4 text-medical-700 rounded border-slate-300">
+                        <input type="checkbox" id="ethiopian_calendar" name="ethiopian_calendar" <?= $_SESSION['medicaremini_db']['settings']['ethiopian_calendar'] ? 'checked' : '' ?> class="h-4 w-4 text-medical-700 rounded border-slate-300">
                         <label for="ethiopian_calendar" class="text-xs font-bold text-slate-700 cursor-pointer">
                             Enable Ethiopian Calendar (ዓመተ ምሕረት) Sync Support in Intake Reports
                         </label>
@@ -869,7 +869,7 @@ $currentUser = new UserSession(
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Service *</label>
                 <select name="service" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none">
-                    <?php foreach ($_SESSION['aster_db']['services'] as $s): ?>
+                    <?php foreach ($_SESSION['medicaremini_db']['services'] as $s): ?>
                         <option value="<?= htmlspecialchars($s['name']) ?>"><?= htmlspecialchars($s['name']) ?></option>
                     <?php endforeach; ?>
                 </select>

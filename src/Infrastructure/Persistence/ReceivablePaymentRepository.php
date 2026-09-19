@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\ReceivablePayment;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\ValueObject\Balance;
-use Aster\Domain\ValueObject\ReceiptId;
+use MediCareMini\Domain\Entity\ReceivablePayment;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\ValueObject\Balance;
+use MediCareMini\Domain\ValueObject\ReceiptId;
 
 final class ReceivablePaymentRepository implements ReceivablePaymentRepositoryInterface
 {

@@ -23,11 +23,11 @@ declare(strict_types=1);
  * running this is the person who will own it.
  */
 
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Database\PlatformReset;
-use Aster\Infrastructure\Persistence\Database;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Security\PasswordHasher;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Database\PlatformReset;
+use MediCareMini\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Security\PasswordHasher;
 
 if (PHP_SAPI !== 'cli') {
     http_response_code(403);

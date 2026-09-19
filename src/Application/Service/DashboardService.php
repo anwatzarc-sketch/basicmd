@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\ValueObject\Money;
-use Aster\Infrastructure\Persistence\AppointmentRepository;
-use Aster\Infrastructure\Persistence\Database;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\EncounterRepository;
-use Aster\Infrastructure\Persistence\InquiryRepository;
-use Aster\Infrastructure\Persistence\PaymentRepository;
-use Aster\Infrastructure\Support\Config;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\ValueObject\Money;
+use MediCareMini\Infrastructure\Persistence\AppointmentRepository;
+use MediCareMini\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\EncounterRepository;
+use MediCareMini\Infrastructure\Persistence\InquiryRepository;
+use MediCareMini\Infrastructure\Persistence\PaymentRepository;
+use MediCareMini\Infrastructure\Support\Config;
 use DateTimeImmutable;
 
 /**
@@ -344,13 +344,13 @@ final readonly class DashboardService
         return $this->payments->settlementByMethod($from, $to);
     }
 
-    /** @return list<\Aster\Domain\Entity\Appointment> */
+    /** @return list<\MediCareMini\Domain\Entity\Appointment> */
     public function recentAppointments(int $limit = 6): array
     {
         return $this->appointments->recent($limit);
     }
 
-    /** @return list<\Aster\Domain\Entity\ContactInquiry> */
+    /** @return list<\MediCareMini\Domain\Entity\ContactInquiry> */
     public function recentInquiries(int $limit = 5): array
     {
         return $this->inquiries->recent($limit);
@@ -491,7 +491,7 @@ final readonly class DashboardService
         ];
     }
 
-    /** @return list<\Aster\Domain\Entity\Encounter> */
+    /** @return list<\MediCareMini\Domain\Entity\Encounter> */
     public function recentEncounters(int $limit = 6): array
     {
         return $this->encounters->active($limit);

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\DiagnosticOrder;
-use Aster\Domain\Enum\DiagnosticCategory;
-use Aster\Domain\Enum\DiagnosticStatus;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Infrastructure\Security\Encryptor;
+use MediCareMini\Domain\Entity\DiagnosticOrder;
+use MediCareMini\Domain\Enum\DiagnosticCategory;
+use MediCareMini\Domain\Enum\DiagnosticStatus;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Infrastructure\Security\Encryptor;
 
 final class DiagnosticOrderRepository implements DiagnosticOrderRepositoryInterface
 {

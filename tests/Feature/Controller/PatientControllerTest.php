@@ -2,35 +2,35 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Controller;
+namespace MediCareMini\Tests\Feature\Controller;
 
-use Aster\Application\Service\PatientAuthService;
-use Aster\Domain\Entity\User;
-use Aster\Domain\Enum\DiagnosticCategory;
-use Aster\Domain\Enum\LedgerCategory;
-use Aster\Domain\Enum\LedgerMode;
-use Aster\Domain\Enum\ReceivablePaymentMethod;
-use Aster\Domain\Enum\UserRole;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Repository\PrescriptionRepositoryInterface;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\Services\PatientDeduplicationService;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\PatientRepository;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Admin\PatientController;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Application\Service\PatientAuthService;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Enum\DiagnosticCategory;
+use MediCareMini\Domain\Enum\LedgerCategory;
+use MediCareMini\Domain\Enum\LedgerMode;
+use MediCareMini\Domain\Enum\ReceivablePaymentMethod;
+use MediCareMini\Domain\Enum\UserRole;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Repository\ClinicalNoteRepositoryInterface;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Repository\PrescriptionRepositoryInterface;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\Services\PatientDeduplicationService;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\PatientRepository;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Admin\PatientController;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 
 /**
  * PatientController's write actions and the Financial panel's arithmetic,
@@ -41,7 +41,7 @@ use Aster\Tests\Support\DatabaseTestCase;
  */
 final class PatientControllerTest extends DatabaseTestCase
 {
-    private const int ACTOR_ID = 1; // admin@astermedical.et, seeded super_admin
+    private const int ACTOR_ID = 1; // admin@medicaremini.radiants.net.et, seeded super_admin
 
     private PatientController $controller;
     private PatientRepository $patients;
@@ -146,7 +146,7 @@ final class PatientControllerTest extends DatabaseTestCase
     /** Simulates what Authenticate/Router already do for a real request. */
     private function actingAs(User $user, string $method, array $post, array $attributes): Request
     {
-        $GLOBALS['aster_current_user'] = $user;
+        $GLOBALS['medicaremini_current_user'] = $user;
 
         $_SERVER['REQUEST_METHOD'] = $method;
         $_SERVER['REQUEST_URI']    = '/test';
@@ -158,7 +158,7 @@ final class PatientControllerTest extends DatabaseTestCase
 
     protected function tearDown(): void
     {
-        unset($GLOBALS['aster_current_user']);
+        unset($GLOBALS['medicaremini_current_user']);
         $_POST = [];
         $_GET  = [];
 
@@ -309,7 +309,7 @@ final class PatientControllerTest extends DatabaseTestCase
             ]);
         }
 
-        $scope = \Aster\Presentation\Support\PatientDetailAccess::diagnosticCategoryScope($labTech);
+        $scope = \MediCareMini\Presentation\Support\PatientDetailAccess::diagnosticCategoryScope($labTech);
         $orders = $this->diagnostics->forPatient($patientId, 50, $scope);
 
         self::assertCount(1, $orders);

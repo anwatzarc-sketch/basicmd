@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\User;
-use Aster\Domain\Enum\UserRole;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Enum\UserRole;
 
 /**
  * Staff account persistence.

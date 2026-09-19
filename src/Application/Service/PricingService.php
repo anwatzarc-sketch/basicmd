@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\Entity\Doctor;
-use Aster\Domain\Entity\HealthPackage;
-use Aster\Domain\Entity\MedicalService;
-use Aster\Domain\Enum\QueueTier;
-use Aster\Application\DTO\PriceQuote;
-use Aster\Domain\ValueObject\Money;
+use MediCareMini\Domain\Entity\Doctor;
+use MediCareMini\Domain\Entity\HealthPackage;
+use MediCareMini\Domain\Entity\MedicalService;
+use MediCareMini\Domain\Enum\QueueTier;
+use MediCareMini\Application\DTO\PriceQuote;
+use MediCareMini\Domain\ValueObject\Money;
 
 /**
  * Works out what a booking costs.

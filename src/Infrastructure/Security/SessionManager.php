@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Security;
+namespace MediCareMini\Infrastructure\Security;
 
-use Aster\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Config;
 
 /**
  * Hardened session lifecycle.

@@ -5,16 +5,16 @@
  * Filters are links, not JavaScript state, so each filtered view is a real
  * crawlable URL that can rank on its own.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale $locale
- * @var list<\Aster\Domain\Entity\MedicalService> $services
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale $locale
+ * @var list<\MediCareMini\Domain\Entity\MedicalService> $services
  * @var array<string,int> $categories
  * @var array{category:?string, q:?string} $filters
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\ServiceCategory;
+use MediCareMini\Domain\Enum\ServiceCategory;
 
 $t = $view->translator;
 ?>

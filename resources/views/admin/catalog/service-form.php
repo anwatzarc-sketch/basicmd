@@ -2,9 +2,9 @@
 /**
  * Service create/edit form.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\MedicalService|null $service
- * @var list<\Aster\Domain\Enum\ServiceCategory> $categories
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\MedicalService|null $service
+ * @var list<\MediCareMini\Domain\Enum\ServiceCategory> $categories
  * @var array<string,string> $old
  */
 

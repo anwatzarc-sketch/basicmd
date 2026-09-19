@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\DTO\LabReport;
-use Aster\Domain\DTO\LabResultLine;
-use Aster\Domain\Entity\DiagnosticOrder;
-use Aster\Domain\Entity\LabPanel;
-use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
-use Aster\Domain\Repository\LabCatalogRepositoryInterface;
-use Aster\Domain\Repository\NumberSequenceInterface;
-use Aster\Domain\ValueObject\AccessionNumber;
+use MediCareMini\Domain\DTO\LabReport;
+use MediCareMini\Domain\DTO\LabResultLine;
+use MediCareMini\Domain\Entity\DiagnosticOrder;
+use MediCareMini\Domain\Entity\LabPanel;
+use MediCareMini\Domain\Repository\DiagnosticOrderRepositoryInterface;
+use MediCareMini\Domain\Repository\LabCatalogRepositoryInterface;
+use MediCareMini\Domain\Repository\NumberSequenceInterface;
+use MediCareMini\Domain\ValueObject\AccessionNumber;
 use DateTimeImmutable;
 
 /**

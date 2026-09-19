@@ -4,7 +4,7 @@
  *
  * Real <a> links, so pages are crawlable and the browser back button works.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var array<string,int|bool>        $pagination
  * @var string                        $basePath
  * @var callable(array):string|null   $query      builds the query string

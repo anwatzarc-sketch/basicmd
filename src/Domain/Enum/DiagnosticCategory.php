@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Enum;
+namespace MediCareMini\Domain\Enum;
 
 /** The three diagnostic categories FRS 6.2 defines. */
 enum DiagnosticCategory: string

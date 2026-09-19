@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Entity\Patient;
-use Aster\Domain\Repository\PatientRepositoryInterface;
-use Aster\Domain\ValueObject\PhoneNumber;
-use Aster\Infrastructure\Security\Encryptor;
+use MediCareMini\Domain\Entity\Patient;
+use MediCareMini\Domain\Repository\PatientRepositoryInterface;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Infrastructure\Security\Encryptor;
 use DateTimeImmutable;
 
 /**

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Mail;
+namespace MediCareMini\Infrastructure\Mail;
 
-use Aster\Infrastructure\Persistence\Database;
-use Aster\Infrastructure\Support\Env;
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Support\Env;
+use MediCareMini\Infrastructure\Support\Logger;
 use Throwable;
 
 /**

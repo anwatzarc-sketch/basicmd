@@ -2,9 +2,9 @@
 /**
  * Facility create/edit form.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Facility|null $facility
- * @var list<\Aster\Domain\Enum\FacilityStatus> $statuses
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Facility|null $facility
+ * @var list<\MediCareMini\Domain\Enum\FacilityStatus> $statuses
  * @var array<string,string> $old
  */
 

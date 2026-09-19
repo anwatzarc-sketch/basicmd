@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\DTO;
+namespace MediCareMini\Domain\DTO;
 
-use Aster\Domain\Entity\LabPanelParameter;
-use Aster\Domain\Enum\LabResultFlag;
+use MediCareMini\Domain\Entity\LabPanelParameter;
+use MediCareMini\Domain\Enum\LabResultFlag;
 
 /**
  * One measured parameter on a report: what was asked for, what came back,

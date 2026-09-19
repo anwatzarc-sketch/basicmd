@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Aster\Application\Service;
+namespace MediCareMini\Application\Service;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Infrastructure\Persistence\ArticleRepository;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\FacilityRepository;
-use Aster\Infrastructure\Persistence\PackageRepository;
-use Aster\Infrastructure\Persistence\ServiceRepository;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Support\BrandResolver;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Translator;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Infrastructure\Persistence\ArticleRepository;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\FacilityRepository;
+use MediCareMini\Infrastructure\Persistence\PackageRepository;
+use MediCareMini\Infrastructure\Persistence\ServiceRepository;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Support\BrandResolver;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Translator;
 
 /**
  * A complete, plain-text description of this site, built from live data.

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Unit\Domain\ValueObject;
+namespace MediCareMini\Tests\Unit\Domain\ValueObject;
 
-use Aster\Domain\ValueObject\Balance;
-use Aster\Domain\ValueObject\Money;
+use MediCareMini\Domain\ValueObject\Balance;
+use MediCareMini\Domain\ValueObject\Money;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Middleware;
+namespace MediCareMini\Presentation\Middleware;
 
-use Aster\Application\Service\AuthService;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
+use MediCareMini\Application\Service\AuthService;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
 
 /**
  * Requires a signed-in staff member.
@@ -67,7 +67,7 @@ final readonly class Authenticate
         }
 
         // Cached on the request so controllers and views need not re-query.
-        $GLOBALS['aster_current_user'] = $user;
+        $GLOBALS['medicaremini_current_user'] = $user;
 
         // See this class's docblock: without this, every audit row written
         // for the rest of the request would have no actor attached.

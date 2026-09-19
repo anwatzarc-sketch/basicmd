@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Support;
+namespace MediCareMini\Infrastructure\Support;
 
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\ValueObject\EthiopianDate;
-use Aster\Domain\ValueObject\Money;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\ValueObject\EthiopianDate;
+use MediCareMini\Domain\ValueObject\Money;
 use DateTimeImmutable;
 use DateTimeZone;
 

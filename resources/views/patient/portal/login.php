@@ -2,7 +2,7 @@
 /**
  * Patient portal sign-in (FRS 10.6).
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string $return
  * @var array<string,string> $old
  * @var array<string,string> $errors

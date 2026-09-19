@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Feature\Services;
+namespace MediCareMini\Tests\Feature\Services;
 
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Enum\LedgerCategory;
-use Aster\Domain\Enum\LedgerMode;
-use Aster\Domain\Enum\ReceivablePaymentMethod;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Exception\UnsettledBalanceException;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\Services\BillingService;
-use Aster\Domain\Services\EncounterService;
-use Aster\Tests\Support\DatabaseTestCase;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Enum\LedgerCategory;
+use MediCareMini\Domain\Enum\LedgerMode;
+use MediCareMini\Domain\Enum\ReceivablePaymentMethod;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Exception\UnsettledBalanceException;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\Services\BillingService;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Tests\Support\DatabaseTestCase;
 
 /**
  * FRS 14.2 (ledger invariant) and 14.3 (discharge gate), against the real
@@ -30,7 +30,7 @@ final class BillingServiceTest extends DatabaseTestCase
     private EncounterRepositoryInterface $encounters;
     private WardLocationRepositoryInterface $wardLocations;
 
-    /** admin@astermedical.et, seeded super_admin - stands in for "an accountant" and "an actor" throughout. */
+    /** admin@medicaremini.radiants.net.et, seeded super_admin - stands in for "an accountant" and "an actor" throughout. */
     private const int ACTOR_ID = 1;
 
     protected function setUp(): void
@@ -277,7 +277,7 @@ final class BillingServiceTest extends DatabaseTestCase
         $encounterId = $this->makeEncounter();
         $this->billing->processDischargeOrClosure($encounterId, self::ACTOR_ID);
 
-        $this->expectException(\Aster\Domain\Exception\EncounterException::class);
+        $this->expectException(\MediCareMini\Domain\Exception\EncounterException::class);
         $this->billing->processDischargeOrClosure($encounterId, self::ACTOR_ID);
     }
 

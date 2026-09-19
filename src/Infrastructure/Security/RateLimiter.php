@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Security;
+namespace MediCareMini\Infrastructure\Security;
 
-use Aster\Domain\Exception\HttpException;
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Infrastructure\Persistence\Database;
 use DateTimeImmutable;
 
 /**

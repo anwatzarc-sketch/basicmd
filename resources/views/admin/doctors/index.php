@@ -2,10 +2,10 @@
 /**
  * Doctor directory.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\Doctor> $doctors
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\Doctor> $doctors
  * @var array $filters
- * @var list<\Aster\Domain\Enum\DoctorStatus> $statuses
+ * @var list<\MediCareMini\Domain\Enum\DoctorStatus> $statuses
  */
 
 declare(strict_types=1);

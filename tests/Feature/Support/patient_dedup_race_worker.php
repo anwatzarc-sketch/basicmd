@@ -15,11 +15,11 @@ declare(strict_types=1);
 
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
-use Aster\Domain\DTO\PatientDTO;
-use Aster\Domain\Enum\Gender;
-use Aster\Domain\Services\PatientDeduplicationService;
-use Aster\Domain\ValueObject\PhoneNumber;
-use Aster\Infrastructure\Container\Bootstrap;
+use MediCareMini\Domain\DTO\PatientDTO;
+use MediCareMini\Domain\Enum\Gender;
+use MediCareMini\Domain\Services\PatientDeduplicationService;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Infrastructure\Container\Bootstrap;
 
 [, $firstName, $phone, $outputFile] = $argv;
 

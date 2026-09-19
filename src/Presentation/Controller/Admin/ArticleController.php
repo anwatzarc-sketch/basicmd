@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Domain\Enum\ArticleStatus;
-use Aster\Domain\Enum\SchemaType;
-use Aster\Domain\Exception\HttpException;
-use Aster\Infrastructure\Persistence\ArticleRepository;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Storage\FileUploader;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\HtmlSanitiser;
-use Aster\Presentation\Http\Response as HttpResponse;
-use Aster\Presentation\View\View;
+use MediCareMini\Domain\Enum\ArticleStatus;
+use MediCareMini\Domain\Enum\SchemaType;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Infrastructure\Persistence\ArticleRepository;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Storage\FileUploader;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\HtmlSanitiser;
+use MediCareMini\Presentation\Http\Response as HttpResponse;
+use MediCareMini\Presentation\View\View;
 
 /**
  * The Health Knowledge Hub CMS.

@@ -2,7 +2,7 @@
 /**
  * Terms of service.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  */
 
 declare(strict_types=1);

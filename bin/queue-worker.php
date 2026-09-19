@@ -16,11 +16,11 @@ declare(strict_types=1);
  * sending duplicates to patients.
  */
 
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Mail\MailQueue;
-use Aster\Infrastructure\Security\RateLimiter;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Logger;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Mail\MailQueue;
+use MediCareMini\Infrastructure\Security\RateLimiter;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Logger;
 
 if (PHP_SAPI !== 'cli') {
     http_response_code(403);

@@ -3,10 +3,10 @@
  * Encounter workbench - default view: search by visit number, and today's
  * active encounters (FRS 10.2).
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string $searchTerm
  * @var bool $notFound
- * @var list<\Aster\Domain\Entity\Encounter> $active
+ * @var list<\MediCareMini\Domain\Entity\Encounter> $active
  */
 
 declare(strict_types=1);

@@ -5,9 +5,9 @@
  * Deliberately narrow: their own queue for today, nothing financial and no
  * other clinician's patients.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Doctor|null $doctor
- * @var list<\Aster\Domain\Entity\Appointment> $queue
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Doctor|null $doctor
+ * @var list<\MediCareMini\Domain\Entity\Appointment> $queue
  * @var DateTimeImmutable $date
  */
 

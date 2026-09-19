@@ -434,13 +434,13 @@ return [
     'email' => [
         'greeting'        => 'Hello :name,',
         'signoff'         => 'Warm regards,',
-        'team'            => 'The Aster Medical Center team',
+        'team'            => 'The MediCareMini team',
         'auto_note'       => 'This is an automated message. Please do not reply directly to this email.',
         'contact_note'    => 'Questions? Call us on :phone or reply to :email.',
 
         'booked_subject'  => 'Your appointment is booked - :ref',
         'booked_heading'  => 'Your appointment is booked',
-        'booked_intro'    => 'Thank you for choosing Aster Medical Center. Here are your appointment details.',
+        'booked_intro'    => 'Thank you for choosing MediCareMini. Here are your appointment details.',
 
         'reminder_subject' => 'Reminder: your appointment tomorrow - :ref',
         'reminder_heading' => 'Your appointment is tomorrow',

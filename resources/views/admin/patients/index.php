@@ -2,9 +2,9 @@
 /**
  * MPI lookup (FRS 10.1).
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var string $term
- * @var list<\Aster\Domain\Entity\Patient> $results
+ * @var list<\MediCareMini\Domain\Entity\Patient> $results
  */
 
 declare(strict_types=1);

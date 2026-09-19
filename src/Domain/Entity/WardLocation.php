@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\ValueObject\Money;
+use MediCareMini\Domain\ValueObject\Money;
 
 /** A bed, room, or transient (consultation/waiting) location (FRS 5.4). */
 final readonly class WardLocation

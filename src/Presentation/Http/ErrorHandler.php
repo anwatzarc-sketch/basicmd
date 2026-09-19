@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Http;
+namespace MediCareMini\Presentation\Http;
 
-use Aster\Domain\Exception\HttpException;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Logger;
-use Aster\Presentation\View\View;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Logger;
+use MediCareMini\Presentation\View\View;
 use Throwable;
 
 /**
@@ -104,9 +104,9 @@ final readonly class ErrorHandler
                 'flash'    => [],
                 'old'      => [],
                 'errors'   => [],
-                'user'     => $GLOBALS['aster_current_user'] ?? null,
+                'user'     => $GLOBALS['medicaremini_current_user'] ?? null,
                 'settings' => null,
-                'cspNonce' => $GLOBALS['aster_csp_nonce'] ?? '',
+                'cspNonce' => $GLOBALS['medicaremini_csp_nonce'] ?? '',
             ]);
 
             $html = $this->view->renderWithLayout(

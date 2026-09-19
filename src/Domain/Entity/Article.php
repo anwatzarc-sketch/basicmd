@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Entity;
+namespace MediCareMini\Domain\Entity;
 
-use Aster\Domain\Enum\ArticleStatus;
-use Aster\Domain\Enum\Locale;
-use Aster\Domain\Enum\SchemaType;
+use MediCareMini\Domain\Enum\ArticleStatus;
+use MediCareMini\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\SchemaType;
 use DateTimeImmutable;
 
 /**

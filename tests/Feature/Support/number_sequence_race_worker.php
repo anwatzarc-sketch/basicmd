@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Persistence\PdoNumberSequence;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Persistence\PdoNumberSequence;
 
 [, $scope, $count, $outputFile] = $argv;
 

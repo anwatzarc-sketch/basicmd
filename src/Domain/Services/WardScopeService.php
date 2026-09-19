@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Services;
+namespace MediCareMini\Domain\Services;
 
-use Aster\Domain\Entity\User;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\Repository\WardScopeRepositoryInterface;
+use MediCareMini\Domain\Entity\User;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\Repository\WardScopeRepositoryInterface;
 
 /**
  * Ward-scoped access (spec §4.5) - the one extra check permission

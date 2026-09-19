@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Services;
+namespace MediCareMini\Domain\Services;
 
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Exception\EncounterException;
-use Aster\Domain\Repository\AuditLoggerInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Exception\EncounterException;
+use MediCareMini\Domain\Repository\AuditLoggerInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
 
 /**
  * Queue walk-out tracking (FRS 8.4).

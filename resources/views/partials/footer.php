@@ -2,13 +2,13 @@
 /**
  * Public site footer.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale     $locale
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale     $locale
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Enum\Locale;
+use MediCareMini\Domain\Enum\Locale;
 
 $settings   = $settings ?? null;
 $clinicName = $settings?->localized('clinic_name', $locale, $view->brand->businessName)

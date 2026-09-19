@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Web;
+namespace MediCareMini\Presentation\Controller\Web;
 
-use Aster\Application\Service\NotificationService;
-use Aster\Application\Service\SeoService;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Domain\ValueObject\PhoneNumber;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\InquiryRepository;
-use Aster\Infrastructure\Persistence\SettingsRepository;
-use Aster\Infrastructure\Security\RateLimiter;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Infrastructure\Support\Env;
-use Aster\Infrastructure\Support\Logger;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Application\Service\NotificationService;
+use MediCareMini\Application\Service\SeoService;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Domain\ValueObject\PhoneNumber;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\InquiryRepository;
+use MediCareMini\Infrastructure\Persistence\SettingsRepository;
+use MediCareMini\Infrastructure\Security\RateLimiter;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Infrastructure\Support\Env;
+use MediCareMini\Infrastructure\Support\Logger;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * The public contact form.

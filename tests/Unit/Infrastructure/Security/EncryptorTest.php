@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Unit\Infrastructure\Security;
+namespace MediCareMini\Tests\Unit\Infrastructure\Security;
 
-use Aster\Domain\Exception\EncryptionException;
-use Aster\Infrastructure\Security\Encryptor;
+use MediCareMini\Domain\Exception\EncryptionException;
+use MediCareMini\Infrastructure\Security\Encryptor;
 use PHPUnit\Framework\TestCase;
 
 final class EncryptorTest extends TestCase

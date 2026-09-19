@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Services;
+namespace MediCareMini\Domain\Services;
 
-use Aster\Domain\Entity\Encounter;
-use Aster\Domain\Enum\EncounterStatus;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Exception\EncounterException;
-use Aster\Domain\Repository\AuditLoggerInterface;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\NumberSequenceInterface;
-use Aster\Domain\Repository\PatientRepositoryInterface;
-use Aster\Domain\Repository\StaffDirectoryInterface;
-use Aster\Domain\Repository\TransactionManagerInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\ValueObject\VisitNumber;
+use MediCareMini\Domain\Entity\Encounter;
+use MediCareMini\Domain\Enum\EncounterStatus;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Exception\EncounterException;
+use MediCareMini\Domain\Repository\AuditLoggerInterface;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\NumberSequenceInterface;
+use MediCareMini\Domain\Repository\PatientRepositoryInterface;
+use MediCareMini\Domain\Repository\StaffDirectoryInterface;
+use MediCareMini\Domain\Repository\TransactionManagerInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\ValueObject\VisitNumber;
 use DateTimeImmutable;
 use RuntimeException;
 

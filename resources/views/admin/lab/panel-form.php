@@ -12,14 +12,14 @@
  * every existing row is rendered as a form field rather than as text
  * with an edit link: what is submitted IS the new list.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\LabPanel|null $panel
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\LabPanel|null $panel
  * @var array<string,string> $old
  */
 
 declare(strict_types=1);
 
-use Aster\Domain\Entity\LabPanelParameter;
+use MediCareMini\Domain\Entity\LabPanelParameter;
 
 $action = $panel === null
     ? $view->adminUrl('lab/catalog')

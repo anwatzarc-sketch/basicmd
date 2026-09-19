@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Domain\Entity\Encounter;
-use Aster\Domain\Enum\VisitType;
-use Aster\Domain\Exception\EncounterException;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Exception\UnsettledBalanceException;
-use Aster\Domain\Repository\EncounterRepositoryInterface;
-use Aster\Domain\Repository\LedgerRepositoryInterface;
-use Aster\Domain\Repository\ReceivablePaymentRepositoryInterface;
-use Aster\Domain\Repository\WardLocationRepositoryInterface;
-use Aster\Domain\Services\BillingService;
-use Aster\Domain\Services\EncounterService;
-use Aster\Domain\Services\QueueService;
-use Aster\Domain\ValueObject\VisitNumber;
-use Aster\Infrastructure\Persistence\PatientRepository;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Domain\Entity\Encounter;
+use MediCareMini\Domain\Enum\VisitType;
+use MediCareMini\Domain\Exception\EncounterException;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\UnsettledBalanceException;
+use MediCareMini\Domain\Repository\EncounterRepositoryInterface;
+use MediCareMini\Domain\Repository\LedgerRepositoryInterface;
+use MediCareMini\Domain\Repository\ReceivablePaymentRepositoryInterface;
+use MediCareMini\Domain\Repository\WardLocationRepositoryInterface;
+use MediCareMini\Domain\Services\BillingService;
+use MediCareMini\Domain\Services\EncounterService;
+use MediCareMini\Domain\Services\QueueService;
+use MediCareMini\Domain\ValueObject\VisitNumber;
+use MediCareMini\Infrastructure\Persistence\PatientRepository;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * The unified encounter workbench (FRS 10.2) and the OPD-to-IPD upgrade

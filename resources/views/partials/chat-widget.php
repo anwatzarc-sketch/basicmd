@@ -9,7 +9,7 @@
  * lives in app.js and hangs off the data- attributes below, the same way every
  * other interactive piece in this codebase works.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  */
 
 declare(strict_types=1);

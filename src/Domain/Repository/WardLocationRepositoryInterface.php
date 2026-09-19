@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Domain\Repository;
+namespace MediCareMini\Domain\Repository;
 
-use Aster\Domain\Entity\WardLocation;
+use MediCareMini\Domain\Entity\WardLocation;
 
 /**
  * Bed/room persistence port for EncounterService's admission workflow.

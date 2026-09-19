@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Aster\Presentation\Controller\Admin;
+namespace MediCareMini\Presentation\Controller\Admin;
 
-use Aster\Domain\Enum\UserRole;
-use Aster\Domain\Enum\UserStatus;
-use Aster\Domain\Exception\HttpException;
-use Aster\Domain\Exception\ValidationException;
-use Aster\Infrastructure\Persistence\AuditLogger;
-use Aster\Infrastructure\Persistence\DoctorRepository;
-use Aster\Infrastructure\Persistence\RoleRepository;
-use Aster\Infrastructure\Persistence\UserRepository;
-use Aster\Infrastructure\Security\PasswordHasher;
-use Aster\Infrastructure\Security\SessionManager;
-use Aster\Infrastructure\Support\Config;
-use Aster\Presentation\Controller\Controller;
-use Aster\Presentation\Http\Request;
-use Aster\Presentation\Http\Response;
-use Aster\Presentation\View\View;
+use MediCareMini\Domain\Enum\UserRole;
+use MediCareMini\Domain\Enum\UserStatus;
+use MediCareMini\Domain\Exception\HttpException;
+use MediCareMini\Domain\Exception\ValidationException;
+use MediCareMini\Infrastructure\Persistence\AuditLogger;
+use MediCareMini\Infrastructure\Persistence\DoctorRepository;
+use MediCareMini\Infrastructure\Persistence\RoleRepository;
+use MediCareMini\Infrastructure\Persistence\UserRepository;
+use MediCareMini\Infrastructure\Security\PasswordHasher;
+use MediCareMini\Infrastructure\Security\SessionManager;
+use MediCareMini\Infrastructure\Support\Config;
+use MediCareMini\Presentation\Controller\Controller;
+use MediCareMini\Presentation\Http\Request;
+use MediCareMini\Presentation\Http\Response;
+use MediCareMini\Presentation\View\View;
 
 /**
  * Staff account administration (SuperAdmin only).
@@ -93,9 +93,9 @@ final class UserController extends Controller
      * since been archived - so editing an existing account never silently
      * drops the option that describes what they already are.
      *
-     * @return list<\Aster\Domain\Entity\Role>
+     * @return list<\MediCareMini\Domain\Entity\Role>
      */
-    private function assignableRoles(?\Aster\Domain\Entity\User $account): array
+    private function assignableRoles(?\MediCareMini\Domain\Entity\User $account): array
     {
         $roles = $this->roles->all(false);
 

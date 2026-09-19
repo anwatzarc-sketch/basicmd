@@ -5,13 +5,13 @@
  * Runs through the same BookingService as the public form, so capacity
  * limits, pricing and notifications behave identically no matter who books.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Entity\MedicalService> $services
- * @var list<\Aster\Domain\Entity\HealthPackage> $packages
- * @var list<\Aster\Domain\Entity\Doctor> $doctors
- * @var list<\Aster\Domain\Enum\TimeSlot> $slots
- * @var list<\Aster\Domain\Enum\QueueTier> $tiers
- * @var list<\Aster\Domain\Enum\BookingSource> $sources
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Entity\MedicalService> $services
+ * @var list<\MediCareMini\Domain\Entity\HealthPackage> $packages
+ * @var list<\MediCareMini\Domain\Entity\Doctor> $doctors
+ * @var list<\MediCareMini\Domain\Enum\TimeSlot> $slots
+ * @var list<\MediCareMini\Domain\Enum\QueueTier> $tiers
+ * @var list<\MediCareMini\Domain\Enum\BookingSource> $sources
  * @var array<string,string> $old
  * @var array<string,string> $errors
  */

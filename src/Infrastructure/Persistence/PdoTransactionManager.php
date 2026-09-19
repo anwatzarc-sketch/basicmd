@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Infrastructure\Persistence;
+namespace MediCareMini\Infrastructure\Persistence;
 
-use Aster\Domain\Repository\TransactionManagerInterface;
+use MediCareMini\Domain\Repository\TransactionManagerInterface;
 
 /**
  * Thin adapter over Database::transaction() implementing the Domain port -

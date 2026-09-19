@@ -33,8 +33,8 @@ declare(strict_types=1);
  * correctly, with real answers, the first time they are checked in.
  */
 
-use Aster\Infrastructure\Container\Bootstrap;
-use Aster\Infrastructure\Persistence\Database;
+use MediCareMini\Infrastructure\Container\Bootstrap;
+use MediCareMini\Infrastructure\Persistence\Database;
 
 if (PHP_SAPI !== 'cli') {
     http_response_code(403);

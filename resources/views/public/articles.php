@@ -2,10 +2,10 @@
 /**
  * Health Knowledge Hub listing.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Enum\Locale $locale
- * @var list<\Aster\Domain\Entity\Article> $articles
- * @var list<\Aster\Domain\Entity\Article> $mostRead
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Enum\Locale $locale
+ * @var list<\MediCareMini\Domain\Entity\Article> $articles
+ * @var list<\MediCareMini\Domain\Entity\Article> $mostRead
  * @var array<string,int> $categories
  * @var array{category:?string, q:?string} $filters
  * @var array<string,int|bool> $pagination

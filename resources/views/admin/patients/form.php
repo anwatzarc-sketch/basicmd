@@ -5,9 +5,9 @@
  * genuinely-new are both handled the same form; the result page says
  * which one happened.
  *
- * @var \Aster\Presentation\View\View $view
- * @var list<\Aster\Domain\Enum\Gender> $genders
- * @var list<\Aster\Domain\Enum\BloodGroup> $bloodGroups
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var list<\MediCareMini\Domain\Enum\Gender> $genders
+ * @var list<\MediCareMini\Domain\Enum\BloodGroup> $bloodGroups
  * @var array<string,string> $old
  * @var array<string,string> $errors
  */

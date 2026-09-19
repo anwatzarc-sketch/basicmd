@@ -7,8 +7,8 @@
  * permission-gated admin links to see, and nothing here should look like
  * it belongs to the staff-facing application.
  *
- * @var \Aster\Presentation\View\View $view
- * @var \Aster\Domain\Entity\Patient|null $patient
+ * @var \MediCareMini\Presentation\View\View $view
+ * @var \MediCareMini\Domain\Entity\Patient|null $patient
  * @var string $content
  * @var array $meta
  * @var array $flash

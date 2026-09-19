@@ -10,7 +10,7 @@
  * docblock for why a narrower query would make this tab materially
  * incomplete, not just shorter.
  *
- * @var \Aster\Presentation\View\View $view
+ * @var \MediCareMini\Presentation\View\View $view
  * @var list<array<string,mixed>> $auditEntries
  * @var bool $auditScopedToOwn
  */

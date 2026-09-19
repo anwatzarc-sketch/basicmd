@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Aster\Tests\Unit\Domain\Enum;
+namespace MediCareMini\Tests\Unit\Domain\Enum;
 
-use Aster\Domain\Enum\LabResultFlag;
+use MediCareMini\Domain\Enum\LabResultFlag;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
