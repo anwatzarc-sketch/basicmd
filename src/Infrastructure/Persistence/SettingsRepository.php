@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Aster\Infrastructure\Persistence;
 
+use Aster\Domain\Enum\Locale;
+
 /**
  * Runtime configuration from the system_settings table.
  *
@@ -43,6 +45,31 @@ final class SettingsRepository
     public function string(string $key, string $default = ''): string
     {
         return $this->get($key) ?? $default;
+    }
+
+    /**
+     * A setting in the requested language, falling back to the base row.
+     *
+     * Translated settings are stored as sibling keys - `address`, `address_am`,
+     * `address_om` - so the suffix comes from the locale itself rather than
+     * from a ternary at each call site. Every caller previously hard-coded
+     * "is this Amharic?", which silently shut a third language out of the
+     * clinic name, the tagline, the address and the opening hours.
+     *
+     * A blank translation falls back too: an empty row is a translation that
+     * was never filled in, not an instruction to render nothing.
+     */
+    public function localized(string $key, Locale $locale, string $default = ''): string
+    {
+        $base = $this->string($key, $default);
+
+        if ($locale === Locale::EN) {
+            return $base;
+        }
+
+        $translated = $this->string($key . $locale->columnSuffix());
+
+        return $translated !== '' ? $translated : $base;
     }
 
     public function int(string $key, int $default = 0): int

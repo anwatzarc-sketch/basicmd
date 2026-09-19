@@ -6,10 +6,18 @@ namespace Aster\Domain\Repository;
 
 use Aster\Domain\Entity\DiagnosticOrder;
 use Aster\Domain\Enum\DiagnosticCategory;
+use Aster\Domain\Enum\DiagnosticStatus;
 
 interface DiagnosticOrderRepositoryInterface
 {
     public function findById(int $id): ?DiagnosticOrder;
+
+    /**
+     * By the laboratory's own identifier, which is what is printed on the
+     * specimen label - so a technician holding a tube can reach the order
+     * without knowing the patient.
+     */
+    public function findByAccessionNumber(string $accessionNumber): ?DiagnosticOrder;
 
     /** @return list<DiagnosticOrder> */
     public function forEncounter(int $encounterId): array;
@@ -32,17 +40,50 @@ interface DiagnosticOrderRepositoryInterface
      */
     public function forPatient(int $patientId, int $limit = 50, ?DiagnosticCategory $category = null): array;
 
+    /**
+     * The cross-patient work queue: every order matching the filters,
+     * unresulted work first.
+     *
+     * $category carries the same meaning and the same guarantee as
+     * forPatient()'s - it is applied in SQL, so a Lab Technician's scope
+     * cannot be widened by a display-layer mistake.
+     *
+     * @return list<DiagnosticOrder>
+     */
+    public function queue(
+        ?DiagnosticCategory $category = null,
+        ?DiagnosticStatus $status = null,
+        ?string $search = null,
+        int $limit = 100,
+    ): array;
+
+    /**
+     * Order counts per status, for the queue's filter chips and the
+     * sidebar badge - counted in SQL so the total stays true beyond the
+     * queue's own LIMIT.
+     *
+     * @return array<string, int> DiagnosticStatus value => count
+     */
+    public function statusCounts(?DiagnosticCategory $category = null): array;
+
     /** @param array<string, mixed> $data */
     public function create(array $data): int;
 
     /**
-     * Update ONLY status and/or results - never encounter_id, category, or
-     * any of the original order details. A narrower surface than a
-     * generic update() is deliberate: the order itself (what was asked
-     * for, by whom, for what encounter) is a historical fact once placed;
-     * only its progress toward a result can change.
+     * Update ONLY the columns that describe an order's progress toward a
+     * result - status, the encrypted result payload, the specimen block
+     * (type, barcode, collection time, clinical location) and who
+     * recorded the result when. Never encounter_id, category, the test
+     * itself or its ordering physician.
      *
-     * @param array{status?: string, results_payload_encrypted?: ?string} $data
+     * A narrower surface than a generic update() is deliberate: the order
+     * (what was asked for, by whom, for what encounter) is a historical
+     * fact once placed; only its progress toward a result can change.
+     * Collection is progress - a specimen is drawn after the order exists
+     * - which is why the specimen columns belong on this side of the line
+     * and the test code does not.
+     *
+     * @param array<string, mixed> $data keys outside the allowed set are ignored
      */
     public function updateProgress(int $id, array $data): bool;
 

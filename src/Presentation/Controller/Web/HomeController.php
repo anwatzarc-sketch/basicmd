@@ -66,9 +66,7 @@ final class HomeController extends Controller
             'structuredData' => $structuredData,
             'meta'           => [
                 'title'       => $this->seo->title(
-                    $locale->value === 'am'
-                        ? $this->settings->string('tagline_am')
-                        : $this->settings->string('tagline'),
+                    $this->settings->localized('tagline', $locale),
                     $locale,
                 ),
                 'description' => $this->view->translator->get('hero.lead'),

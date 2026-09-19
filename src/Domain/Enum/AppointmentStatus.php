@@ -44,7 +44,7 @@ enum AppointmentStatus: string
     {
         return match ($this) {
             self::PENDING   => 'bg-amber-100 text-amber-800 border-amber-200',
-            self::CONFIRMED => 'bg-teal-100 text-teal-800 border-teal-200',
+            self::CONFIRMED => 'bg-medical-100 text-medical-800 border-medical-200',
             self::COMPLETED => 'bg-emerald-100 text-emerald-800 border-emerald-200',
             self::CANCELLED => 'bg-rose-100 text-rose-800 border-rose-200',
             self::NO_SHOW   => 'bg-slate-200 text-slate-700 border-slate-300',
@@ -55,7 +55,7 @@ enum AppointmentStatus: string
     {
         return match ($this) {
             self::PENDING   => 'bg-amber-500',
-            self::CONFIRMED => 'bg-teal-500',
+            self::CONFIRMED => 'bg-medical-500',
             self::COMPLETED => 'bg-emerald-500',
             self::CANCELLED => 'bg-rose-500',
             self::NO_SHOW   => 'bg-slate-400',

@@ -32,6 +32,9 @@ $hasError = static fn (string $key): bool => isset($errors[$key]);
 ?>
 
 <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+
+    <?= $view->partial('partials/booking-steps', ['view' => $view, 'current' => 1]) ?>
+
     <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr]">
 
         <!-- ------------------------------ Sidebar ------------------------------ -->
@@ -42,35 +45,35 @@ $hasError = static fn (string $key): bool => isset($errors[$key]);
 
             <!-- Live price summary, updated by app.js as selections change. -->
             <div class="card-pad mt-8" data-quote-panel hidden>
-                <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-500">
+                <h2 class="panel-title">
                     <?= $view->t('booking.summary') ?>
                 </h2>
                 <dl class="mt-4 grid gap-2 text-sm">
                     <div class="flex items-center justify-between">
-                        <dt class="text-slate-600"><?= $view->t('booking.subtotal') ?></dt>
-                        <dd class="font-bold text-slate-900" data-quote-base>&mdash;</dd>
+                        <dt class="text-slate-600 dark:text-slate-300"><?= $view->t('booking.subtotal') ?></dt>
+                        <dd class="font-bold text-slate-900 dark:text-slate-100" data-quote-base>&mdash;</dd>
                     </div>
                     <div class="flex items-center justify-between" data-quote-surcharge-row hidden>
-                        <dt class="text-slate-600"><?= $view->t('booking.surcharge') ?></dt>
-                        <dd class="font-bold text-amber-700" data-quote-surcharge>&mdash;</dd>
+                        <dt class="text-slate-600 dark:text-slate-300"><?= $view->t('booking.surcharge') ?></dt>
+                        <dd class="font-bold text-amber-700 dark:text-amber-400" data-quote-surcharge>&mdash;</dd>
                     </div>
-                    <div class="mt-2 flex items-center justify-between border-t border-slate-200 pt-3">
-                        <dt class="font-extrabold text-medical-900"><?= $view->t('booking.total') ?></dt>
-                        <dd class="text-lg font-extrabold text-medical-700" data-quote-total>&mdash;</dd>
+                    <div class="mt-2 flex items-center justify-between border-t border-slate-200 pt-3 dark:border-slate-700">
+                        <dt class="font-extrabold text-medical-900 dark:text-medical-100"><?= $view->t('booking.total') ?></dt>
+                        <dd class="text-lg font-extrabold text-medical-700 dark:text-medical-300" data-quote-total>&mdash;</dd>
                     </div>
                     <div class="flex items-center justify-between" data-quote-deposit-row hidden>
-                        <dt class="text-xs text-slate-500"><?= $view->t('payment.deposit_due') ?></dt>
-                        <dd class="text-xs font-bold text-slate-700" data-quote-deposit>&mdash;</dd>
+                        <dt class="text-xs text-slate-500 dark:text-slate-400"><?= $view->t('payment.deposit_due') ?></dt>
+                        <dd class="text-xs font-bold text-slate-700 dark:text-slate-300" data-quote-deposit>&mdash;</dd>
                     </div>
                 </dl>
             </div>
 
             <?php if ($emergency !== ''): ?>
-                <div class="mt-8 rounded-2xl bg-medical-900 p-6 text-white shadow-lg">
-                    <b class="block text-lg font-bold"><?= $view->t('booking.emergency_title') ?></b>
-                    <p class="mt-2 text-sm leading-relaxed text-white/70"><?= $view->t('booking.emergency_body') ?></p>
+                <div class="cta-panel-dark mt-8">
+                    <h2 class="block text-lg font-bold"><?= $view->t('booking.emergency_title') ?></h2>
+                    <p class="mt-2 text-sm leading-relaxed text-white/75"><?= $view->t('booking.emergency_body') ?></p>
                     <a href="tel:<?= $view->e($emergency) ?>"
-                       class="mt-4 inline-flex items-center gap-2 text-lg font-bold text-teal-300 hover:underline">
+                       class="mt-4 inline-flex items-center gap-2 text-lg font-bold text-medical-300 hover:underline">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                         </svg>
@@ -79,8 +82,8 @@ $hasError = static fn (string $key): bool => isset($errors[$key]);
                 </div>
             <?php endif; ?>
 
-            <p class="mt-6 text-xs leading-relaxed text-slate-500">
-                <a href="<?= $view->url('my-booking') ?>" class="font-semibold text-medical-700 hover:underline">
+            <p class="mt-6 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                <a href="<?= $view->url('my-booking') ?>" class="font-semibold text-medical-700 hover:underline dark:text-medical-300">
                     <?= $view->t('lookup.title') ?>
                 </a>
             </p>
@@ -105,7 +108,7 @@ $hasError = static fn (string $key): bool => isset($errors[$key]);
 
             <!-- ---------- Step 1: what ---------- -->
             <fieldset class="grid gap-5">
-                <legend class="mb-1 text-sm font-extrabold uppercase tracking-wider text-medical-700">
+                <legend class="mb-1 text-sm font-extrabold uppercase tracking-wider text-medical-700 dark:text-medical-300">
                     <?= $view->t('booking.step_details') ?>
                 </legend>
 
@@ -189,7 +192,7 @@ $hasError = static fn (string $key): bool => isset($errors[$key]);
                                        class="sr-only" data-slot-radio
                                        <?= $view->attr($value('time_slot') === $slot->value, 'checked') ?>>
                                 <span class="text-sm font-bold"><?= $view->e($slot->label()) ?></span>
-                                <span class="text-[10px] font-semibold text-slate-400" data-slot-count></span>
+                                <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400" data-slot-count></span>
                             </label>
                         <?php endforeach; ?>
                     </div>
@@ -208,18 +211,18 @@ $hasError = static fn (string $key): bool => isset($errors[$key]);
                             <input type="radio" name="queue_tier" value="standard" class="radio mt-0.5"
                                    data-quote-input <?= $view->attr($value('queue_tier', 'standard') !== 'express', 'checked') ?>>
                             <span>
-                                <b class="block text-sm text-medical-900"><?= $view->t('booking.tier_standard') ?></b>
-                                <span class="text-xs text-slate-500"><?= $view->t('queue_tier.standard') ?></span>
+                                <span class="block text-sm font-bold text-medical-900 dark:text-medical-100"><?= $view->t('booking.tier_standard') ?></span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400"><?= $view->t('queue_tier.standard') ?></span>
                             </span>
                         </label>
                         <label class="radio-card">
                             <input type="radio" name="queue_tier" value="express" class="radio mt-0.5"
                                    data-quote-input <?= $view->attr($value('queue_tier') === 'express', 'checked') ?>>
                             <span>
-                                <b class="block text-sm text-medical-900">
+                                <span class="block text-sm font-bold text-medical-900 dark:text-medical-100">
                                     <?= $view->t('booking.tier_express', ['percent' => $surchargeLabel]) ?>
-                                </b>
-                                <span class="text-xs text-slate-500"><?= $view->t('booking.tier_express_hint') ?></span>
+                                </span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400"><?= $view->t('booking.tier_express_hint') ?></span>
                             </span>
                         </label>
                     </div>
@@ -227,8 +230,8 @@ $hasError = static fn (string $key): bool => isset($errors[$key]);
             </fieldset>
 
             <!-- ---------- Step 2: who ---------- -->
-            <fieldset class="mt-8 grid gap-5 border-t border-slate-200 pt-8">
-                <legend class="mb-1 text-sm font-extrabold uppercase tracking-wider text-medical-700">
+            <fieldset class="mt-8 grid gap-5 border-t border-slate-200 pt-8 dark:border-slate-700">
+                <legend class="mb-1 text-sm font-extrabold uppercase tracking-wider text-medical-700 dark:text-medical-300">
                     <?= $view->t('booking.step_patient') ?>
                 </legend>
 
@@ -285,7 +288,7 @@ $hasError = static fn (string $key): bool => isset($errors[$key]);
                 <span data-submit-label><?= $view->t('booking.submit') ?></span>
             </button>
 
-            <p class="mt-4 text-center text-xs leading-relaxed text-slate-500">
+            <p class="mt-4 text-center text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                 <?= $view->t('articles.disclaimer') ?>
             </p>
         </form>

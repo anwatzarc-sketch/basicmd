@@ -27,5 +27,5 @@
 /storage/uploads/proofs/*
 /vendor/
 # Runtime config, like .env - admin-editable, must never be committed
-/public/CompanyBrand.json
+/storage/CompanyBrand.json
 Thumbs.db

@@ -15,13 +15,16 @@ final readonly class Doctor
         public ?int $userId,
         public string $fullName,
         public ?string $fullNameAm,
+        public ?string $fullNameOm,
         public string $slug,
         public string $specialty,
         public ?string $specialtyAm,
+        public ?string $specialtyOm,
         public int $experienceYears,
         public ?string $credentials,
         public ?string $bio,
         public ?string $bioAm,
+        public ?string $bioOm,
         public ?string $photoPath,
         public string $initials,
         public ?string $phone,
@@ -43,13 +46,16 @@ final readonly class Doctor
             userId:          isset($row['user_id']) && $row['user_id'] !== null ? (int) $row['user_id'] : null,
             fullName:        (string) $row['full_name'],
             fullNameAm:      self::nullableString($row['full_name_am'] ?? null),
+            fullNameOm:      self::nullableString($row['full_name_om'] ?? null),
             slug:            (string) $row['slug'],
             specialty:       (string) $row['specialty'],
             specialtyAm:     self::nullableString($row['specialty_am'] ?? null),
+            specialtyOm:     self::nullableString($row['specialty_om'] ?? null),
             experienceYears: (int) ($row['experience_years'] ?? 0),
             credentials:     self::nullableString($row['credentials'] ?? null),
             bio:             self::nullableString($row['bio'] ?? null),
             bioAm:           self::nullableString($row['bio_am'] ?? null),
+            bioOm:           self::nullableString($row['bio_om'] ?? null),
             photoPath:       self::nullableString($row['photo_path'] ?? null),
             initials:        (string) ($row['initials'] ?? ''),
             phone:           self::nullableString($row['phone'] ?? null),
@@ -67,6 +73,26 @@ final readonly class Doctor
     }
 
     /**
+     * The translation for a locale, or null when there is not a usable one.
+     *
+     * English is the base column and therefore never has a translation of
+     * its own; a locale whose column is NULL or empty also returns null so
+     * the caller can fall back with `?? $base`. Deliberately never falls
+     * back to the OTHER translation: an untranslated Afaan Oromo profile
+     * degrades to readable English, not to Ge'ez script.
+     */
+    private function translation(Locale $locale, ?string $amharic, ?string $oromo): ?string
+    {
+        $value = match ($locale) {
+            Locale::EN => null,
+            Locale::AM => $amharic,
+            Locale::OM => $oromo,
+        };
+
+        return $value !== null && $value !== '' ? $value : null;
+    }
+
+    /**
      * Name in the requested language, falling back to English.
      *
      * Falling back rather than showing an empty string is deliberate: a
@@ -74,21 +100,17 @@ final readonly class Doctor
      */
     public function name(Locale $locale): string
     {
-        return $locale === Locale::AM && $this->fullNameAm !== null
-            ? $this->fullNameAm
-            : $this->fullName;
+        return $this->translation($locale, $this->fullNameAm, $this->fullNameOm) ?? $this->fullName;
     }
 
     public function specialtyLabel(Locale $locale): string
     {
-        return $locale === Locale::AM && $this->specialtyAm !== null
-            ? $this->specialtyAm
-            : $this->specialty;
+        return $this->translation($locale, $this->specialtyAm, $this->specialtyOm) ?? $this->specialty;
     }
 
     public function biography(Locale $locale): ?string
     {
-        return $locale === Locale::AM && $this->bioAm !== null ? $this->bioAm : $this->bio;
+        return $this->translation($locale, $this->bioAm, $this->bioOm) ?? $this->bio;
     }
 
     /** Derive initials when the column was left blank. */

@@ -36,7 +36,7 @@ declare(strict_types=1);
     </div>
 
     <?php if ($doctors === []): ?>
-        <p class="mt-12 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+        <p class="empty-state mt-12">
             <?= $view->t('doctors.none') ?>
         </p>
     <?php else: ?>
@@ -50,8 +50,8 @@ declare(strict_types=1);
                                  alt="<?= $view->e($doctor->name($locale)) ?>"
                                  loading="lazy" width="108" height="108">
                         <?php else: ?>
-                            <span class="doctor-card__photo--fallback" aria-hidden="true">
-                                <?= $view->e($doctor->displayInitials()) ?>
+                            <span class="doctor-card__photo--fallback">
+                                <?= $view->partial('partials/doctor-avatar', ['view' => $view]) ?>
                             </span>
                         <?php endif; ?>
                     </div>
@@ -94,4 +94,16 @@ declare(strict_types=1);
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
+
+    <div class="cta-panel-dark mt-16 flex flex-wrap items-center justify-between gap-6">
+        <div class="max-w-2xl">
+            <span class="eyebrow-invert"><?= $view->t('booking.eyebrow') ?></span>
+            <?php /* text-white, not the class default: this panel is dark in
+                     both themes, so .section-title's slate-900 would be
+                     dark-on-dark in light mode. */ ?>
+            <h2 class="section-title text-white dark:text-white"><?= $view->t('booking.title') ?></h2>
+            <p class="mt-2 text-sm leading-relaxed text-white/75"><?= $view->t('booking.lead') ?></p>
+        </div>
+        <a href="<?= $view->url('book') ?>" class="btn-invert btn-lg"><?= $view->t('nav.book') ?></a>
+    </div>
 </section>

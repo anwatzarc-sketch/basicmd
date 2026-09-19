@@ -40,6 +40,10 @@ $labels = [
                     $type   = (string) $row['value_type'];
                     $label  = (string) ($row['label'] ?? $key);
                     $isAm   = str_ends_with($key, '_am');
+                    // Afaan Oromo is Qubee (Latin), so it needs the lang
+                    // attribute but not the Ge'ez font stack.
+                    $isOm   = str_ends_with($key, '_om');
+                    $lang   = $isAm ? 'lang="am-ET"' : ($isOm ? 'lang="om-ET"' : '');
                     $inputId = 'setting-' . $key;
                     ?>
                     <div class="field <?= $type === 'text' ? 'sm:col-span-2' : '' ?>">
@@ -59,7 +63,7 @@ $labels = [
                             <textarea class="textarea <?= $isAm ? 'font-ethiopic' : '' ?>"
                                       id="<?= $view->e($inputId) ?>"
                                       name="settings[<?= $view->e($key) ?>]" rows="3"
-                                      <?= $isAm ? 'lang="am-ET"' : '' ?>><?= $view->e($value) ?></textarea>
+                                      <?= $lang ?>><?= $view->e($value) ?></textarea>
                         <?php else: ?>
                             <label class="label" for="<?= $view->e($inputId) ?>"><?= $view->e($label) ?></label>
                             <input class="input <?= $isAm ? 'font-ethiopic' : '' ?>"
@@ -67,7 +71,7 @@ $labels = [
                                    id="<?= $view->e($inputId) ?>"
                                    name="settings[<?= $view->e($key) ?>]"
                                    value="<?= $view->e($value) ?>"
-                                   <?= $isAm ? 'lang="am-ET"' : '' ?>>
+                                   <?= $lang ?>>
                         <?php endif; ?>
 
                         <span class="hint font-mono text-[10px] text-slate-400"><?= $view->e($key) ?></span>

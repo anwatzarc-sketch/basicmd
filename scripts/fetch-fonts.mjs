@@ -38,6 +38,23 @@ const FONTS = [
     label: 'Inter (Latin)',
   },
   {
+    // Display face. Inter Tight is narrower than Inter at the same size, which
+    // is what lets a headline hold its line count once it is translated into
+    // Amharic or Afaan Oromo - both of which run longer than the English.
+    file: 'inter-tight-latin.woff2',
+    css: 'https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500..800&display=swap',
+    match: /unicode-range:\s*U\+0000-00FF/i,
+    label: 'Inter Tight (Latin, display)',
+  },
+  {
+    // Carries the eyebrow/label role, where the wide tracking needs a face
+    // designed for it.
+    file: 'plex-mono-latin.woff2',
+    css: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&display=swap',
+    match: /unicode-range:\s*U\+0000-00FF/i,
+    label: 'IBM Plex Mono (Latin, labels)',
+  },
+  {
     file: 'noto-ethiopic.woff2',
     css: 'https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400..700&display=swap',
     // Ethiopic has a single subset; take the first face returned.

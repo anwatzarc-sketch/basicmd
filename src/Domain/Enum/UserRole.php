@@ -93,6 +93,7 @@ enum UserRole: string
                 'diagnostics.view', 'diagnostics.order', 'diagnostics.result', 'diagnostics.result_lab',
                 'prescriptions.view', 'prescriptions.write', 'prescriptions.dispense',
                 'brand.manage',
+                'lab_catalog.manage',
             ],
 
             // Clinical staff: their own queue plus the articles they author.

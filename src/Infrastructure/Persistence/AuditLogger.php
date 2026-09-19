@@ -61,6 +61,10 @@ final class AuditLogger implements AuditLoggerInterface
     public const string CLINICAL_NOTE_CREATED      = 'clinical_note.created';
     public const string DIAGNOSTIC_ORDER_CREATED   = 'diagnostic_order.created';
     public const string DIAGNOSTIC_RESULT_RECORDED = 'diagnostic_order.result_recorded';
+    // Reading a released lab report renders a patient's numbers in full,
+    // so it is audited on the same principle as PAYMENT_PROOF_VIEWED:
+    // opening a stored sensitive document is itself an event.
+    public const string LAB_REPORT_VIEWED          = 'lab_report.viewed';
     public const string PRESCRIPTION_CREATED       = 'prescription.created';
     public const string PRESCRIPTION_DISPENSED     = 'prescription.dispensed';
 

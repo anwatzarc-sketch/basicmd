@@ -7,6 +7,7 @@ namespace Aster\Infrastructure\Container;
 use Aster\Application\Service\AuthService;
 use Aster\Application\Service\BookingService;
 use Aster\Application\Service\DashboardService;
+use Aster\Application\Service\LabReportService;
 use Aster\Application\Service\NotificationService;
 use Aster\Application\Service\PatientAuthService;
 use Aster\Application\Service\PaymentService;
@@ -17,6 +18,7 @@ use Aster\Domain\Repository\AuditLoggerInterface;
 use Aster\Domain\Repository\ClinicalNoteRepositoryInterface;
 use Aster\Domain\Repository\DiagnosticOrderRepositoryInterface;
 use Aster\Domain\Repository\EncounterRepositoryInterface;
+use Aster\Domain\Repository\LabCatalogRepositoryInterface;
 use Aster\Domain\Repository\LedgerRepositoryInterface;
 use Aster\Domain\Repository\NumberSequenceInterface;
 use Aster\Domain\Repository\PatientAccountRepositoryInterface;
@@ -45,6 +47,7 @@ use Aster\Infrastructure\Persistence\DoctorRepository;
 use Aster\Infrastructure\Persistence\EncounterRepository;
 use Aster\Infrastructure\Persistence\FacilityRepository;
 use Aster\Infrastructure\Persistence\InquiryRepository;
+use Aster\Infrastructure\Persistence\LabCatalogRepository;
 use Aster\Infrastructure\Persistence\LedgerRepository;
 use Aster\Infrastructure\Persistence\PackageRepository;
 use Aster\Infrastructure\Persistence\PatientAccountRepository;
@@ -150,6 +153,7 @@ final class Bootstrap
             ReceivablePaymentRepository::class,
             RoleRepository::class,
             WardScopeRepository::class,
+            LabCatalogRepository::class,
         ] as $repository) {
             $container->singleton(
                 $repository,
@@ -215,6 +219,10 @@ final class Bootstrap
         $container->singleton(
             DiagnosticOrderRepositoryInterface::class,
             static fn (Container $c): DiagnosticOrderRepositoryInterface => $c->get(DiagnosticOrderRepository::class),
+        );
+        $container->singleton(
+            LabCatalogRepositoryInterface::class,
+            static fn (Container $c): LabCatalogRepositoryInterface => $c->get(LabCatalogRepository::class),
         );
         $container->singleton(
             PrescriptionRepositoryInterface::class,
@@ -340,6 +348,15 @@ final class Bootstrap
                 $c->get(AuditLoggerInterface::class),
             ));
 
+        // Laboratory reporting: the one place a lab result crosses
+        // between ciphertext and a usable object (migration 012).
+        $container->singleton(LabReportService::class, static fn (Container $c): LabReportService
+            => new LabReportService(
+                $c->get(DiagnosticOrderRepositoryInterface::class),
+                $c->get(LabCatalogRepositoryInterface::class),
+                $c->get(NumberSequenceInterface::class),
+            ));
+
         // --- Application services ----------------------------------------
 
         $container->singleton(PricingService::class, static function (Container $c) use ($config): PricingService {
@@ -423,6 +440,46 @@ final class Bootstrap
 
             return new SeoService($config, $settings, $c->get(Translator::class), $c->get(BrandResolver::class));
         });
+
+        // --- Site assistant ----------------------------------------------
+
+        $container->singleton(
+            \Aster\Infrastructure\Ai\ChatProvider::class,
+            static fn (Container $c): \Aster\Infrastructure\Ai\ChatProvider => new \Aster\Infrastructure\Ai\ChatProvider(
+                logger:         $c->get(Logger::class)->withChannel('ai'),
+                baseUrl:        \Aster\Infrastructure\Support\Env::bool('AI_ENABLED', false)
+                    ? (\Aster\Infrastructure\Support\Env::get('AI_BASE_URL') ?? '')
+                    : '',
+                apiKey:         \Aster\Infrastructure\Support\Env::get('AI_API_KEY') ?? '',
+                model:          \Aster\Infrastructure\Support\Env::get('AI_MODEL') ?? '',
+                timeoutSeconds: \Aster\Infrastructure\Support\Env::int('AI_TIMEOUT', 20),
+            ),
+        );
+
+        $container->singleton(
+            \Aster\Application\Service\SiteGuide::class,
+            static fn (Container $c): \Aster\Application\Service\SiteGuide => new \Aster\Application\Service\SiteGuide(
+                $c->get(ServiceRepository::class),
+                $c->get(DoctorRepository::class),
+                $c->get(PackageRepository::class),
+                $c->get(FacilityRepository::class),
+                $c->get(ArticleRepository::class),
+                $c->get(SettingsRepository::class),
+                $c->get(BrandResolver::class),
+                $c->get(Translator::class),
+                $config,
+            ),
+        );
+
+        $container->singleton(
+            \Aster\Application\Service\ChatService::class,
+            static fn (Container $c): \Aster\Application\Service\ChatService => new \Aster\Application\Service\ChatService(
+                $c->get(\Aster\Infrastructure\Ai\ChatProvider::class),
+                $c->get(\Aster\Application\Service\SiteGuide::class),
+                $c->get(SettingsRepository::class),
+                $c->get(Translator::class),
+            ),
+        );
 
         // --- Presentation ------------------------------------------------
 

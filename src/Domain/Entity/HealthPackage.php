@@ -20,12 +20,14 @@ final readonly class HealthPackage
         public int $id,
         public string $title,
         public ?string $titleAm,
+        public ?string $titleOm,
         public string $slug,
         public Money $price,
         /** Fraction of the price required up front, 0.0-1.0. */
         public float $depositRate,
         public ?string $description,
         public ?string $descriptionAm,
+        public ?string $descriptionOm,
         public array $items,
         public ?string $badge,
         public bool $isFeatured,
@@ -62,11 +64,13 @@ final readonly class HealthPackage
             id:            (int) $row['id'],
             title:         (string) $row['title'],
             titleAm:       self::nullableString($row['title_am'] ?? null),
+            titleOm:       self::nullableString($row['title_om'] ?? null),
             slug:          (string) $row['slug'],
             price:         Money::fromDatabase($row['price_etb'] ?? 0),
             depositRate:   (float) ($row['deposit_rate'] ?? 0.30),
             description:   self::nullableString($row['description'] ?? null),
             descriptionAm: self::nullableString($row['description_am'] ?? null),
+            descriptionOm: self::nullableString($row['description_om'] ?? null),
             items:         $items,
             badge:         self::nullableString($row['badge'] ?? null),
             isFeatured:    (bool) ($row['is_featured'] ?? false),
@@ -80,20 +84,39 @@ final readonly class HealthPackage
         return is_string($value) && $value !== '' ? $value : null;
     }
 
+    /**
+     * The translation for a locale, or null when there is not a usable one.
+     *
+     * English is the base column and therefore never has a translation of
+     * its own; a locale whose column is NULL or empty also returns null so
+     * the caller can fall back with `?? $base`. Deliberately never falls
+     * back to the OTHER translation: an untranslated Afaan Oromo package
+     * degrades to readable English, not to Ge'ez script.
+     */
+    private function translation(Locale $locale, ?string $amharic, ?string $oromo): ?string
+    {
+        $value = match ($locale) {
+            Locale::EN => null,
+            Locale::AM => $amharic,
+            Locale::OM => $oromo,
+        };
+
+        return $value !== null && $value !== '' ? $value : null;
+    }
+
     public function name(Locale $locale): string
     {
-        return $locale === Locale::AM && $this->titleAm !== null ? $this->titleAm : $this->title;
+        return $this->translation($locale, $this->titleAm, $this->titleOm) ?? $this->title;
     }
 
     public function summary(Locale $locale): ?string
     {
-        return $locale === Locale::AM && $this->descriptionAm !== null
-            ? $this->descriptionAm
-            : $this->description;
+        return $this->translation($locale, $this->descriptionAm, $this->descriptionOm)
+            ?? $this->description;
     }
 
     /**
-     * Bullet list for a locale, falling back to English when the Amharic
+     * Bullet list for a locale, falling back to English when the translated
      * list has not been filled in.
      *
      * @return list<string>

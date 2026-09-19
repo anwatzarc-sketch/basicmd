@@ -94,12 +94,16 @@ final class PackageRepository
     }
 
     /**
-     * Encode the bilingual bullet lists for the items_json column.
+     * Encode the per-locale bullet lists for the items_json column.
+     *
+     * Keyed by Locale::value, which is what HealthPackage::itemList() reads
+     * back; the Afaan Oromo list needs no column of its own for that reason.
      *
      * @param list<string> $englishItems
      * @param list<string> $amharicItems
+     * @param list<string> $oromoItems
      */
-    public static function encodeItems(array $englishItems, array $amharicItems): string
+    public static function encodeItems(array $englishItems, array $amharicItems, array $oromoItems = []): string
     {
         $clean = static fn (array $items): array => array_values(array_filter(
             array_map(static fn (string $i): string => trim($i), $items),
@@ -107,7 +111,11 @@ final class PackageRepository
         ));
 
         return json_encode(
-            ['en' => $clean($englishItems), 'am' => $clean($amharicItems)],
+            [
+                'en' => $clean($englishItems),
+                'am' => $clean($amharicItems),
+                'om' => $clean($oromoItems),
+            ],
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
         );
     }

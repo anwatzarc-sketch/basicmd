@@ -116,12 +116,15 @@ final class ArticleController extends Controller
         $data = [
             'title'            => $title,
             'title_am'         => $request->input('title_am'),
+            'title_om'         => $request->input('title_om'),
             'category'         => $request->string('category', 'General'),
             'excerpt'          => $request->input('excerpt'),
             'excerpt_am'       => $request->input('excerpt_am'),
+            'excerpt_om'       => $request->input('excerpt_om'),
             // Sanitised at the boundary, so what is stored is already safe.
             'content'          => $this->cleanBody($request->input('content')),
             'content_am'       => $this->cleanBody($request->input('content_am')),
+            'content_om'       => $this->cleanBody($request->input('content_om')),
             'author_id'        => $request->nullableInt('author_id'),
             'reviewer_id'      => $request->nullableInt('reviewer_id'),
             'schema_type'      => (SchemaType::tryFrom($request->string('schema_type')) ?? SchemaType::MEDICAL_WEB_PAGE)->value,
@@ -172,7 +175,7 @@ final class ArticleController extends Controller
             // versions on every save would bloat the audit table and bury
             // the field that actually changed.
             $auditable = $data;
-            unset($auditable['content'], $auditable['content_am']);
+            unset($auditable['content'], $auditable['content_am'], $auditable['content_om']);
 
             $this->audit->recordDiff(
                 AuditLogger::CONTENT_UPDATED,

@@ -15,11 +15,8 @@ declare(strict_types=1);
 $meta       = $meta ?? [];
 $settings   = $settings ?? null;
 $t          = $view->translator;
-$clinicName = $view->brand->businessName;
-
-if ($locale->value === 'am' && $settings !== null) {
-    $clinicName = $settings->string('clinic_name_am', $clinicName);
-}
+$clinicName = $settings?->localized('clinic_name', $locale, $view->brand->businessName)
+    ?: $view->brand->businessName;
 ?>
 <!doctype html>
 <html lang="<?= $view->e($locale->htmlLang()) ?>" class="scroll-smooth">
@@ -75,7 +72,11 @@ if ($locale->value === 'am' && $settings !== null) {
         <link rel="preload" as="style" href="<?= $view->asset('dist/css/app.min.css') ?>">
         <link rel="stylesheet" href="<?= $view->asset('dist/css/app.min.css') ?>">
         <?= $view->partial('partials/brand-vars', ['view' => $view, 'cspNonce' => $cspNonce]) ?>
+        <?php /* Body and display faces only. The label face is small and below
+                 the fold, and the Ethiopic face is preloaded just below, for
+                 Amharic alone. */ ?>
         <link rel="preload" as="font" type="font/woff2" href="/dist/fonts/inter-latin.woff2" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="/dist/fonts/inter-tight-latin.woff2" crossorigin>
         <?php if ($view->isAmharic()): ?>
             <link rel="preload" as="font" type="font/woff2" href="/dist/fonts/noto-ethiopic.woff2" crossorigin>
         <?php endif; ?>
@@ -144,6 +145,10 @@ if ($locale->value === 'am' && $settings !== null) {
 <?= $view->partial('partials/footer', ['view' => $view, 'locale' => $locale, 'settings' => $settings]) ?>
 
 <?= $view->partial('partials/confirm-dialog', ['view' => $view]) ?>
+
+<?php if ($view->config->assistantEnabled()): ?>
+    <?= $view->partial('partials/chat-widget', ['view' => $view]) ?>
+<?php endif; ?>
 
 <script nonce="<?= $view->e($cspNonce) ?>" src="<?= $view->asset('assets/js/app.js') ?>" defer></script>
 </body>

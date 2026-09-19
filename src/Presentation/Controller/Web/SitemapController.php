@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aster\Presentation\Controller\Web;
 
+use Aster\Domain\Enum\Locale;
 use Aster\Domain\Exception\HttpException;
 use Aster\Infrastructure\Persistence\ArticleRepository;
 use Aster\Infrastructure\Persistence\DoctorRepository;
@@ -118,8 +119,11 @@ final class SitemapController
             $xml .= "    <priority>{$url['priority']}</priority>\n";
 
             if ($url['alt']) {
-                $xml .= '    <xhtml:link rel="alternate" hreflang="en" href="' . $loc . '?lang=en"/>' . "\n";
-                $xml .= '    <xhtml:link rel="alternate" hreflang="am-ET" href="' . $loc . '?lang=am"/>' . "\n";
+                foreach (Locale::all() as $locale) {
+                    $xml .= '    <xhtml:link rel="alternate" hreflang="' . $locale->htmlLang()
+                        . '" href="' . $loc . '?lang=' . $locale->value . '"/>' . "\n";
+                }
+
                 $xml .= '    <xhtml:link rel="alternate" hreflang="x-default" href="' . $loc . '"/>' . "\n";
             }
 

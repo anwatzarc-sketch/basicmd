@@ -55,6 +55,17 @@ module.exports = {
           'Segoe UI',
           'sans-serif',
         ],
+        // Headings. Ethiopic sits second in every stack so a stray Ge'ez glyph
+        // on an English page still renders correctly, per glyph, without the
+        // page having paid for the face up front.
+        display: [
+          'Inter Tight',
+          'Inter',
+          'Noto Sans Ethiopic',
+          'system-ui',
+          '-apple-system',
+          'sans-serif',
+        ],
         // Applied to <body> when the locale is Amharic: Ethiopic leads so the
         // browser does not have to fall through Inter on every glyph.
         ethiopic: [
@@ -64,7 +75,15 @@ module.exports = {
           'Inter',
           'sans-serif',
         ],
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace'],
+        mono: [
+          'IBM Plex Mono',
+          'Noto Sans Ethiopic',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Consolas',
+          'monospace',
+        ],
       },
 
       // Every shade below is `rgb(var(--brand-N) / <alpha-value>)` rather
@@ -122,8 +141,10 @@ module.exports = {
 
       boxShadow: {
         card: '0 1px 3px rgba(15, 23, 42, .06), 0 1px 2px rgba(15, 23, 42, .04)',
-        lift: '0 20px 45px rgba(6, 59, 58, .10)',
-        brand: '0 10px 30px rgba(5, 100, 96, .20)',
+        // Tinted with the configured primary rather than the default teal, so
+        // a re-branded site does not keep glowing green under its buttons.
+        lift: '0 20px 45px rgb(var(--brand-900) / .10)',
+        brand: '0 10px 30px rgb(var(--brand-700) / .20)',
       },
 
       keyframes: {

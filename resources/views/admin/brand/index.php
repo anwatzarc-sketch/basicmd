@@ -1,6 +1,6 @@
 <?php
 /**
- * Brand & Theme editor: the single form over public/CompanyBrand.json.
+ * Brand & Theme editor: the single form over storage/CompanyBrand.json.
  *
  * @var \Aster\Presentation\View\View $view
  * @var \Aster\Domain\ValueObject\CompanyBrand $brand
@@ -141,7 +141,7 @@ $footerFgHex  = $tripleToHex($brand->footerText);
     </div>
 
     <details class="rounded-2xl border border-slate-200 p-4">
-        <summary class="cursor-pointer text-sm font-bold text-slate-700">What's actually saved (public/CompanyBrand.json)</summary>
+        <summary class="cursor-pointer text-sm font-bold text-slate-700">What's actually saved (storage/CompanyBrand.json)</summary>
         <pre class="mt-3 overflow-x-auto rounded-xl bg-slate-900 p-4 text-xs text-slate-100"><?= $view->e($rawJson) ?></pre>
     </details>
 </form>

@@ -21,9 +21,11 @@ final readonly class MedicalService
         public string $icon,
         public string $name,
         public ?string $nameAm,
+        public ?string $nameOm,
         public string $slug,
         public ?string $description,
         public ?string $descriptionAm,
+        public ?string $descriptionOm,
         public ServiceCategory $category,
         public Money $price,
         public int $durationMinutes,
@@ -41,9 +43,11 @@ final readonly class MedicalService
             icon:            (string) ($row['icon'] ?? ''),
             name:            (string) $row['ser_name'],
             nameAm:          self::nullableString($row['name_am'] ?? null),
+            nameOm:          self::nullableString($row['name_om'] ?? null),
             slug:            (string) $row['slug'],
             description:     self::nullableString($row['description'] ?? null),
             descriptionAm:   self::nullableString($row['description_am'] ?? null),
+            descriptionOm:   self::nullableString($row['description_om'] ?? null),
             category:        ServiceCategory::from((string) ($row['category'] ?? 'clinical')),
             price:           Money::fromDatabase($row['price'] ?? 0),
             durationMinutes: (int) ($row['duration_min'] ?? 30),
@@ -58,16 +62,35 @@ final readonly class MedicalService
         return is_string($value) && $value !== '' ? $value : null;
     }
 
+    /**
+     * The translation for a locale, or null when there is not a usable one.
+     *
+     * English is the base column and therefore never has a translation of
+     * its own; a locale whose column is NULL or empty also returns null so
+     * the caller can fall back with `?? $base`. Deliberately never falls
+     * back to the OTHER translation: an untranslated Afaan Oromo service
+     * degrades to readable English, not to Ge'ez script.
+     */
+    private function translation(Locale $locale, ?string $amharic, ?string $oromo): ?string
+    {
+        $value = match ($locale) {
+            Locale::EN => null,
+            Locale::AM => $amharic,
+            Locale::OM => $oromo,
+        };
+
+        return $value !== null && $value !== '' ? $value : null;
+    }
+
     public function title(Locale $locale): string
     {
-        return $locale === Locale::AM && $this->nameAm !== null ? $this->nameAm : $this->name;
+        return $this->translation($locale, $this->nameAm, $this->nameOm) ?? $this->name;
     }
 
     public function summary(Locale $locale): ?string
     {
-        return $locale === Locale::AM && $this->descriptionAm !== null
-            ? $this->descriptionAm
-            : $this->description;
+        return $this->translation($locale, $this->descriptionAm, $this->descriptionOm)
+            ?? $this->description;
     }
 
     /** Free services (pharmacy, emergency triage) show no price badge. */

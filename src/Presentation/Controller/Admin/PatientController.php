@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Aster\Presentation\Controller\Admin;
 
+use Aster\Application\Service\LabReportService;
 use Aster\Application\Service\PatientAuthService;
 use Aster\Domain\DTO\PatientDTO;
 use Aster\Domain\Entity\Patient;
@@ -71,6 +72,7 @@ final class PatientController extends Controller
         private readonly ReceivablePaymentRepositoryInterface $receivablePayments,
         private readonly AuditLogger $audit,
         private readonly WardScopeService $wardScope,
+        private readonly LabReportService $labReports,
     ) {
         parent::__construct($view, $session, $config);
     }
@@ -260,17 +262,34 @@ final class PatientController extends Controller
         // Same decrypt-at-the-controller boundary as clinical notes -
         // only orders that actually carry a result have anything to
         // decrypt.
+        //
+        // A Lab order's payload is structured (migration 012), so it is
+        // decoded through LabReportService into a LabReport the panel can
+        // summarise - parameter counts, how many fell outside range -
+        // rather than dumped as the raw JSON its plaintext now is.
+        // Imaging and PACS results are still free text and take the
+        // original path.
         $orderResults = [];
+        $labReports   = [];
 
         foreach ($orders as $order) {
-            if ($order->hasResults()) {
-                $orderResults[$order->id] = $this->diagnostics->decryptResults($order);
+            if (!$order->hasResults()) {
+                continue;
             }
+
+            if ($order->isLab()) {
+                $labReports[$order->id] = $this->labReports->saved($order);
+
+                continue;
+            }
+
+            $orderResults[$order->id] = $this->diagnostics->decryptResults($order);
         }
 
         return [
             'orders'         => $orders,
             'orderResults'   => $orderResults,
+            'labReports'     => $labReports,
             'openEncounters' => $this->encounters->forPatient($patient->id),
             'categories'     => $scope !== null ? [$scope] : DiagnosticCategory::all(),
         ];

@@ -176,6 +176,20 @@ final readonly class Config
         return $this->path(Env::get('UPLOAD_PROOF_DIR', 'storage/uploads/proofs') ?? 'storage/uploads/proofs');
     }
 
+    /**
+     * Whether the site assistant should render.
+     *
+     * Both halves are required: the flag alone would put a chat button on a
+     * site with no model behind it, which fails only once the visitor has
+     * typed a question.
+     */
+    public function assistantEnabled(): bool
+    {
+        return Env::bool('AI_ENABLED', false)
+            && (Env::get('AI_MODEL') ?? '') !== ''
+            && (Env::get('AI_BASE_URL') ?? '') !== '';
+    }
+
     public function mediaDir(): string
     {
         return $this->path(Env::get('UPLOAD_MEDIA_DIR', 'storage/uploads/media') ?? 'storage/uploads/media');

@@ -14,9 +14,9 @@ declare(strict_types=1);
 $email = $settings->string('email_public', '');
 $phone = $settings->string('phone_primary', '');
 ?>
-<section class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
-    <h1 class="text-3xl font-extrabold tracking-tight text-medical-900 sm:text-4xl"><?= $view->t('footer.privacy') ?></h1>
-    <p class="mt-3 text-sm text-slate-500">Last updated: <?= date('d F Y') ?></p>
+<section class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <h1 class="page-title"><?= $view->t('footer.privacy') ?></h1>
+    <p class="mt-3 text-sm text-slate-600 dark:text-slate-400">Last updated: <?= date('d F Y') ?></p>
 
     <div class="prose-article mt-8">
         <h2>What we collect</h2>
@@ -47,5 +47,10 @@ $phone = $settings->string('phone_primary', '');
             <?php if ($email !== ''): ?>at <a href="mailto:<?= $view->e($email) ?>"><?= $view->e($email) ?></a><?php endif; ?>
             <?php if ($phone !== ''): ?> or on <a href="tel:<?= $view->e($phone) ?>"><?= $view->e($phone) ?></a><?php endif; ?>.
         </p>
+    </div>
+
+    <div class="mt-10 flex flex-wrap items-center gap-3 border-t border-slate-200 pt-8 dark:border-slate-800">
+        <a href="<?= $view->url('contact') ?>" class="btn-secondary"><?= $view->t('nav.contact') ?></a>
+        <a href="<?= $view->url('terms') ?>" class="btn-ghost"><?= $view->t('footer.terms') ?></a>
     </div>
 </section>

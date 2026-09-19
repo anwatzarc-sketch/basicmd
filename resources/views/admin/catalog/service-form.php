@@ -30,6 +30,11 @@ $val = static fn (string $k, mixed $c = ''): string => (string) ($old[$k] ?? $c 
                    value="<?= $view->e($val('name_am', $service?->nameAm)) ?>">
         </div>
         <div class="field">
+            <label class="label" for="name_om">Name (Afaan Oromoo)</label>
+            <input class="input" type="text" id="name_om" name="name_om" lang="om-ET"
+                   value="<?= $view->e($val('name_om', $service?->nameOm)) ?>">
+        </div>
+        <div class="field">
             <label class="label" for="icon">Icon</label>
             <input class="input" type="text" id="icon" name="icon" maxlength="8" placeholder="An emoji, e.g. a stethoscope"
                    value="<?= $view->e($val('icon', $service?->icon)) ?>">
@@ -64,6 +69,11 @@ $val = static fn (string $k, mixed $c = ''): string => (string) ($old[$k] ?? $c 
             <label class="label" for="description_am">Description (Amharic)</label>
             <textarea class="textarea font-ethiopic" id="description_am" name="description_am" rows="3"
                       lang="am-ET"><?= $view->e($val('description_am', $service?->descriptionAm)) ?></textarea>
+        </div>
+        <div class="field sm:col-span-2">
+            <label class="label" for="description_om">Description (Afaan Oromoo)</label>
+            <textarea class="textarea" id="description_om" name="description_om" rows="3"
+                      lang="om-ET"><?= $view->e($val('description_om', $service?->descriptionOm)) ?></textarea>
         </div>
         <div class="field">
             <label class="label" for="sort_order">Display order</label>

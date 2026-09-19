@@ -29,6 +29,27 @@ return [
         'menu'       => 'Menu',
         'close'      => 'Close',
         'language'   => 'Language',
+        'theme'        => 'Theme',
+        'theme_system' => 'Match system',
+        'theme_light'  => 'Light',
+        'theme_dark'   => 'Dark',
+    ],
+
+    // --- Site assistant -----------------------------------------------
+    'chat' => [
+        'title'       => 'Ask the clinic',
+        'open'        => 'Open the assistant',
+        'close'       => 'Close the assistant',
+        'greeting'    => 'Hello. I can help you find services, doctors, opening hours and how booking works. What are you looking for?',
+        'placeholder' => 'Ask about services, hours or booking',
+        'send'        => 'Send',
+        'thinking'    => 'Typing…',
+        'you'         => 'You',
+        'assistant'   => 'Assistant',
+        'disclaimer'  => 'An automated assistant, not a clinician. It cannot give medical advice or see your booking. Please do not type personal health details.',
+        'emergency'   => 'This may be an emergency. Please stop using this chat and call now, or go to the nearest emergency department:',
+        'unavailable' => 'Sorry, the assistant is unavailable right now. Please use the contact page or call us:',
+        'error'       => 'Something went wrong. Please try again.',
     ],
 
     // --- Hero ---------------------------------------------------------
@@ -100,6 +121,7 @@ return [
         'deposit_note'   => 'Reserve with a :percent deposit of :amount',
         'pay_full'       => 'Or pay the full :amount',
         'most_popular'   => 'Most popular',
+        'none'           => 'No health packages are available right now.',
     ],
 
     'articles' => [

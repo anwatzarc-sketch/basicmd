@@ -630,9 +630,312 @@
     };
 
     /* =================================================================
+       Site assistant
+
+       The transcript lives in this closure and nowhere else: not in
+       localStorage, not on the server. A visitor may type a symptom into it,
+       and nothing here should outlive the tab.
+       ================================================================= */
+    const initChat = () => {
+        const root = $('[data-chat]');
+
+        if (!root) return;
+
+        const panel  = $('[data-chat-panel]', root);
+        const log    = $('[data-chat-log]', root);
+        const form   = $('[data-chat-form]', root);
+        const input  = $('[data-chat-input]', root);
+        const send   = $('[data-chat-send]', root);
+        const opener = $('[data-chat-open]', root);
+        const closer = $('[data-chat-close]', root);
+
+        if (!panel || !log || !form || !input) return;
+
+        const history = [];
+        let busy = false;
+
+        const setOpen = (open) => {
+            panel.hidden = !open;
+            opener.setAttribute('aria-expanded', String(open));
+            if (open) input.focus();
+        };
+
+        // Written out in full rather than built by concatenation: Tailwind
+        // scans this file for class names as literal strings, and a name
+        // assembled at runtime gets purged out of the stylesheet.
+        const BUBBLE = {
+            me:     'chat__msg chat__msg--me',
+            bot:    'chat__msg chat__msg--bot',
+            urgent: 'chat__msg chat__msg--urgent',
+        };
+
+        // textContent throughout: replies are model output and must never be
+        // parsed as HTML.
+        const bubble = (text, kind) => {
+            const el = document.createElement('div');
+            el.className = BUBBLE[kind] || BUBBLE.bot;
+            el.textContent = text;
+            log.appendChild(el);
+            log.scrollTop = log.scrollHeight;
+            return el;
+        };
+
+        opener.addEventListener('click', () => setOpen(panel.hidden));
+        closer?.addEventListener('click', () => { setOpen(false); opener.focus(); });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !panel.hidden) { setOpen(false); opener.focus(); }
+        });
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const message = input.value.trim();
+            if (message === '' || busy) return;
+
+            busy = true;
+            send.disabled = true;
+            input.value = '';
+            bubble(message, 'me');
+
+            const pending = bubble(form.dataset.thinking || '…', 'bot');
+
+            try {
+                const body = new URLSearchParams();
+                body.set('message', message);
+                body.set('history', JSON.stringify(history));
+                body.set('_token', csrfToken());
+
+                const response = await fetch('/assistant', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-Token': csrfToken(),
+                        'Accept': 'application/json',
+                    },
+                    body,
+                });
+
+                const data = await response.json().catch(() => ({}));
+                const reply = data.reply || form.dataset.error || 'Error';
+
+                pending.remove();
+                bubble(reply, data.urgent ? 'urgent' : 'bot');
+
+                // Only real exchanges become context; an error message would
+                // just teach the model to apologise.
+                if (!data.fallback && !data.urgent) {
+                    history.push({ role: 'user', content: message });
+                    history.push({ role: 'assistant', content: reply });
+                }
+            } catch (error) {
+                pending.remove();
+                bubble(form.dataset.error || 'Error', 'bot');
+            } finally {
+                busy = false;
+                send.disabled = false;
+                input.focus();
+            }
+        });
+    };
+
+    /* =================================================================
+       Admin: laboratory result / catalogue grid
+
+       One component, two screens - lab result entry and the test-panel
+       editor post the same whole-row shape (rows[i][name], rows[i][value],
+       ...), so both are driven from here.
+
+       The flag chip this draws is a PREVIEW. What is stored and what is
+       printed is always derived server-side by LabResultFlag::evaluate();
+       this exists so a technician sees a value fall out of range as they
+       type it, and its absence costs nothing but that.
+       ================================================================= */
+    const LAB_FLAGS = {
+        NORMAL:        { label: 'Normal',        chip: 'chip--built' },
+        LOW:           { label: 'Low',           chip: 'chip--partial' },
+        HIGH:          { label: 'High',          chip: 'chip--partial' },
+        CRITICAL_LOW:  { label: 'Critical low',  chip: 'chip--absent' },
+        CRITICAL_HIGH: { label: 'Critical high', chip: 'chip--absent' },
+        ABNORMAL:      { label: 'Abnormal',      chip: 'chip--absent' },
+    };
+
+    /** Mirrors LabResultFlag::evaluate(). Keep the two in step. */
+    const labFlag = (value, min, max, text) => {
+        const raw = (value ?? '').trim();
+        if (raw === '') return null;
+
+        const lower   = raw.toLowerCase();
+        const hasMin  = min !== null && min !== undefined && min !== '' && !Number.isNaN(Number(min));
+        const hasMax  = max !== null && max !== undefined && max !== '' && !Number.isNaN(Number(max));
+        const numeric = Number(raw);
+
+        if (Number.isNaN(numeric) || (!hasMin && !hasMax)) {
+            for (const marker of ['positive', 'reactive', 'abnormal', 'detected']) {
+                if (lower.includes(marker)) {
+                    return new RegExp(`\\b(non|not|no)[\\s-]*${marker}`).test(lower)
+                        ? LAB_FLAGS.NORMAL
+                        : LAB_FLAGS.ABNORMAL;
+                }
+            }
+
+            const reference = (text ?? '').trim().toLowerCase();
+            if (reference === '') return LAB_FLAGS.NORMAL;
+
+            return lower === reference ? LAB_FLAGS.NORMAL : LAB_FLAGS.ABNORMAL;
+        }
+
+        // A bound of exactly zero has no meaningful percentage to exceed,
+        // so magnitude is never escalated off it - same rule as the PHP.
+        const beyond = (excess, bound) => Math.abs(bound) !== 0 && (excess / Math.abs(bound)) > 0.25;
+
+        if (hasMin && numeric < Number(min)) {
+            return beyond(Number(min) - numeric, Number(min)) ? LAB_FLAGS.CRITICAL_LOW : LAB_FLAGS.LOW;
+        }
+
+        if (hasMax && numeric > Number(max)) {
+            return beyond(numeric - Number(max), Number(max)) ? LAB_FLAGS.CRITICAL_HIGH : LAB_FLAGS.HIGH;
+        }
+
+        return LAB_FLAGS.NORMAL;
+    };
+
+    const initLabGrid = () => {
+        $$('[data-lab-entry]').forEach((form) => {
+            const body     = $('[data-lab-rows]', form);
+            const template = $('[data-lab-row-template]');
+
+            if (!body || !template) return;
+
+            // Start above every index already rendered, so a new row can
+            // never collide with an existing one and overwrite it on POST.
+            let nextIndex = $$('[data-lab-row]', body).length;
+
+            const buildRow = (index) => {
+                const host = document.createElement('tbody');
+                host.innerHTML = template.innerHTML.replaceAll('__INDEX__', String(index));
+
+                return host.firstElementChild;
+            };
+
+            const paintFlag = (row) => {
+                const chip = $('[data-lab-flag]', row);
+                if (!chip) return;
+
+                const flag = labFlag(
+                    $('[data-lab-value]', row)?.value,
+                    $('[data-lab-min]', row)?.value,
+                    $('[data-lab-max]', row)?.value,
+                    $('[data-lab-text]', row)?.value,
+                );
+
+                if (!flag) {
+                    chip.hidden = true;
+                    return;
+                }
+
+                chip.hidden = false;
+                chip.className = flag.chip;
+                chip.textContent = flag.label;
+            };
+
+            const addRow = (values = {}) => {
+                const row = buildRow(nextIndex);
+                nextIndex += 1;
+
+                Object.entries(values).forEach(([field, value]) => {
+                    const input = $(`[name$="[${field}]"]`, row);
+                    if (input && value !== null && value !== undefined) input.value = String(value);
+                });
+
+                body.appendChild(row);
+                paintFlag(row);
+
+                return row;
+            };
+
+            $('[data-lab-add]', form)?.addEventListener('click', () => {
+                addRow().querySelector('input')?.focus();
+            });
+
+            // Delegated: rows come and go, and rebinding per row would
+            // leak listeners every time a preset is loaded.
+            body.addEventListener('click', (event) => {
+                const remove = event.target.closest('[data-lab-remove]');
+                if (remove) remove.closest('[data-lab-row]')?.remove();
+            });
+
+            body.addEventListener('input', (event) => {
+                const row = event.target.closest('[data-lab-row]');
+                if (row) paintFlag(row);
+            });
+
+            // Preset loader - replaces the grid from the test directory.
+            const loader = $('[data-lab-preset-load]', form);
+            const picker = $('[data-lab-preset]', form);
+
+            loader?.addEventListener('click', async () => {
+                const code = picker?.value;
+                if (!code) return;
+
+                loader.disabled = true;
+
+                try {
+                    const response = await fetch(`${loader.dataset.endpoint}/${encodeURIComponent(code)}/parameters`, {
+                        headers: { 'Accept': 'application/json' },
+                    });
+                    const data = await response.json();
+
+                    if (!data.ok || !Array.isArray(data.rows)) return;
+
+                    body.innerHTML = '';
+                    data.rows.forEach((row) => addRow(row));
+
+                    const heading = $('#report_title', form);
+                    if (heading && data.title) heading.value = data.title;
+                } catch (error) {
+                    // Leave the grid exactly as it was: silently emptying it
+                    // because a fetch failed would look like the preset had
+                    // loaded and contained nothing.
+                } finally {
+                    loader.disabled = false;
+                }
+            });
+
+            $$('[data-lab-row]', body).forEach(paintFlag);
+        });
+    };
+
+    /* =================================================================
+       Admin: requisition - specimen follows the chosen panel
+
+       Only while the field still holds the previous panel default. Once a
+       technician types their own specimen description, changing the panel
+       must not quietly overwrite it.
+       ================================================================= */
+    const initLabPanelPicker = () => {
+        const picker = $('[data-lab-panel-picker]');
+        const target = $('[data-lab-specimen-target]');
+
+        if (!picker || !target) return;
+
+        let applied = target.value;
+
+        picker.addEventListener('change', () => {
+            const specimen = picker.selectedOptions[0]?.dataset.specimen ?? '';
+
+            if (target.value === applied || target.value === '') {
+                target.value = specimen;
+                applied = specimen;
+            }
+        });
+    };
+
+    /* =================================================================
        Boot
        ================================================================= */
     const boot = () => {
+        initChat();
         initMenu();
         initFlash();
         initCopy();
@@ -643,6 +946,8 @@
         initFilters();
         initMethodEditor();
         initPermissionGroups();
+        initLabGrid();
+        initLabPanelPicker();
         initServiceWorker();
     };
 

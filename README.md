@@ -68,9 +68,21 @@ cp .env.example .env                  # then edit DB_*, MAIL_*, APP_URL, TRUSTED
 
 mysql -u USER -p DATABASE < database/schema.sql
 mysql -u USER -p DATABASE < database/seed.sql
+php bin/migrate.php                   # applies database/migrations/*.sql
 
 php bin/install.php                   # checks everything, creates the first admin
 ```
+
+`schema.sql` is the Phase I baseline only. Everything after it — the master patient
+index, encounters, clinical documentation, the ledger, role management and the
+laboratory — lives in `database/migrations/`, so **`bin/migrate.php` is not optional**,
+on a fresh install or an upgrade. It is idempotent: already-applied versions are
+skipped.
+
+> `schema.sql` opens with `CREATE DATABASE` / `USE aster_medical` and a `DROP TABLE`
+> block. It targets that database by name whatever connection you feed it to, and it
+> drops the Phase I tables before recreating them. Never run it against a database
+> holding data you want to keep.
 
 `bin/install.php` verifies the PHP version and extensions, generates `APP_KEY`, confirms
 storage is writable, checks all 16 tables exist, and refuses to continue if
@@ -160,7 +172,7 @@ downloader, the prototypes and the tests are all left behind. `.env` is delibera
 | `bin/` | Installer, queue worker, reminder scheduler |
 | `vendor/` | Autoloader + PHPMailer — shipped so the server needs no Composer |
 | `database/` | `schema.sql`, `seed.sql` — used once, at install |
-| `storage/` | Created **empty** and writable. Receipts and logs live here |
+| `storage/` | Created **empty** and writable. Receipts, logs and the admin-saved `CompanyBrand.json` live here |
 | `composer.json` / `.lock` | Only if you ever regenerate the autoloader on the server |
 | `.env.example` | Template to copy to `.env` on the server |
 
@@ -215,7 +227,12 @@ downloader, the prototypes and the tests are all left behind. `.env` is delibera
 - Plesk manages its own nginx/Apache config, so `deploy/nginx*.conf` is **reference only**
   there. The shipped `public/.htaccess` handles rewriting on Plesk's Apache.
 - Redeploying: replace `public/`, `src/`, `resources/`, `lang/`, `bin/`, `vendor/`.
-  Never overwrite `.env` or `storage/`.
+  Never overwrite `.env` or `storage/` — the admin-saved `storage/CompanyBrand.json`
+  (logo, hero image, theme colors) lives there specifically so a redeploy can't
+  wipe it. It used to live under `public/CompanyBrand.json`; if you're
+  upgrading a site deployed before this change, copy that file to
+  `storage/CompanyBrand.json` on the server **before** your next redeploy, or
+  the brand/logo/hero settings will silently reset to defaults.
 - Back up `storage/uploads/proofs/` — those are financial records and are not
   reproducible.
 
@@ -265,6 +282,52 @@ the detail route, so typing another appointment's id into the URL returns 403.
 
 ---
 
+## Laboratory
+
+`/admin/lab` — a work queue, structured result entry, a printed A4 report sheet, and a
+master test directory. Added by `database/migrations/012_laboratory.sql`.
+
+A lab order **is** a `diagnostic_orders` row with `category = 'Lab'`. There is no second
+order table: the order's identity, encounter, ordering physician and status machine were
+already modelled, and a parallel copy would immediately raise the question of which one is
+true. The migration adds a specimen block (accession number, type, barcode, collection
+time, ward) and who recorded the result.
+
+**Results are not a table.** The result matrix is JSON, encrypted into the existing
+`diagnostic_orders.results_payload_encrypted` (AES-256-GCM, `Infrastructure/Security/Encryptor.php`).
+Structured entry therefore costs nothing in confidentiality — a database dump still yields
+ciphertext — where a per-parameter table would have put haemoglobin values in plaintext
+columns to buy a reporting capability nothing asks for. `LabReportService` is the only
+thing that decodes it, and it still reads the free-text payloads migration 004 shipped.
+
+**Reference intervals are copied onto the report, not looked up when printing.** A report
+is a signed statement about what was normal the day it was released; reprinting a two-year-old
+result against today's catalogue would silently restate it.
+
+**Flags are always derived, never stored.** `LabResultFlag::evaluate()` is the single
+judge — L/H outside the interval, LL/HH more than 25% beyond it, and a qualitative
+parameter compared against what normal reads as. The live flag in the entry grid is a
+JavaScript preview of the same rule; what prints is always the server's answer, so a
+browser with JavaScript off loses the preview and nothing else.
+
+| | |
+|---|---|
+| Queue status | `ORDERED` → *Awaiting specimen*, `IN_PROGRESS` → *Pending result entry*, `COMPLETED` → *Released for print*. Four states, laboratory names — no fifth state a transition machine could not validate. |
+| "Verify & release" | Moves `ORDERED → IN_PROGRESS → COMPLETED` in one submit. Every hop is checked by `DiagnosticStatus::canReach()`, so it is a shortcut *through* the machine, not around it. |
+| Unreleased sheets | Carry a `PROVISIONAL — NOT RELEASED` watermark on the page itself, so it survives being printed, photographed or photocopied. |
+| Accession number | `LAB-YYYYMMDD-NNNNN`, from `NumberSequence` — the same collision-safe mechanism behind `VisitNumber` and `ReceiptId`. It doubles as the specimen label and prints as a real, scannable Code 39 barcode (`Presentation/Support/Code39.php`), not decorative stripes. |
+| Permissions | Reading is `diagnostics.view`; raising a requisition is `diagnostics.order`; recording a result is checked per-order against its *own* category, which is what makes a Lab Technician's `diagnostics.result_lab` sufficient here and insufficient on an Imaging order. Editing the test directory is `lab_catalog.manage` (super_admin by default) — a reference interval decides what every future report calls abnormal. |
+
+The directory ships five routine panels (CBC, lipid, CMP, thyroid, urinalysis) as editable
+defaults. Reference intervals are method- and population-dependent: **reconcile them
+against your own analysers before use.**
+
+Nothing pre-fills the pathologist's impression, deliberately. A canned interpretation is
+text that gets signed without being written, which is the exact failure a signature block
+exists to prevent.
+
+---
+
 ## Security
 
 | | |
@@ -278,6 +341,7 @@ the detail route, so typing another appointment's id into the URL returns 403.
 | Brute force | Per-IP rate limit **and** per-account lockout, plus constant-ish response time so staff emails cannot be enumerated. |
 | Uploads | Type from magic bytes, images re-encoded through GD (strips payloads and EXIF/GPS), random stored names. |
 | Payment proofs | Stored **outside the webroot**, streamed only through an authenticated route that writes an audit entry per view. |
+| Lab results | Encrypted at rest in `diagnostic_orders.results_payload_encrypted`; opening a report sheet writes an audit entry, on the same principle as viewing a payment proof. |
 | Audit | Append-only trail of who did what, with before/after diffs. Passwords and clinical notes are redacted. |
 
 Error pages never show a stack trace; debug output is force-disabled whenever

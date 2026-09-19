@@ -46,9 +46,7 @@ final readonly class SeoService
     {
         $name = $this->brand->resolve()->businessName;
 
-        return $locale === Locale::AM
-            ? $this->settings->string('clinic_name_am', $name)
-            : $name;
+        return $this->settings->localized('clinic_name', $locale, $name) ?: $name;
     }
 
     /**
@@ -71,14 +69,10 @@ final readonly class SeoService
             '@id'         => $this->config->url('#clinic'),
             'name'        => $this->clinicName($locale),
             'url'         => $this->config->appUrl,
-            'description' => $locale === Locale::AM
-                ? $this->settings->string('tagline_am')
-                : $this->settings->string('tagline'),
+            'description' => $this->settings->localized('tagline', $locale),
             'address'     => [
                 '@type'           => 'PostalAddress',
-                'streetAddress'   => $locale === Locale::AM
-                    ? $this->settings->string('address_am', $this->settings->string('address'))
-                    : $this->settings->string('address'),
+                'streetAddress'   => $this->settings->localized('address', $locale),
                 'addressLocality' => $brand->mainCity,
                 'addressRegion'   => $brand->mainCity,
                 'addressCountry'  => 'ET',
@@ -330,22 +324,29 @@ final readonly class SeoService
     /**
      * Canonical and hreflang links.
      *
-     * hreflang tells Google the English and Amharic pages are translations
-     * rather than duplicates, so neither is filtered as thin content.
+     * hreflang tells Google the translated pages are translations rather than
+     * duplicates, so none of them is filtered as thin content. Built from
+     * Locale::all() rather than a literal list: a language that ships without
+     * an hreflang entry is invisible to search in that language, and that is
+     * not a thing anyone remembers to update by hand.
      *
      * @return array{canonical:string, alternates: array<string, string>}
      */
     public function alternates(string $path, Locale $current): array
     {
-        $clean = '/' . ltrim($path, '/');
+        $url = $this->config->url(ltrim('/' . ltrim($path, '/'), '/'));
+
+        $alternates = [];
+
+        foreach (Locale::all() as $locale) {
+            $alternates[$locale->htmlLang()] = $url . '?lang=' . $locale->value;
+        }
+
+        $alternates['x-default'] = $url;
 
         return [
-            'canonical'  => $this->config->url(ltrim($clean, '/')),
-            'alternates' => [
-                'en'        => $this->config->url(ltrim($clean, '/')) . '?lang=en',
-                'am-ET'     => $this->config->url(ltrim($clean, '/')) . '?lang=am',
-                'x-default' => $this->config->url(ltrim($clean, '/')),
-            ],
+            'canonical'  => $url,
+            'alternates' => $alternates,
         ];
     }
 

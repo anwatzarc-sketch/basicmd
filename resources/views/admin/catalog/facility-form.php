@@ -33,6 +33,12 @@ $val = static fn (string $key, mixed $current = ''): string => (string) ($old[$k
         </div>
 
         <div class="field">
+            <label class="label" for="name_om">Name (Afaan Oromoo)</label>
+            <input class="input" type="text" id="name_om" name="name_om" lang="om-ET"
+                   value="<?= $view->e($val('name_om', $facility?->nameOm)) ?>">
+        </div>
+
+        <div class="field">
             <label class="label" for="type">Type</label>
             <input class="input" type="text" id="type" name="type"
                    placeholder="Clinical Room, Radiology, Laboratory"
@@ -54,6 +60,12 @@ $val = static fn (string $key, mixed $current = ''): string => (string) ($old[$k
             <label class="label" for="description_am">Description (Amharic)</label>
             <textarea class="textarea font-ethiopic" id="description_am" name="description_am" rows="3"
                       lang="am-ET"><?= $view->e($val('description_am', $facility?->descriptionAm)) ?></textarea>
+        </div>
+
+        <div class="field sm:col-span-2">
+            <label class="label" for="description_om">Description (Afaan Oromoo)</label>
+            <textarea class="textarea" id="description_om" name="description_om" rows="3"
+                      lang="om-ET"><?= $view->e($val('description_om', $facility?->descriptionOm)) ?></textarea>
         </div>
 
         <div class="field">

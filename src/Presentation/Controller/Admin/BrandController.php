@@ -43,7 +43,7 @@ final class BrandController extends Controller
 
         return $this->renderAdmin('admin/brand/index', [
             'brand'   => $this->resolver->resolve(),
-            'rawJson' => $rawRaw === '' ? '(no CompanyBrand.json - showing defaults)' : $rawRaw,
+            'rawJson' => $rawRaw === '' ? '(no CompanyBrand.json yet - showing defaults)' : $rawRaw,
             'meta'    => ['title' => 'Brand & Theme', 'noindex' => true],
         ]);
     }

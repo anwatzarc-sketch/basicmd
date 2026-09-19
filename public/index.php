@@ -210,6 +210,11 @@ $contact = $make(WebController\ContactController::class, [
     $container->get(SeoService::class),
 ]);
 
+$chat = $make(WebController\ChatController::class, [
+    $container->get(\Aster\Application\Service\ChatService::class),
+    $container->get(RateLimiter::class),
+]);
+
 $sitemap = new WebController\SitemapController(
     $config,
     $container->get(ArticleRepository::class),
@@ -303,6 +308,7 @@ $patientsAdmin = $make(AdminController\PatientController::class, [
     $container->get(ReceivablePaymentRepositoryInterface::class),
     $container->get(AuditLogger::class),
     $container->get(\Aster\Domain\Services\WardScopeService::class),
+    $container->get(\Aster\Application\Service\LabReportService::class),
 ]);
 
 $rolesAdmin = $make(AdminController\RoleController::class, [
@@ -343,6 +349,16 @@ $billingAdmin = $make(AdminController\BillingController::class, [
     $container->get(NumberSequenceInterface::class),
     $container->get(BillingService::class),
     $container->get(AuditLogger::class),
+]);
+
+$labAdmin = $make(AdminController\LabController::class, [
+    $container->get(DiagnosticOrderRepositoryInterface::class),
+    $container->get(\Aster\Domain\Repository\LabCatalogRepositoryInterface::class),
+    $container->get(EncounterRepositoryInterface::class),
+    $container->get(\Aster\Application\Service\LabReportService::class),
+    $container->get(SettingsRepository::class),
+    $container->get(AuditLogger::class),
+    $container->get(\Aster\Domain\Services\WardScopeService::class),
 ]);
 
 $patientPortal = $make(PatientPortalController\PortalController::class, [
@@ -400,6 +416,8 @@ foreach ([
     'roles.manage', 'wards.manage',
     // Brand & Theme (migration 010)
     'brand.manage',
+    // Laboratory test directory (migration 012)
+    'lab_catalog.manage',
 ] as $permission) {
     $router->registerMiddleware('can:' . $permission, new Authorize($permission, $logger));
 }
@@ -428,6 +446,9 @@ $router->get('/locations', [$content, 'locations'], $publicStack, 'locations');
 
 $router->get('/contact', [$contact, 'form'], $publicStack, 'contact');
 $router->post('/contact', [$contact, 'store'], $publicForm);
+
+// Site assistant. POST only and CSRF-protected like any other form here.
+$router->post('/assistant', [$chat, 'send'], $publicForm);
 
 // --- Booking ----------------------------------------------------------
 
@@ -466,6 +487,7 @@ $router->group($adminPath, [], static function (Router $r) use (
     $auth, $dashboard, $appointments, $payments, $doctorsAdmin, $catalog,
     $articlesAdmin, $inquiriesAdmin, $usersAdmin, $settingsAdmin,
     $patientsAdmin, $encountersAdmin, $billingAdmin, $rolesAdmin, $wardsAdmin, $brandAdmin,
+    $labAdmin,
     $publicStack, $publicForm, $adminStack, $adminForm
 ): void {
     // Authentication (no auth middleware, obviously)
@@ -615,6 +637,31 @@ $router->group($adminPath, [], static function (Router $r) use (
     $r->get('/billing/ledger', [$billingAdmin, 'ledger'], [...$adminStack, 'can:billing.view']);
     $r->post('/billing/ledger', [$billingAdmin, 'postLedgerEntry'], [...$adminForm, 'can:billing.write']);
     $r->post('/billing/payments', [$billingAdmin, 'postPayment'], [...$adminForm, 'can:billing.write']);
+
+    // Laboratory (migration 012). Every route is Lab-only by the
+    // controller's own category pin; the can: gates below are the
+    // ordinary permission layer on top of it. Result entry and the
+    // report sheet are gated on diagnostics.view because the finer
+    // decision - may THIS user record against THIS order's category -
+    // depends on the row and is made once the order is loaded.
+    $r->get('/lab', [$labAdmin, 'queue'], [...$adminStack, 'can:diagnostics.view']);
+    $r->get('/lab/requisitions/create', [$labAdmin, 'requisitionForm'], [...$adminStack, 'can:diagnostics.order']);
+    $r->post('/lab/requisitions', [$labAdmin, 'saveRequisition'], [...$adminForm, 'can:diagnostics.order']);
+    $r->get('/lab/orders/{id:\d+}/results', [$labAdmin, 'resultEntry'], [...$adminStack, 'can:diagnostics.view']);
+    $r->post('/lab/orders/{id:\d+}/results', [$labAdmin, 'saveResults'], [...$adminForm, 'can:diagnostics.view']);
+    $r->get('/lab/orders/{id:\d+}/report', [$labAdmin, 'report'], [...$adminStack, 'can:diagnostics.view']);
+    $r->get('/lab/panels/{code:[A-Za-z0-9_-]+}/parameters', [$labAdmin, 'panelParameters'], [...$adminStack, 'can:diagnostics.view']);
+
+    // Master test directory - readable by anyone who can see an order,
+    // editable only with lab_catalog.manage (super_admin by default):
+    // a reference interval decides what every future report calls
+    // abnormal.
+    $r->get('/lab/catalog', [$labAdmin, 'catalog'], [...$adminStack, 'can:diagnostics.view']);
+    $r->get('/lab/catalog/create', [$labAdmin, 'panelForm'], [...$adminStack, 'can:lab_catalog.manage']);
+    $r->post('/lab/catalog', [$labAdmin, 'savePanel'], [...$adminForm, 'can:lab_catalog.manage']);
+    $r->get('/lab/catalog/{id:\d+}/edit', [$labAdmin, 'panelForm'], [...$adminStack, 'can:lab_catalog.manage']);
+    $r->post('/lab/catalog/{id:\d+}', [$labAdmin, 'savePanel'], [...$adminForm, 'can:lab_catalog.manage']);
+    $r->post('/lab/catalog/{id:\d+}/delete', [$labAdmin, 'deletePanel'], [...$adminForm, 'can:lab_catalog.manage']);
 });
 
 // ---------------------------------------------------------------------

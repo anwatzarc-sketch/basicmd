@@ -7,7 +7,7 @@ namespace Aster\Infrastructure\Support;
 use RuntimeException;
 
 /**
- * Atomically saves public/CompanyBrand.json.
+ * Atomically saves storage/CompanyBrand.json.
  *
  * Written to a temp file in the same directory and then renamed into place:
  * rename() is atomic on both POSIX and Windows filesystems, so a request
@@ -32,7 +32,7 @@ final class BrandWriter
 
         if (!is_writable($directory)) {
             throw new RuntimeException(
-                "public/ is not writable by the web server user - ask your host to chmod it.",
+                "storage/ is not writable by the web server user - ask your host to chmod it.",
             );
         }
 

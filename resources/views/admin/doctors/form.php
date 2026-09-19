@@ -41,6 +41,12 @@ $val = static fn (string $key, mixed $current = ''): string
             </div>
 
             <div class="field">
+                <label class="label" for="full_name_om">Full name (Afaan Oromoo)</label>
+                <input class="input" type="text" id="full_name_om" name="full_name_om"
+                       lang="om-ET" value="<?= $view->e($val('full_name_om', $doctor?->fullNameOm)) ?>">
+            </div>
+
+            <div class="field">
                 <label class="label" for="specialty">Specialty <span class="text-rose-500" aria-hidden="true">*</span></label>
                 <input class="input" type="text" id="specialty" name="specialty" required
                        value="<?= $view->e($val('specialty', $doctor?->specialty)) ?>">
@@ -50,6 +56,12 @@ $val = static fn (string $key, mixed $current = ''): string
                 <label class="label" for="specialty_am">Specialty (Amharic)</label>
                 <input class="input font-ethiopic" type="text" id="specialty_am" name="specialty_am"
                        lang="am-ET" value="<?= $view->e($val('specialty_am', $doctor?->specialtyAm)) ?>">
+            </div>
+
+            <div class="field">
+                <label class="label" for="specialty_om">Specialty (Afaan Oromoo)</label>
+                <input class="input" type="text" id="specialty_om" name="specialty_om"
+                       lang="om-ET" value="<?= $view->e($val('specialty_om', $doctor?->specialtyOm)) ?>">
             </div>
 
             <div class="field">
@@ -87,6 +99,12 @@ $val = static fn (string $key, mixed $current = ''): string
                 <label class="label" for="bio_am">Biography (Amharic)</label>
                 <textarea class="textarea font-ethiopic" id="bio_am" name="bio_am" rows="4"
                           lang="am-ET"><?= $view->e($val('bio_am', $doctor?->bioAm)) ?></textarea>
+            </div>
+
+            <div class="field sm:col-span-2">
+                <label class="label" for="bio_om">Biography (Afaan Oromoo)</label>
+                <textarea class="textarea" id="bio_om" name="bio_om" rows="4"
+                          lang="om-ET"><?= $view->e($val('bio_om', $doctor?->bioOm)) ?></textarea>
             </div>
 
             <div class="field sm:col-span-2">

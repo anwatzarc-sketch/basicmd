@@ -21,7 +21,11 @@ $action = $package === null
 $val = static fn (string $k, mixed $c = ''): string => (string) ($old[$k] ?? $c ?? '');
 
 $itemsEn = $old['items_en'] ?? implode("\n", $package?->itemList(Locale::EN) ?? []);
+// The translated lists read the raw items array, not itemList(), so an
+// untranslated language shows an empty box to fill in rather than the
+// English list itemList() would fall back to.
 $itemsAm = $old['items_am'] ?? implode("\n", $package?->items['am'] ?? []);
+$itemsOm = $old['items_om'] ?? implode("\n", $package?->items['om'] ?? []);
 ?>
 <form method="post" action="<?= $action ?>" class="card-pad mx-auto grid max-w-3xl gap-5">
     <?= $view->csrfField() ?>
@@ -35,6 +39,11 @@ $itemsAm = $old['items_am'] ?? implode("\n", $package?->items['am'] ?? []);
             <label class="label" for="title_am">Title (Amharic)</label>
             <input class="input font-ethiopic" type="text" id="title_am" name="title_am" lang="am-ET"
                    value="<?= $view->e($val('title_am', $package?->titleAm)) ?>">
+        </div>
+        <div class="field">
+            <label class="label" for="title_om">Title (Afaan Oromoo)</label>
+            <input class="input" type="text" id="title_om" name="title_om" lang="om-ET"
+                   value="<?= $view->e($val('title_om', $package?->titleOm)) ?>">
         </div>
         <div class="field">
             <label class="label" for="price_etb">Price (ETB) <span class="text-rose-500" aria-hidden="true">*</span></label>
@@ -56,6 +65,11 @@ $itemsAm = $old['items_am'] ?? implode("\n", $package?->items['am'] ?? []);
             <textarea class="textarea font-ethiopic" id="description_am" name="description_am" rows="3"
                       lang="am-ET"><?= $view->e($val('description_am', $package?->descriptionAm)) ?></textarea>
         </div>
+        <div class="field sm:col-span-2">
+            <label class="label" for="description_om">Description (Afaan Oromoo)</label>
+            <textarea class="textarea" id="description_om" name="description_om" rows="3"
+                      lang="om-ET"><?= $view->e($val('description_om', $package?->descriptionOm)) ?></textarea>
+        </div>
         <div class="field">
             <label class="label" for="items_en">Included items (English)</label>
             <textarea class="textarea" id="items_en" name="items_en" rows="8"
@@ -66,6 +80,12 @@ $itemsAm = $old['items_am'] ?? implode("\n", $package?->items['am'] ?? []);
             <label class="label" for="items_am">Included items (Amharic)</label>
             <textarea class="textarea font-ethiopic" id="items_am" name="items_am" rows="8"
                       lang="am-ET" placeholder="One item per line"><?= $view->e($itemsAm) ?></textarea>
+            <span class="hint">One per line, matching the English order.</span>
+        </div>
+        <div class="field">
+            <label class="label" for="items_om">Included items (Afaan Oromoo)</label>
+            <textarea class="textarea" id="items_om" name="items_om" rows="8"
+                      lang="om-ET" placeholder="One item per line"><?= $view->e($itemsOm) ?></textarea>
             <span class="hint">One per line, matching the English order.</span>
         </div>
         <div class="field">

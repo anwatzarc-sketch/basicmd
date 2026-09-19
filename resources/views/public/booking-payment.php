@@ -24,39 +24,23 @@ $amountDue = $balance->isPositive() ? $balance : $appointment->totalAmount;
 $latest = $payments[0] ?? null;
 ?>
 
-<section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+<section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
 
-    <!-- Progress: booked -> pay -> confirmed -->
-    <ol class="mb-10 flex items-center gap-2 text-xs font-bold" aria-label="Booking progress">
-        <li class="flex items-center gap-2 text-medical-700">
-            <span class="grid h-6 w-6 place-items-center rounded-full bg-medical-600 text-white">&#10003;</span>
-            <?= $view->t('booking.step_details') ?>
-        </li>
-        <li class="h-px w-6 bg-medical-300" aria-hidden="true"></li>
-        <li class="flex items-center gap-2 text-medical-700" aria-current="step">
-            <span class="grid h-6 w-6 place-items-center rounded-full bg-medical-600 text-white">2</span>
-            <?= $view->t('booking.step_payment') ?>
-        </li>
-        <li class="h-px w-6 bg-slate-200" aria-hidden="true"></li>
-        <li class="flex items-center gap-2 text-slate-400">
-            <span class="grid h-6 w-6 place-items-center rounded-full bg-slate-200 text-slate-500">3</span>
-            <?= $view->t('booking.step_done') ?>
-        </li>
-    </ol>
+    <?= $view->partial('partials/booking-steps', ['view' => $view, 'current' => 2]) ?>
 
     <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
 
         <!-- ------------------------- Left: instructions ------------------------- -->
         <div>
-            <h1 class="text-3xl font-extrabold tracking-tight text-medical-900"><?= $view->t('payment.title') ?></h1>
-            <p class="mt-3 leading-relaxed text-slate-600"><?= $view->t('payment.lead') ?></p>
+            <h1 class="page-title"><?= $view->t('payment.title') ?></h1>
+            <p class="mt-3 leading-relaxed text-slate-600 dark:text-slate-300"><?= $view->t('payment.lead') ?></p>
 
             <!-- The reference the patient must quote on the transfer. -->
-            <div class="mt-6 rounded-2xl border border-dashed border-medical-400 bg-medical-50 p-5 text-center">
-                <span class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-medical-700">
+            <div class="reference-box mt-6">
+                <span class="text-[11px] font-extrabold uppercase tracking-[0.14em] text-medical-700 dark:text-medical-300">
                     <?= $view->t('confirmation.reference') ?>
                 </span>
-                <div class="mt-2 font-mono text-2xl font-extrabold tracking-wider text-medical-900 sm:text-3xl">
+                <div class="mt-2 font-mono text-2xl font-extrabold tracking-wider text-medical-900 dark:text-medical-100 sm:text-3xl">
                     <?= $view->e($appointment->reference->formatted()) ?>
                 </div>
                 <button type="button" class="chip mt-3"
@@ -66,7 +50,7 @@ $latest = $payments[0] ?? null;
                 </button>
             </div>
 
-            <div class="alert-warning mt-5" role="note">
+            <div class="alert-warning mt-5">
                 <svg class="mt-0.5 h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                 </svg>
@@ -104,7 +88,7 @@ $latest = $payments[0] ?? null;
                 <?= $view->csrfField() ?>
 
                 <!-- ---------- Method selection ---------- -->
-                <h2 class="text-sm font-extrabold uppercase tracking-wider text-medical-700">
+                <h2 class="text-sm font-extrabold uppercase tracking-wider text-medical-700 dark:text-medical-300">
                     <?= $view->t('payment.choose_method') ?>
                 </h2>
 
@@ -116,8 +100,8 @@ $latest = $payments[0] ?? null;
                                    data-requires-proof="<?= $method->expectsProof() ? '1' : '0' ?>"
                                    <?= $view->attr($index === 0, 'checked') ?>>
                             <span class="flex-1">
-                                <b class="block text-sm text-medical-900"><?= $view->e($method->name($locale)) ?></b>
-                                <span class="text-xs text-slate-500"><?= $view->t($method->channel->translationKey()) ?></span>
+                                <span class="block text-sm font-bold text-medical-900 dark:text-medical-100"><?= $view->e($method->name($locale)) ?></span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400"><?= $view->t($method->channel->translationKey()) ?></span>
                             </span>
                         </label>
                     <?php endforeach; ?>
@@ -125,22 +109,22 @@ $latest = $payments[0] ?? null;
 
                 <!-- ---------- Per-method instructions ---------- -->
                 <?php foreach ($paymentMethods as $method): ?>
-                    <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                    <div class="soft-card mt-5"
                          data-method-panel="<?= $method->id ?>" hidden>
 
                         <?php if ($method->hasAccountDetails()): ?>
                             <dl class="grid gap-3 text-sm">
                                 <?php if ($method->accountName !== null): ?>
                                     <div class="flex flex-wrap items-center justify-between gap-2">
-                                        <dt class="text-slate-500"><?= $view->t('payment.account_name') ?></dt>
-                                        <dd class="font-bold text-slate-900"><?= $view->e($method->accountName) ?></dd>
+                                        <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('payment.account_name') ?></dt>
+                                        <dd class="font-bold text-slate-900 dark:text-slate-100"><?= $view->e($method->accountName) ?></dd>
                                     </div>
                                 <?php endif; ?>
 
                                 <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <dt class="text-slate-500"><?= $view->t('payment.account_number') ?></dt>
+                                    <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('payment.account_number') ?></dt>
                                     <dd class="flex items-center gap-2">
-                                        <span class="font-mono text-base font-extrabold tracking-wide text-medical-800">
+                                        <span class="font-mono text-base font-extrabold tracking-wide text-medical-800 dark:text-medical-200">
                                             <?= $view->e($method->accountNumber ?? '') ?>
                                         </span>
                                         <button type="button" class="chip"
@@ -153,20 +137,20 @@ $latest = $payments[0] ?? null;
 
                                 <?php if ($method->branch !== null): ?>
                                     <div class="flex flex-wrap items-center justify-between gap-2">
-                                        <dt class="text-slate-500"><?= $view->t('payment.branch') ?></dt>
-                                        <dd class="font-semibold text-slate-700"><?= $view->e($method->branch) ?></dd>
+                                        <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('payment.branch') ?></dt>
+                                        <dd class="font-semibold text-slate-700 dark:text-slate-300"><?= $view->e($method->branch) ?></dd>
                                     </div>
                                 <?php endif; ?>
 
-                                <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-3">
-                                    <dt class="font-bold text-slate-700"><?= $view->t('payment.amount_due') ?></dt>
-                                    <dd class="text-lg font-extrabold text-medical-700"><?= $view->e($t->money($amountDue)) ?></dd>
+                                <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-3 dark:border-slate-700">
+                                    <dt class="font-bold text-slate-700 dark:text-slate-300"><?= $view->t('payment.amount_due') ?></dt>
+                                    <dd class="text-lg font-extrabold text-medical-700 dark:text-medical-300"><?= $view->e($t->money($amountDue)) ?></dd>
                                 </div>
                             </dl>
                         <?php endif; ?>
 
                         <?php if ($method->howTo($locale) !== null): ?>
-                            <p class="mt-4 text-sm leading-relaxed text-slate-600">
+                            <p class="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                                 <?= $view->e($method->howTo($locale)) ?>
                             </p>
                         <?php endif; ?>
@@ -175,11 +159,11 @@ $latest = $payments[0] ?? null;
 
                 <!-- ---------- Proof upload ---------- -->
                 <div data-upload-block>
-                    <div class="mt-8 border-t border-slate-200 pt-6">
-                        <h2 class="text-sm font-extrabold uppercase tracking-wider text-medical-700">
+                    <div class="mt-8 border-t border-slate-200 pt-6 dark:border-slate-700">
+                        <h2 class="text-sm font-extrabold uppercase tracking-wider text-medical-700 dark:text-medical-300">
                             <?= $view->t('payment.upload_title') ?>
                         </h2>
-                        <p class="mt-2 text-sm text-slate-600"><?= $view->t('payment.upload_lead') ?></p>
+                        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300"><?= $view->t('payment.upload_lead') ?></p>
 
                         <div class="mt-5 grid gap-5">
                             <div class="field">
@@ -195,13 +179,13 @@ $latest = $payments[0] ?? null;
                                     <span class="field-error"><?= $view->e($errors['proof']) ?></span>
                                 <?php endif; ?>
 
-                                <div class="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs"
+                                <div class="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs dark:border-slate-700 dark:bg-slate-800/60"
                                      data-proof-preview hidden>
                                     <svg class="h-5 w-5 shrink-0 text-medical-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.9A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                     </svg>
-                                    <span class="flex-1 truncate font-semibold text-slate-700" data-proof-name></span>
-                                    <span class="text-slate-500" data-proof-size></span>
+                                    <span class="flex-1 truncate font-semibold text-slate-700 dark:text-slate-200" data-proof-name></span>
+                                    <span class="text-slate-500 dark:text-slate-400" data-proof-size></span>
                                     <span class="font-bold text-rose-600" data-proof-warning hidden>
                                         <?= $view->t('validation.file_size', ['size' => $maxMb]) ?>
                                     </span>
@@ -266,55 +250,55 @@ $latest = $payments[0] ?? null;
         <!-- ------------------------- Right: summary ------------------------- -->
         <aside class="lg:sticky lg:top-24 lg:self-start">
             <div class="card-pad">
-                <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-500">
+                <h2 class="panel-title">
                     <?= $view->t('booking.summary') ?>
                 </h2>
 
                 <dl class="mt-4 grid gap-3 text-sm">
                     <div class="flex justify-between gap-3">
-                        <dt class="text-slate-500"><?= $view->t('email.label_service') ?></dt>
-                        <dd class="text-right font-semibold text-slate-900"><?= $view->e($appointment->subjectLabel()) ?></dd>
+                        <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('email.label_service') ?></dt>
+                        <dd class="text-right font-semibold text-slate-900 dark:text-slate-100"><?= $view->e($appointment->subjectLabel()) ?></dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-slate-500"><?= $view->t('email.label_doctor') ?></dt>
-                        <dd class="text-right font-semibold text-slate-900"><?= $view->e($appointment->doctorLabel()) ?></dd>
+                        <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('email.label_doctor') ?></dt>
+                        <dd class="text-right font-semibold text-slate-900 dark:text-slate-100"><?= $view->e($appointment->doctorLabel()) ?></dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-slate-500"><?= $view->t('email.label_date') ?></dt>
-                        <dd class="text-right font-semibold text-slate-900"><?= $view->e($t->date($appointment->date)) ?></dd>
+                        <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('email.label_date') ?></dt>
+                        <dd class="text-right font-semibold text-slate-900 dark:text-slate-100"><?= $view->e($t->date($appointment->date)) ?></dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-slate-500"><?= $view->t('email.label_time') ?></dt>
-                        <dd class="text-right font-semibold text-slate-900"><?= $view->e($appointment->timeSlot->label()) ?></dd>
+                        <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('email.label_time') ?></dt>
+                        <dd class="text-right font-semibold text-slate-900 dark:text-slate-100"><?= $view->e($appointment->timeSlot->label()) ?></dd>
                     </div>
 
                     <?php if ($appointment->isExpress()): ?>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-slate-500"><?= $view->t('booking.tier') ?></dt>
+                            <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('booking.tier') ?></dt>
                             <dd><span class="badge <?= $view->e($appointment->queueTier->badgeClass()) ?>">
                                 <?= $view->t('queue_tier.express') ?>
                             </span></dd>
                         </div>
                     <?php endif; ?>
 
-                    <div class="mt-2 flex justify-between gap-3 border-t border-slate-200 pt-3">
-                        <dt class="font-bold text-slate-700"><?= $view->t('booking.total') ?></dt>
-                        <dd class="font-extrabold text-medical-700"><?= $view->e($t->money($appointment->totalAmount)) ?></dd>
+                    <div class="mt-2 flex justify-between gap-3 border-t border-slate-200 pt-3 dark:border-slate-700">
+                        <dt class="font-bold text-slate-700 dark:text-slate-300"><?= $view->t('booking.total') ?></dt>
+                        <dd class="font-extrabold text-medical-700 dark:text-medical-300"><?= $view->e($t->money($appointment->totalAmount)) ?></dd>
                     </div>
 
                     <?php if ($appointment->amountPaid->isPositive()): ?>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-slate-500"><?= $view->t('email.label_paid') ?></dt>
-                            <dd class="font-semibold text-emerald-700"><?= $view->e($t->money($appointment->amountPaid)) ?></dd>
+                            <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('email.label_paid') ?></dt>
+                            <dd class="font-semibold text-emerald-700 dark:text-emerald-400"><?= $view->e($t->money($appointment->amountPaid)) ?></dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-slate-500"><?= $view->t('email.label_balance') ?></dt>
-                            <dd class="font-bold text-amber-700"><?= $view->e($t->money($balance)) ?></dd>
+                            <dt class="text-slate-500 dark:text-slate-400"><?= $view->t('email.label_balance') ?></dt>
+                            <dd class="font-bold text-amber-700 dark:text-amber-400"><?= $view->e($t->money($balance)) ?></dd>
                         </div>
                     <?php endif; ?>
                 </dl>
 
-                <div class="mt-5 border-t border-slate-200 pt-4">
+                <div class="mt-5 border-t border-slate-200 pt-4 dark:border-slate-700">
                     <span class="badge <?= $view->e($appointment->paymentStatus->badgeClass()) ?>">
                         <?= $view->t($appointment->paymentStatus->translationKey()) ?>
                     </span>
@@ -328,15 +312,15 @@ $latest = $payments[0] ?? null;
 
             <?php if ($payments !== []): ?>
                 <div class="card-pad mt-5">
-                    <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-500">
+                    <h2 class="panel-title">
                         <?= $view->t('email.label_status') ?>
                     </h2>
                     <ul class="mt-4 grid gap-3">
                         <?php foreach ($payments as $payment): ?>
                             <li class="flex items-start justify-between gap-3 text-sm">
                                 <div>
-                                    <b class="block text-slate-900"><?= $view->e($t->money($payment->amount)) ?></b>
-                                    <span class="text-xs text-slate-500">
+                                    <strong class="block text-slate-900 dark:text-slate-100"><?= $view->e($t->money($payment->amount)) ?></strong>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">
                                         <?= $view->e($t->dateShort($payment->createdAt)) ?>
                                         <?php if ($payment->methodLabel !== null): ?>
                                             &middot; <?= $view->e($payment->methodLabel) ?>

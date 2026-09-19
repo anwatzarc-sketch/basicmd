@@ -84,6 +84,37 @@ final class BrandPalette
         return $ramp;
     }
 
+    /**
+     * WCAG contrast ratio between two "R G B" triples, 1.0 (identical) to
+     * 21.0 (black on white).
+     */
+    public static function contrastRatio(string $tripleA, string $tripleB): float
+    {
+        $lumA = self::relativeLuminance($tripleA);
+        $lumB = self::relativeLuminance($tripleB);
+
+        [$light, $dark] = $lumA >= $lumB ? [$lumA, $lumB] : [$lumB, $lumA];
+
+        return ($light + 0.05) / ($dark + 0.05);
+    }
+
+    /** Per WCAG 2.1 relative luminance, from a "R G B" triple. */
+    private static function relativeLuminance(string $triple): float
+    {
+        $parts = array_map('intval', preg_split('/\s+/', trim($triple)) ?: []);
+        $parts = array_pad($parts, 3, 0);
+
+        $channel = static function (int $value): float {
+            $srgb = $value / 255;
+
+            return $srgb <= 0.04045 ? $srgb / 12.92 : (($srgb + 0.055) / 1.055) ** 2.4;
+        };
+
+        return 0.2126 * $channel($parts[0])
+             + 0.7152 * $channel($parts[1])
+             + 0.0722 * $channel($parts[2]);
+    }
+
     /** @return array{0:int,1:int,2:int} */
     private static function hexToRgb(string $hex): array
     {

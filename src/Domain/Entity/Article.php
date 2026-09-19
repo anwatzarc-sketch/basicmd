@@ -21,12 +21,15 @@ final readonly class Article
         public int $id,
         public string $title,
         public ?string $titleAm,
+        public ?string $titleOm,
         public string $slug,
         public string $category,
         public ?string $excerpt,
         public ?string $excerptAm,
+        public ?string $excerptOm,
         public ?string $content,
         public ?string $contentAm,
+        public ?string $contentOm,
         public ?string $coverImage,
         public ?string $coverAlt,
         public ?int $authorId,
@@ -54,12 +57,15 @@ final readonly class Article
             id:              (int) $row['id'],
             title:           (string) $row['title'],
             titleAm:         self::nullableString($row['title_am'] ?? null),
+            titleOm:         self::nullableString($row['title_om'] ?? null),
             slug:            (string) $row['slug'],
             category:        (string) ($row['category'] ?? 'General'),
             excerpt:         self::nullableString($row['excerpt'] ?? null),
             excerptAm:       self::nullableString($row['excerpt_am'] ?? null),
+            excerptOm:       self::nullableString($row['excerpt_om'] ?? null),
             content:         self::nullableString($row['content'] ?? null),
             contentAm:       self::nullableString($row['content_am'] ?? null),
+            contentOm:       self::nullableString($row['content_om'] ?? null),
             coverImage:      self::nullableString($row['cover_image'] ?? null),
             coverAlt:        self::nullableString($row['cover_alt'] ?? null),
             authorId:        self::nullableInt($row['author_id'] ?? null),
@@ -94,25 +100,53 @@ final readonly class Article
         return is_string($value) && $value !== '' ? new DateTimeImmutable($value . ' UTC') : null;
     }
 
+    /**
+     * The translation for a locale, or null when there is not a usable one.
+     *
+     * English is the base column and therefore never has a translation of
+     * its own; a locale whose column is NULL or empty also returns null so
+     * the caller can fall back with `?? $base`. Deliberately never falls
+     * back to the OTHER translation: an untranslated Afaan Oromo article
+     * degrades to readable English, not to Ge'ez script.
+     */
+    private function translation(Locale $locale, ?string $amharic, ?string $oromo): ?string
+    {
+        $value = match ($locale) {
+            Locale::EN => null,
+            Locale::AM => $amharic,
+            Locale::OM => $oromo,
+        };
+
+        return $value !== null && $value !== '' ? $value : null;
+    }
+
     public function heading(Locale $locale): string
     {
-        return $locale === Locale::AM && $this->titleAm !== null ? $this->titleAm : $this->title;
+        return $this->translation($locale, $this->titleAm, $this->titleOm) ?? $this->title;
     }
 
     public function summary(Locale $locale): ?string
     {
-        return $locale === Locale::AM && $this->excerptAm !== null ? $this->excerptAm : $this->excerpt;
+        return $this->translation($locale, $this->excerptAm, $this->excerptOm) ?? $this->excerpt;
     }
 
     public function body(Locale $locale): ?string
     {
-        return $locale === Locale::AM && $this->contentAm !== null ? $this->contentAm : $this->content;
+        return $this->translation($locale, $this->contentAm, $this->contentOm) ?? $this->content;
     }
 
-    /** True when this article has a usable Amharic translation. */
-    public function hasTranslation(): bool
+    /**
+     * True when this article has a usable translation in a given language -
+     * both a headline and a body, since a translated title over English
+     * prose reads as a bug rather than as a translation.
+     *
+     * Defaults to Amharic, which is what the single-argument-free callers
+     * predating Afaan Oromo meant by "translated".
+     */
+    public function hasTranslation(Locale $locale = Locale::AM): bool
     {
-        return $this->titleAm !== null && $this->contentAm !== null;
+        return $this->translation($locale, $this->titleAm, $this->titleOm) !== null
+            && $this->translation($locale, $this->contentAm, $this->contentOm) !== null;
     }
 
     /** <title> value: the SEO override if set, otherwise the headline. */

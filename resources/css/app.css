@@ -2,8 +2,8 @@
  * Aster Medical Center - Premium Glassmorphic Application Stylesheet
  *
  * Merges the Aster component class signatures with a glassmorphism design system.
- * Supports light/dark mode via the `.dark` class on <html> or <body>, and includes
- * animated ambient background bubbles.
+ * Supports light/dark mode via the `.dark` class on <html> or <body>, and carries
+ * the per-locale typography corrections for English, Amharic and Afaan Oromo.
  */
 
 /* ---------------------------------------------------------------------
@@ -19,6 +19,33 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
 }
 
+/* Display face. Narrower than Inter at the same size, which is what lets a
+   headline keep its line count once it is translated - Amharic and Afaan
+   Oromo both run longer than the English they replace. */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url('/dist/fonts/inter-tight-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+
+/* Carries the eyebrow/label role, where the wide tracking needs a face drawn
+   for it. Latin only: the Amharic rules below strip the tracking and the
+   uppercasing that this face exists to serve. */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/dist/fonts/plex-mono-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215;
+}
+
+/* Ge'ez. unicode-range gates the download: this is by far the largest face in
+   the build, and a browser fetches it only when a glyph in these blocks is
+   actually painted - so English and Afaan Oromo pages never pay for it. */
 @font-face {
   font-family: 'Noto Sans Ethiopic';
   font-style: normal;
@@ -39,7 +66,10 @@
   /* --- Light / Day Mode Variables --- */
   :root {
     color-scheme: light;
-    --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #f1f5f9 50%, #e2e8f0 100%);
+    /* The Brand & Theme screen's "Page background" field, via brand-vars.
+       .dark overrides this outright further down: a night page needs a dark
+       background whatever the configured brand colour is. */
+    --bg-gradient: var(--brand-background, linear-gradient(135deg, #e0f2fe 0%, #f1f5f9 50%, #e2e8f0 100%));
 
     /* Brand palette defaults - CompanyBrand.json overrides these at runtime
        via partials/brand-vars, which re-declares them on :root after this
@@ -61,34 +91,125 @@
     --brand-footer-text: 94 234 212;
     --brand-header-text: 15 23 42;
 
-    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-bg: var(--brand-surface, rgba(255, 255, 255, 0.65));
     --glass-bg-hover: rgba(255, 255, 255, 0.85);
     --glass-border: rgba(255, 255, 255, 0.8);
     --glass-border-subtle: rgba(226, 232, 240, 0.8);
     --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
-    --glass-glow: 0 0 22px rgba(14, 116, 144, 0.25);
-    --text-main: #0f172a;
+    --glass-glow: 0 0 22px rgb(var(--brand-500) / 0.25);
+    --text-main: rgb(var(--brand-body-text, 15 23 42));
     --text-muted: #475569;
-    --bubble-color-1: rgba(56, 189, 248, 0.35);
-    --bubble-color-2: rgba(168, 85, 247, 0.22);
-    --bubble-color-3: rgba(236, 72, 153, 0.22);
+
+    /* --- Section surfaces -------------------------------------------
+       A deliberately small palette. Sections step between these rather
+       than each picking their own colour, so scrolling reads as one
+       composition instead of a stack of unrelated blocks. Every step is
+       a low-alpha tint of the SAME brand hue, which is what keeps the
+       transitions tonal rather than abrupt. */
+    --surface-raised: rgb(var(--brand-50) / 0.5);
+    --surface-tint:   rgb(var(--brand-100) / 0.4);
+    --surface-accent: rgb(var(--brand-900));
+    --surface-seam:   rgb(var(--brand-200) / 0.55);
+
+    /* --- Type scale --------------------------------------------------
+       Fluid by default: each step interpolates with the viewport, so the
+       layout never depends on a breakpoint to stay readable. Sizes are
+       in rem so browser font scaling keeps working. */
+    --fs-2xs:     clamp(0.6875rem, 0.665rem + 0.11vw, 0.75rem);
+    --fs-xs:      clamp(0.75rem,   0.727rem + 0.11vw, 0.8125rem);
+    --fs-sm:      clamp(0.875rem,  0.852rem + 0.11vw, 0.9375rem);
+    --fs-base:    clamp(1rem,      0.977rem + 0.11vw, 1.0625rem);
+    --fs-lg:      clamp(1.125rem,  1.09rem  + 0.17vw, 1.25rem);
+    --fs-xl:      clamp(1.25rem,   1.18rem  + 0.34vw, 1.5rem);
+    --fs-2xl:     clamp(1.5rem,    1.36rem  + 0.68vw, 2rem);
+    --fs-3xl:     clamp(1.75rem,   1.5rem   + 1.25vw, 2.5rem);
+    --fs-display: clamp(2rem,      1.5rem   + 2.4vw,  3.25rem);
+    --fs-hero:    clamp(2.25rem,   1.5rem   + 3.6vw,  3.75rem);
+
+    /* Rhythm. Redeclared per language below - this is the single place a
+       script-specific adjustment is made. */
+    --lh-tight:   1.15;
+    --lh-snug:    1.35;
+    --lh-normal:  1.6;
+    --lh-relaxed: 1.75;
+
+    --tracking-display: -0.03em;
+    --tracking-wide:    0.1em;
+  }
+
+  /* --- Script-specific typography ------------------------------------
+     One shared family stack and one shared scale, with a small set of
+     corrections per locale. Nothing here is a preference: every value
+     fixes a specific defect in how the script renders under type that was
+     tuned for Latin. */
+  :root:lang(am) {
+    /* Both tracking tokens go to zero. Ge'ez is not drawn to be letter-spaced:
+       spacing it apart breaks the visual unit of a syllable, and the uppercase
+       roles the wide tracking exists to serve do not exist in this script. */
+    --tracking-display: 0;
+    --tracking-wide:    0;
+
+    /* Ge'ez glyphs are taller and fill more of the em box, so Latin display
+       leading collides their ascenders. */
+    --lh-tight:   1.25;
+    --lh-snug:    1.4;
+    --lh-normal:  1.8;
+    --lh-relaxed: 1.95;
+
+    /* At an identical size Ge'ez reads noticeably larger and heavier than
+       Latin, so the display steps come down about a tenth. */
+    --fs-hero:    clamp(2rem,    1.35rem + 3.2vw, 3.35rem);
+    --fs-display: clamp(1.8rem,  1.35rem + 2.2vw, 2.95rem);
+    --fs-3xl:     clamp(1.6rem,  1.38rem + 1.1vw, 2.25rem);
+    --fs-2xl:     clamp(1.4rem,  1.28rem + 0.6vw, 1.8rem);
+
+    /* The small roles move the other way: denser glyphs need more size, not
+       less, to stay legible at caption scale. */
+    --fs-2xs: clamp(0.8125rem, 0.79rem + 0.08vw, 0.875rem);
+    --fs-xs:  clamp(0.8125rem, 0.8rem  + 0.10vw, 0.9375rem);
+  }
+
+  /* Afaan Oromo is typographically identical to English by design - same
+     faces, same scale, same tracking, same leading. Its one correction is a
+     wrapping rule, not a token, and lives with the other locale rules below. */
+
+  /* The "Surface transparency" slider scales the glass fill. Floored at 0.5:
+     a lower setting makes body text on a panel unreadable, and an admin must
+     not be able to type the public site into illegibility. Declared here,
+     before .dark, so night mode's own --glass-bg still wins. */
+  @supports (background: color-mix(in srgb, red 50%, transparent)) {
+    :root {
+      --glass-bg: color-mix(
+        in srgb,
+        var(--brand-surface, rgba(255, 255, 255, 0.65))
+          calc(max(var(--brand-transparency, 1), 0.5) * 100%),
+        transparent
+      );
+    }
   }
 
   /* --- Night / Dark Mode Variables --- */
   .dark {
     color-scheme: dark;
-    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 50%, #1e1b4b 100%);
+    /* Ends on the brand's darkest shade rather than the indigo #1e1b4b it
+       used to, which tinted every night page a colour the brand never
+       contained. */
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 55%, rgb(var(--brand-950)) 100%);
     --glass-bg: rgba(15, 23, 42, 0.65);
     --glass-bg-hover: rgba(30, 41, 59, 0.85);
     --glass-border: rgba(255, 255, 255, 0.12);
     --glass-border-subtle: rgba(255, 255, 255, 0.07);
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    --glass-glow: 0 0 25px rgba(129, 140, 248, 0.3);
+    --glass-glow: 0 0 25px rgb(var(--brand-400) / 0.3);
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
-    --bubble-color-1: rgba(56, 189, 248, 0.2);
-    --bubble-color-2: rgba(147, 51, 234, 0.25);
-    --bubble-color-3: rgba(219, 39, 119, 0.2);
+
+    /* Night surfaces step through lightness instead of brand tint - a
+       saturated tint over a near-black page reads as a colour cast. */
+    --surface-raised: rgb(148 163 184 / 0.07);
+    --surface-tint:   rgb(var(--brand-400) / 0.07);
+    --surface-accent: rgb(var(--brand-950));
+    --surface-seam:   rgb(148 163 184 / 0.14);
   }
 
   html {
@@ -111,7 +232,19 @@
 
   body.font-ethiopic {
     font-family: theme('fontFamily.ethiopic');
-    line-height: 1.85;
+  }
+
+  /* Body leading comes from the language tokens, not from a per-script
+     override, so there is one place to tune it. */
+  body {
+    line-height: var(--lh-normal);
+  }
+
+  /* No layout may depend on a translated string being short. A long Qubee
+     or Ge'ez compound breaks inside the element instead of widening it
+     and forcing the page to scroll sideways. */
+  h1, h2, h3, h4, p, li, dt, dd, label, legend, summary, figcaption {
+    overflow-wrap: break-word;
   }
 
   /* --- Focus Rings & Accessibility --- */
@@ -138,10 +271,6 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
-    }
-
-    .bubble {
-      animation: none !important;
     }
   }
 
@@ -180,65 +309,6 @@
 }
 
 /* ---------------------------------------------------------------------
-   Bubbly Background System
-   --------------------------------------------------------------------- */
-.bubble-bg {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bubble {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(48px);
-  animation: floatBubble 18s infinite ease-in-out alternate;
-}
-
-.bubble-1 {
-  width: 360px;
-  height: 360px;
-  background: var(--bubble-color-1);
-  top: 8%;
-  left: 10%;
-  animation-duration: 22s;
-}
-
-.bubble-2 {
-  width: 440px;
-  height: 440px;
-  background: var(--bubble-color-2);
-  bottom: 8%;
-  right: 8%;
-  animation-duration: 28s;
-  animation-delay: -5s;
-}
-
-.bubble-3 {
-  width: 280px;
-  height: 280px;
-  background: var(--bubble-color-3);
-  top: 42%;
-  left: 48%;
-  animation-duration: 18s;
-  animation-delay: -9s;
-}
-
-@keyframes floatBubble {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(65px, -55px) scale(1.15);
-  }
-  100% {
-    transform: translate(-45px, 45px) scale(0.9);
-  }
-}
-
-/* ---------------------------------------------------------------------
    Glassy Components Layer
    --------------------------------------------------------------------- */
 @layer components {
@@ -268,7 +338,7 @@
 
   .glass-btn-primary {
     @apply glass-btn bg-medical-600/90 text-white border-medical-400/40 
-           hover:bg-medical-600 hover:shadow-[0_0_20px_rgba(14,116,144,0.45)];
+           hover:bg-medical-600 hover:shadow-[0_0_20px_rgb(var(--brand-500)/0.45)];
   }
 
   .glass-input {
@@ -278,26 +348,244 @@
 
   /* --- Typography ------------------------------------------------- */
 
+  /* --- Section surfaces --------------------------------------------
+     Sections pick one of these rather than inventing a background. Two
+     adjacent bands should never be more than one step apart. */
+
+  .surface-raised {
+    background-color: var(--surface-raised);
+  }
+
+  .surface-tint {
+    background-color: var(--surface-tint);
+  }
+
+  .surface-accent {
+    background-color: var(--surface-accent);
+    color: theme('colors.white');
+  }
+
+  /* Hairline where two same-tone sections meet, so the boundary is felt
+     rather than seen. */
+  .section-seam {
+    border-top: 1px solid var(--surface-seam);
+  }
+
+  /* --- Header control cluster --------------------------------------
+     The language, theme and call-to-action controls read as one group of
+     pills rather than three unrelated widgets. */
+
+  .control-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3.5 py-2
+           text-sm font-semibold text-slate-700 backdrop-blur-md transition
+           hover:border-slate-300 hover:text-medical-800
+           dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:text-white;
+  }
+
+  .control-group {
+    @apply inline-flex items-center gap-0.5 rounded-full border border-slate-200 bg-white/80 p-1
+           backdrop-blur-md dark:border-slate-700 dark:bg-slate-800/70;
+  }
+
+  .control-icon {
+    @apply grid h-8 w-8 place-items-center rounded-full text-slate-500 transition
+           hover:text-medical-800 dark:text-slate-400 dark:hover:text-white;
+  }
+
+  /* Set by app.js once the stored preference is known - it lives in
+     localStorage, so the server cannot render the active state. */
+  .control-icon[aria-pressed='true'] {
+    @apply bg-slate-100 text-medical-800 shadow-sm dark:bg-slate-700 dark:text-white;
+  }
+
+  /* A <details> rather than a scripted dropdown: the language links have to
+     be real anchors in the DOM for hreflang to mean anything, and the menu
+     has to open without JavaScript. */
+  .lang-menu > summary {
+    @apply list-none;
+  }
+
+  .lang-menu > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .lang-menu__panel {
+    @apply absolute right-0 z-50 mt-2 grid w-44 gap-0.5 rounded-2xl border border-slate-200 bg-white p-1.5
+           shadow-lg dark:border-slate-700 dark:bg-slate-800;
+  }
+
+  .lang-menu__item {
+    @apply flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm font-semibold
+           text-slate-700 transition hover:bg-slate-100 hover:text-medical-800
+           dark:text-slate-200 dark:hover:bg-slate-700 dark:hover:text-white;
+  }
+
+  .lang-menu__item[aria-current='true'] {
+    @apply bg-medical-50 text-medical-800 dark:bg-medical-950/60 dark:text-medical-200;
+  }
+
+  /* --- Site assistant ----------------------------------------------- */
+
+  .chat {
+    @apply fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6;
+  }
+
+  .chat__launcher {
+    @apply grid h-14 w-14 place-items-center rounded-full bg-medical-800 text-white shadow-lift
+           transition hover:bg-medical-700 active:scale-95;
+  }
+
+  /* Sized in vh/vw with caps rather than fixed pixels, so it does not run off
+     a short phone screen or become a letterbox on a tall one. */
+  .chat__panel {
+    @apply glass-panel flex w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl;
+    max-height: min(32rem, calc(100vh - 7rem));
+    background: theme('colors.white');
+  }
+
+  :is(.dark) .chat__panel {
+    background: theme('colors.slate.900');
+  }
+
+  .chat__header {
+    @apply flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-slate-700;
+  }
+
+  .chat__title {
+    @apply font-display text-base font-extrabold text-medical-900 dark:text-medical-100;
+  }
+
+  .chat__close {
+    @apply grid h-8 w-8 place-items-center rounded-full text-slate-500 transition
+           hover:bg-slate-100 hover:text-medical-800 dark:hover:bg-slate-800 dark:hover:text-white;
+  }
+
+  .chat__disclaimer {
+    @apply border-b border-slate-200 bg-amber-50 px-4 py-2.5 text-xs leading-relaxed text-amber-900
+           dark:border-slate-700 dark:bg-amber-950/40 dark:text-amber-200;
+  }
+
+  .chat__log {
+    @apply flex flex-1 flex-col gap-2.5 overflow-y-auto px-4 py-4;
+  }
+
+  .chat__msg {
+    @apply max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed;
+    overflow-wrap: break-word;
+  }
+
+  .chat__msg--bot {
+    @apply self-start bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100;
+  }
+
+  .chat__msg--me {
+    @apply self-end bg-medical-700 text-white;
+  }
+
+  /* Urgent replies are generated by code, not the model, and are styled to
+     stand apart from ordinary chat so the number is not skimmed past. */
+  .chat__msg--urgent {
+    @apply self-start border border-rose-200 bg-rose-50 font-semibold text-rose-900
+           dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-100;
+  }
+
+  .chat__form {
+    @apply flex items-center gap-2 border-t border-slate-200 p-3 dark:border-slate-700;
+  }
+
+  .chat__input {
+    @apply w-full rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900
+           placeholder:text-slate-400 focus:border-medical-500 focus:outline-none focus:ring-2 focus:ring-medical-500/25
+           dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500;
+  }
+
+  .chat__send {
+    @apply grid h-10 w-10 shrink-0 place-items-center rounded-full bg-medical-700 text-white
+           transition hover:bg-medical-600 disabled:opacity-50;
+  }
+
+  /* --- Typography -------------------------------------------------- */
+
+  /* The label role takes the mono face, which is drawn for exactly this
+     treatment - uppercase, widely tracked, small. On an Amharic page the
+     locale rules strip both, and the stack falls through to Ethiopic. */
   .eyebrow {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-medical-200/60 dark:border-medical-500/30 
-           bg-medical-50/80 dark:bg-medical-950/40 px-3 py-1 
-           text-[0.72rem] font-extrabold uppercase tracking-[0.1em] text-medical-700 dark:text-medical-300 
+    @apply inline-flex items-center gap-1.5 rounded-full border border-medical-200/60 dark:border-medical-500/30
+           bg-medical-50/80 dark:bg-medical-950/40 px-3 py-1
+           font-mono font-medium uppercase text-medical-700 dark:text-medical-300
            shadow-sm backdrop-blur-md;
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--tracking-wide);
   }
 
   .eyebrow-invert {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 
-           text-[0.72rem] font-extrabold uppercase tracking-[0.1em] text-medical-100 backdrop-blur-md;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1
+           font-mono font-medium uppercase text-medical-100 backdrop-blur-md;
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  /* The one headline larger than .section-title. It exists as a class rather
+     than a string of size utilities because the hero is the largest text on
+     the site, and inline `tracking-[-0.035em]` there put negative tracking on
+     Ge'ez - the single thing the Amharic rules are most concerned with. */
+  .hero-title {
+    @apply font-display font-extrabold text-medical-900 dark:text-medical-100;
+    font-size: var(--fs-hero);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tracking-display);
+    overflow-wrap: break-word;
   }
 
   .section-title {
-    @apply mt-3 max-w-3xl text-[clamp(2rem,4.2vw,3.25rem)] font-extrabold leading-[1.08] tracking-[-0.035em] 
-           text-slate-900 dark:text-slate-100;
+    @apply mt-3 max-w-3xl font-display font-extrabold text-slate-900 dark:text-slate-100;
+    font-size: var(--fs-display);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tracking-display);
+    /* Long compounds (Qubee especially) must break rather than overflow. */
+    overflow-wrap: break-word;
   }
 
   .section-lead {
-    @apply mt-4 max-w-2xl text-lg leading-relaxed font-normal text-slate-600 dark:text-slate-300;
+    @apply mt-4 max-w-2xl font-normal text-slate-600 dark:text-slate-300;
+    font-size: var(--fs-lg);
+    line-height: var(--lh-relaxed);
   }
+
+  /* The h1 on a narrow detail page (a service, a doctor, an article, a
+     booking step). .section-title is sized for a full-width landing section
+     and overpowers these; this is the same lockup one step down. */
+  .page-title {
+    @apply font-display font-extrabold text-medical-900 dark:text-medical-100;
+    font-size: var(--fs-3xl);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tracking-display);
+    overflow-wrap: break-word;
+  }
+
+  .subsection-title {
+    @apply font-display font-extrabold text-medical-900 dark:text-medical-100;
+    font-size: var(--fs-xl);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-display);
+    overflow-wrap: break-word;
+  }
+
+  /* The <dt> in a detail list, and the heading over a form/summary panel. */
+  .dt-label {
+    @apply font-mono font-bold uppercase text-slate-500 dark:text-slate-400;
+    font-size: var(--fs-xs);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .panel-title {
+    @apply font-mono font-extrabold uppercase text-slate-500 dark:text-slate-400;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-wide);
+  }
+
 
   /* --- Buttons ---------------------------------------------------- */
 
@@ -309,8 +597,8 @@
 
   .btn-primary {
     @apply btn bg-gradient-to-r from-medical-700 via-medical-600 to-medical-700 bg-[length:200%_auto] text-white 
-           shadow-[0_4px_14px_0_rgba(14,116,144,0.35)] hover:bg-[position:right_center] 
-           hover:shadow-[0_6px_20px_0_rgba(14,116,144,0.45)] active:bg-medical-800;
+           shadow-[0_4px_14px_0_rgb(var(--brand-500)/0.35)] hover:bg-[position:right_center]
+           hover:shadow-[0_6px_20px_0_rgb(var(--brand-500)/0.45)] active:bg-medical-800;
   }
 
   .btn-secondary {
@@ -325,6 +613,12 @@
   .btn-danger {
     @apply btn bg-gradient-to-r from-rose-600 to-rose-700 text-white shadow-[0_4px_14px_0_rgba(225,29,72,0.3)] 
            hover:from-rose-500 hover:to-rose-600 hover:shadow-[0_6px_20px_0_rgba(225,29,72,0.4)];
+  }
+
+  /* The button that sits ON a .cta-panel-dark, where .btn-primary's brand
+     gradient would disappear into the panel behind it. */
+  .btn-invert {
+    @apply btn bg-white text-medical-800 shadow-sm hover:bg-slate-100 active:bg-slate-200;
   }
 
   .btn-sm {
@@ -346,14 +640,33 @@
   }
 
   .soft-card {
-    @apply glass-panel rounded-2xl p-5 transition-all duration-200 
+    @apply glass-panel rounded-2xl p-5 transition-all duration-200
            hover:border-medical-400 dark:hover:border-medical-500 hover:shadow-md;
+  }
+
+  /* "Nothing here yet" panel. Carries no outer margin on purpose - the page
+     owns its own spacing rhythm. */
+  .empty-state {
+    @apply rounded-2xl border border-dashed border-slate-300 dark:border-slate-700
+           p-10 text-center text-slate-500 dark:text-slate-400;
+  }
+
+  /* Dark brand panel used to close a page with a booking prompt. */
+  .cta-panel-dark {
+    @apply rounded-2xl bg-medical-900 p-6 text-white shadow-lift sm:p-8;
+  }
+
+  /* Holds a booking reference the patient has to read back to us, so it is
+     deliberately the loudest thing on the confirmation screens. */
+  .reference-box {
+    @apply rounded-2xl border border-dashed border-medical-300 dark:border-medical-700
+           bg-medical-50/60 dark:bg-medical-950/40 p-5 text-center;
   }
 
   .service-card {
     @apply glass-panel flex flex-col justify-between rounded-3xl p-7 transition-all duration-300 
            hover:-translate-y-1.5 hover:border-medical-300 dark:hover:border-medical-500 
-           hover:shadow-[0_20px_35px_-10px_rgba(14,116,144,0.2)];
+           hover:shadow-[0_20px_35px_-10px_rgb(var(--brand-500)/0.2)];
   }
 
   .service-icon {
@@ -379,11 +692,18 @@
   }
 
   .doctor-card {
-    @apply glass-panel relative rounded-3xl px-6 pb-7 text-center transition-all duration-300
+    @apply glass-panel relative flex flex-col rounded-3xl px-6 pb-7 text-center transition-all duration-300
            hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-12px_rgba(15,23,42,0.25)];
     /* Room for the portrait that overhangs the top edge. */
     padding-top: 4.125rem;
     overflow: visible;
+  }
+
+  /* Biographies differ in length, so without this the call to action sits at
+     a different height in every card and the row reads as ragged. */
+  .doctor-card > :last-child {
+    margin-top: auto;
+    padding-top: 1.25rem;
   }
 
   .doctor-card__photo-wrap {
@@ -403,18 +723,26 @@
     background: rgb(var(--brand-50));
   }
 
-  /* Initials stand in until a photo is uploaded, so the card never
-     shows a broken image. */
+  /* Holds the placeholder avatar (partials/doctor-avatar) until a photo is
+     uploaded, so the card never shows a broken image. The SVG inherits this
+     element's colour, which is why the tint is set here and not in the
+     asset. */
+  /* No dark: variant on the colour: the disc behind the figure is a light
+     brand tint in both themes, so the figure stays the dark shade or it
+     washes out at night. */
   .doctor-card__photo--fallback {
-    @apply grid h-full w-full place-items-center rounded-full text-2xl font-extrabold tracking-tight
-           text-medical-800 dark:text-medical-100;
+    @apply grid h-full w-full place-items-center overflow-hidden rounded-full text-medical-700;
     border: 3px solid theme('colors.white');
     background: linear-gradient(135deg, rgb(var(--brand-50)), rgb(var(--brand-100)));
   }
 
+  /* Light brand tint rather than the secondary colour. The secondary is
+     administrator-chosen and nothing constrains it to be light: the live
+     brand file set #2f4b38, a dark green, which on this dark pill left the
+     specialty unreadable on every doctor card. */
   .doctor-card__badge {
     @apply mt-3.5 inline-block rounded-full bg-medical-800 px-3.5 py-1 text-[0.7rem] font-extrabold
-           uppercase tracking-[0.04em] text-gold dark:bg-medical-950;
+           uppercase tracking-[0.04em] text-medical-100 dark:bg-medical-950;
   }
 
   .doctor-card__name {
@@ -437,12 +765,20 @@
   .doctor-avatar {
     @apply relative grid h-52 place-items-center bg-gradient-to-br from-medical-100/90 via-slate-50 to-medical-50/40
            dark:from-slate-800 dark:via-slate-900 dark:to-medical-950/80
-           text-5xl font-extrabold text-medical-800 dark:text-medical-200 tracking-tight;
+           text-medical-700 dark:text-medical-300;
+  }
+
+  /* The placeholder sits at a fixed proportion of the banner rather than
+     filling it, so it reads as a portrait and not as wallpaper. Clipped to
+     its own disc: the artwork runs to the foot of its viewBox, which in a
+     rectangular container would otherwise end in a flat cut-off edge. */
+  .doctor-avatar > svg {
+    @apply h-28 w-28 overflow-hidden rounded-full;
   }
 
   .facility-card {
-    @apply rounded-3xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-slate-900/40 p-6 
-           backdrop-blur-md shadow-lg transition-all duration-300 hover:border-white/30 hover:bg-white/20;
+    @apply glass-panel rounded-3xl p-6 transition-all duration-300
+           hover:-translate-y-1 hover:border-medical-300 dark:hover:border-medical-600 hover:shadow-lg;
   }
 
   .article-card {
@@ -451,8 +787,14 @@
   }
 
   .package-card {
-    @apply glass-panel relative flex flex-col rounded-3xl p-7 transition-all duration-300 
-           hover:-translate-y-1 hover:border-medical-500 hover:shadow-[0_20px_40px_-10px_rgba(14,116,144,0.25)];
+    @apply glass-panel relative flex flex-col rounded-3xl p-7 transition-all duration-300
+           hover:-translate-y-1 hover:border-medical-500 hover:shadow-[0_20px_40px_-10px_rgb(var(--brand-500)/0.25)];
+  }
+
+  /* "Most popular" ribbon straddling a package card's top edge. Positioned by
+     the call site, which knows whether it is centred or offset. */
+  .package-badge {
+    @apply rounded-full bg-gold px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-white shadow-sm;
   }
 
   /* --- Forms ------------------------------------------------------ */
@@ -491,8 +833,16 @@
     @apply flex items-center gap-1 text-xs font-semibold text-rose-600 dark:text-rose-400;
   }
 
+  /* form-checkbox/form-radio come from @tailwindcss/forms, which runs with
+     strategy:'class' (tailwind.config.js) - without that base class the
+     control stays a native widget and ignores the brand accent entirely. */
   .checkbox {
-    @apply h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-medical-600 transition-all 
+    @apply form-checkbox h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-medical-600 transition-all
+           focus:ring-medical-500 focus:ring-offset-0 dark:bg-slate-800;
+  }
+
+  .radio {
+    @apply form-radio h-4 w-4 border-slate-300 dark:border-slate-600 text-medical-600 transition-all
            focus:ring-medical-500 focus:ring-offset-0 dark:bg-slate-800;
   }
 
@@ -511,8 +861,15 @@
            hover:border-medical-400 hover:bg-medical-50/60 dark:hover:bg-medical-950/40 hover:shadow;
   }
 
+  /* The real radio is sr-only inside the label, so the label has to carry the
+     focus ring - otherwise tabbing through the time grid moves an invisible
+     cursor and a keyboard user cannot tell which slot they are on. */
+  .slot:has(:focus-visible) {
+    @apply ring-2 ring-medical-500 ring-offset-2 dark:ring-offset-slate-900;
+  }
+
   .slot-selected {
-    @apply border-medical-600 bg-medical-600 text-white shadow-[0_4px_14px_0_rgba(14,116,144,0.35)] 
+    @apply border-medical-600 bg-medical-600 text-white shadow-[0_4px_14px_0_rgb(var(--brand-500)/0.35)]
            hover:border-medical-600 hover:bg-medical-600 hover:text-white dark:bg-medical-600;
   }
 
@@ -711,17 +1068,69 @@
     display: none;
   }
 
-  /* Soft brand-tinted wash used behind hero-adjacent cards. Driven by
-     --brand-500 rather than the `from-medical-50 via-teal-50/30 to-white`
-     Tailwind arbitrary gradient it replaces, so it follows the configured
-     primary colour instead of a fixed shade. */
-  .hero-wash {
-    background-image: linear-gradient(
-      to bottom right,
-      rgb(var(--brand-50)),
-      rgb(var(--brand-500) / 0.08),
-      #fff
-    );
+  /* Faint clinical grid - the graph paper a trace is printed on, at an
+     opacity where it registers as texture rather than as a pattern
+     competing with the copy. Purely decorative: it never encodes anything,
+     and it is always applied to an aria-hidden layer. */
+  .clinical-grid {
+    background-image:
+      linear-gradient(to right, rgb(var(--brand-500) / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--brand-500) / 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+    /* Fades out toward the edges so the band has no visible seam. */
+    mask-image: radial-gradient(ellipse at center, #000 35%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 78%);
+  }
+
+  /* Hero backdrop: a brand glow off the top-right over a near-white brand
+     tint. Replaces a literal rgba(15,143,137,...) + #f7fffe/#eef8f7 pair that
+     stayed teal no matter what primary colour was configured. */
+  .hero-glow {
+    background-image:
+      radial-gradient(circle at 80% 20%, rgb(var(--brand-500) / 0.18), transparent 38%),
+      linear-gradient(135deg, rgb(var(--brand-50)), rgb(var(--brand-100) / 0.5));
+  }
+
+  /* Same glow tuned for the dark facilities band. */
+  .band-glow {
+    background-image: radial-gradient(circle at 50% 0%, rgb(var(--brand-500) / 0.25), transparent 55%);
+  }
+
+  /* --- Footer ------------------------------------------------------
+     Both the footer's background and its text colour come from the Brand &
+     Theme screen. "Footer background" was emitted as a variable but never
+     consumed - the footer hard-coded a near-black brand shade - so an
+     administrator who chose a light footer got a dark one, and the dark text
+     they had sensibly paired with it became invisible.
+
+     Everything inside therefore tints itself from currentColor instead of
+     assuming white-on-dark, which is what makes the pair work at either
+     polarity. */
+  .brand-footer {
+    background-color: rgb(var(--brand-footer-bg));
+    color: rgb(var(--brand-footer-text));
+  }
+
+  .brand-footer a {
+    color: inherit;
+  }
+
+  .brand-footer .footer-rule {
+    border-color: rgb(var(--brand-footer-text) / 0.15);
+  }
+
+  .brand-footer .footer-chip {
+    border-color: rgb(var(--brand-footer-text) / 0.22);
+  }
+
+  /* Column headings. Deliberately NOT .panel-title: that carries a dark-mode
+     colour, and this footer does not follow the page theme - its polarity is
+     whatever the administrator configured, so anything inside it has to tint
+     from currentColor instead. */
+  .brand-footer .footer-heading {
+    @apply font-bold uppercase;
+    font-size: var(--fs-sm);
+    letter-spacing: var(--tracking-wide);
   }
 
   /* --- Footer accents ----------------------------------------------
@@ -759,6 +1168,56 @@
     color: var(--preview-body, rgb(var(--brand-header-text)));
   }
 
+  /* --- Laboratory report sheet -------------------------------------
+     An A4 page rendered on screen and then printed as itself, rather
+     than a screen layout that print styles try to rescue. The width is
+     stated in millimetres because that is the unit the paper is cut in;
+     everything inside it can still use the ordinary type scale.
+
+     Deliberately NOT .card / .glass-panel: this is a document, so it has
+     an opaque white surface at both polarities. A clinical report that
+     rendered dark because the operator happened to have night mode on
+     would print as a black rectangle.
+     -------------------------------------------------------------- */
+  .a4-page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 15mm 16mm;
+    margin-inline: auto;
+    background: #ffffff;
+    color: theme('colors.slate.900');
+    box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.25);
+  }
+
+  :is(.dark *) .a4-page {
+    background: #ffffff;
+    color: theme('colors.slate.900');
+  }
+
+  /*
+     A result that has not been verified and released must never be
+     mistaken for one that has. The watermark is on the PAGE, not on a
+     banner above it, so it survives being printed, photographed or
+     photocopied - which is how a provisional sheet actually escapes.
+  */
+  .a4-provisional {
+    position: relative;
+  }
+
+  .a4-provisional::after {
+    content: 'PROVISIONAL - NOT RELEASED';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transform: rotate(-32deg);
+    font-size: 3.25rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: rgba(225, 29, 72, 0.12);
+    pointer-events: none;
+  }
+
   .prose-article {
     @apply prose prose-slate dark:prose-invert max-w-none
            prose-headings:font-extrabold prose-headings:tracking-tight prose-headings:text-slate-900 dark:prose-headings:text-slate-100
@@ -771,11 +1230,89 @@
 }
 
 /* ---------------------------------------------------------------------
+   Per-locale corrections
+
+   Deliberately unlayered. Rules outside @layer outrank everything inside
+   one, so these win over both the component classes above and any Tailwind
+   utility in the markup - which is the only way a correction like "never
+   letter-space this script" can actually hold.
+   --------------------------------------------------------------------- */
+
+/*
+   Ge'ez HAS NO LETTER CASE, so `text-transform: uppercase` is a no-op that
+   still applies the tracking which accompanies it - producing spaced-out
+   Amharic that reads as broken rather than as emphasis.
+
+   !important is deliberate: it makes "uppercase is a style, never a content
+   string" structurally true, so no component, utility or inline style can
+   reintroduce it on an Amharic page. Both the component classes and the
+   Tailwind utilities are listed, because this codebase applies the effect
+   both ways - `.eyebrow` in the stylesheet, `uppercase` in the markup.
+*/
+:lang(am) .uppercase,
+:lang(am) .eyebrow,
+:lang(am) .eyebrow-invert,
+:lang(am) .dt-label,
+:lang(am) .panel-title,
+:lang(am) .footer-heading,
+:lang(am) .doctor-card__badge,
+:lang(am) .package-badge,
+
+:lang(am) .stat-label,
+:lang(am) .table thead th {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+:lang(am) .tracking-wide,
+:lang(am) .tracking-wider,
+:lang(am) .tracking-widest {
+  letter-spacing: 0 !important;
+}
+
+/* SVG text does not inherit these the way HTML does in every engine, so
+   chart and diagram labels need saying again explicitly. */
+:lang(am) svg text {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Ge'ez has no italic form. A synthesised oblique looks like a rendering
+   fault, so weight carries the emphasis instead. */
+:lang(am) em,
+:lang(am) i {
+  font-style: normal;
+  font-weight: 600;
+}
+
+/*
+   Afaan Oromo builds long compounds - Indaastiriiwwan, keessummeessummaa -
+   and at display sizes a single unbreakable word will overflow its column on
+   a phone. Headings may break mid-word; prose is left alone, because
+   hyphenating body copy is not wanted.
+*/
+:lang(om) h1,
+:lang(om) h2,
+:lang(om) h3,
+:lang(om) .section-title,
+:lang(om) .page-title,
+:lang(om) .subsection-title {
+  hyphens: auto;
+  overflow-wrap: anywhere;
+}
+
+/* The apostrophe in Afaan Oromo (dhaabbata'aa, danda'u) is a glottal stop -
+   a letter, not punctuation - so it stays straight and is never curled into
+   a quotation mark. */
+:lang(om) {
+  quotes: '"' '"' "'" "'";
+}
+
+/* ---------------------------------------------------------------------
    Print - Print Media Clear Overrides
    --------------------------------------------------------------------- */
 @media print {
-  .no-print,
-  .bubble-bg {
+  .no-print {
     display: none !important;
   }
 
@@ -800,4 +1337,40 @@
     font-size: 0.75rem;
     color: #475569;
   }
+
+  /* The report sheet IS the page: no shadow, no centring margin, and
+     the paper's own margins come from @page below rather than from the
+     element, so the printer does not add its default margin on top of
+     this element's padding. */
+  .a4-page {
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* A URL appended to every link is useful on a printed web page and
+     wrong on a clinical report, where the only links are navigation the
+     reader cannot follow on paper. */
+  .a4-page a[href]::after {
+    content: none;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Colour matters here: a flag printed in grey is a flag nobody sees. */
+  .a4-page,
+  .a4-page * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* A4 with real margins, so the sheet prints the same from any browser. */
+@page {
+  size: A4 portrait;
+  margin: 12mm 14mm;
 }

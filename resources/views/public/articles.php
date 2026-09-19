@@ -53,7 +53,7 @@ $query = static function (array $overrides) use ($filters): string {
             </div>
 
             <?php if ($articles === []): ?>
-                <p class="mt-12 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+                <p class="empty-state mt-12">
                     <?= $view->t('articles.none') ?>
                 </p>
             <?php else: ?>
@@ -68,25 +68,25 @@ $query = static function (array $overrides) use ($filters): string {
                                          width="400" height="160">
                                 <?php endif; ?>
 
-                                <span class="text-xs font-extrabold uppercase tracking-wider text-medical-600">
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-medical-600 dark:text-medical-300">
                                     <?= $view->e($article->category) ?>
                                 </span>
-                                <h2 class="mt-2 text-lg font-extrabold leading-snug text-medical-900">
-                                    <a href="<?= $view->url('health/' . $article->slug) ?>" class="hover:text-medical-600">
+                                <h2 class="mt-2 text-lg font-extrabold leading-snug text-medical-900 dark:text-medical-100">
+                                    <a href="<?= $view->url('health/' . $article->slug) ?>" class="hover:text-medical-600 dark:hover:text-medical-300">
                                         <?= $view->e($article->heading($locale)) ?>
                                     </a>
                                 </h2>
-                                <p class="mt-3 text-sm leading-relaxed text-slate-600">
+                                <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                                     <?= $view->excerpt($article->summary($locale), 130) ?>
                                 </p>
                             </div>
 
                             <div class="mt-6 flex items-center justify-between text-xs">
-                                <span class="text-slate-400">
+                                <span class="text-slate-500 dark:text-slate-400">
                                     <?= $view->t('articles.read_time', ['minutes' => $article->estimatedReadMinutes($locale)]) ?>
                                 </span>
                                 <a href="<?= $view->url('health/' . $article->slug) ?>"
-                                   class="font-bold text-medical-700 hover:underline">
+                                   class="font-bold text-medical-700 hover:underline dark:text-medical-300">
                                     <?= $view->t('articles.read') ?> &rarr;
                                 </a>
                             </div>
@@ -106,27 +106,27 @@ $query = static function (array $overrides) use ($filters): string {
         <aside class="lg:sticky lg:top-24 lg:self-start">
             <?php if ($mostRead !== []): ?>
                 <div class="card-pad">
-                    <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-500">
+                    <h2 class="panel-title">
                         <?= $view->t('common.view_all') ?>
                     </h2>
                     <ul class="mt-4 grid gap-4">
                         <?php foreach ($mostRead as $item): ?>
                             <li>
                                 <a href="<?= $view->url('health/' . $item->slug) ?>"
-                                   class="text-sm font-semibold leading-snug text-medical-900 hover:text-medical-600">
+                                   class="text-sm font-semibold leading-snug text-medical-900 hover:text-medical-600 dark:text-medical-100 dark:hover:text-medical-300">
                                     <?= $view->e($item->heading($locale)) ?>
                                 </a>
-                                <span class="mt-1 block text-xs text-slate-400"><?= $view->e($item->category) ?></span>
+                                <span class="mt-1 block text-xs text-slate-500 dark:text-slate-400"><?= $view->e($item->category) ?></span>
                             </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
             <?php endif; ?>
 
-            <div class="card-pad mt-5 bg-medical-900 text-white">
-                <b class="block text-base font-bold"><?= $view->t('booking.title') ?></b>
-                <p class="mt-2 text-sm leading-relaxed text-white/70"><?= $view->t('booking.lead') ?></p>
-                <a href="<?= $view->url('book') ?>" class="btn-primary btn-sm mt-4 w-full bg-white text-medical-800 hover:bg-slate-100">
+            <div class="cta-panel-dark mt-5">
+                <h2 class="text-base font-bold"><?= $view->t('booking.title') ?></h2>
+                <p class="mt-2 text-sm leading-relaxed text-white/75"><?= $view->t('booking.lead') ?></p>
+                <a href="<?= $view->url('book') ?>" class="btn-invert btn-sm mt-4 w-full">
                     <?= $view->t('nav.book') ?>
                 </a>
             </div>

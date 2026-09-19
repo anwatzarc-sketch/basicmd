@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 $phone = $settings->string('phone_emergency', $settings->string('phone_primary', ''));
 ?>
-<section class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
-    <h1 class="text-3xl font-extrabold tracking-tight text-medical-900 sm:text-4xl"><?= $view->t('footer.terms') ?></h1>
-    <p class="mt-3 text-sm text-slate-500">Last updated: <?= date('d F Y') ?></p>
+<section class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <h1 class="page-title"><?= $view->t('footer.terms') ?></h1>
+    <p class="mt-3 text-sm text-slate-600 dark:text-slate-400">Last updated: <?= date('d F Y') ?></p>
 
     <div class="prose-article mt-8">
         <h2>This website is not for emergencies</h2>
@@ -33,5 +33,10 @@ $phone = $settings->string('phone_emergency', $settings->string('phone_primary',
 
         <h2>Accuracy of the information you give us</h2>
         <p>Please give accurate contact details. We use your phone number and email address to confirm and remind you about appointments, and we cannot reach you if they are wrong.</p>
+    </div>
+
+    <div class="mt-10 flex flex-wrap items-center gap-3 border-t border-slate-200 pt-8 dark:border-slate-800">
+        <a href="<?= $view->url('contact') ?>" class="btn-secondary"><?= $view->t('nav.contact') ?></a>
+        <a href="<?= $view->url('privacy') ?>" class="btn-ghost"><?= $view->t('footer.privacy') ?></a>
     </div>
 </section>

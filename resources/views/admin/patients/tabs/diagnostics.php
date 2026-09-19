@@ -13,7 +13,8 @@
  * @var \Aster\Domain\Entity\User $user
  * @var \Aster\Domain\Entity\Patient $patient
  * @var list<\Aster\Domain\Entity\DiagnosticOrder> $orders
- * @var array<int, string> $orderResults id => decrypted plaintext (COMPLETED orders only)
+ * @var array<int, string> $orderResults id => decrypted plaintext (Imaging/PACS results, which are free text)
+ * @var array<int, \Aster\Domain\DTO\LabReport|null> $labReports id => decoded structured result (Lab orders only)
  * @var list<\Aster\Domain\Entity\Encounter> $openEncounters
  * @var list<\Aster\Domain\Enum\DiagnosticCategory> $categories
  */
@@ -44,10 +45,51 @@ $adminPath = '/' . $view->config->adminPath;
                             <span class="badge"><?= $view->e($order->status->label()) ?></span>
                         </div>
                         <p class="mt-1 text-xs text-slate-400">
+                            <?php if ($order->accessionNumber !== null): ?>
+                                <span class="font-mono"><?= $view->e($order->accessionNumber->value) ?></span> &middot;
+                            <?php endif; ?>
                             <?= $view->e($order->testCode) ?> &middot; ICD <?= $view->e($order->icdCode) ?>
                             &middot; ordered by <?= $view->e($order->physicianName ?? 'Unknown') ?>
                             &middot; <?= $view->e($order->createdAt->format('Y-m-d H:i')) ?>
                         </p>
+
+                        <?php if ($order->isLab()): ?>
+                            <?php
+                            /*
+                             * A Lab order is worked in the Laboratory module, not
+                             * inline here: that is where the structured grid, the
+                             * reference intervals and the printable sheet live.
+                             * This panel stays the patient-centred READ of every
+                             * diagnostic order, and hands off rather than growing
+                             * a second, weaker result editor beside the real one.
+                             */
+                            $labReport = $labReports[$order->id] ?? null;
+                            ?>
+                            <?php if ($labReport !== null && $labReport->isStructured()): ?>
+                                <p class="mt-3 text-sm text-slate-700">
+                                    <?= (int) count($labReport->reportedLines()) ?> parameter<?= count($labReport->reportedLines()) === 1 ? '' : 's' ?> reported<?php
+                                    if ($labReport->abnormalCount() > 0): ?>,
+                                        <b class="text-rose-700"><?= (int) $labReport->abnormalCount() ?> outside reference</b><?php
+                                    endif; ?>.
+                                </p>
+                                <?php if ($labReport->impression !== ''): ?>
+                                    <p class="mt-2 whitespace-pre-line rounded-lg bg-slate-50 p-3 text-sm text-slate-700"><?= $view->e($labReport->impression) ?></p>
+                                <?php endif; ?>
+                            <?php elseif (isset($orderResults[$order->id])): ?>
+                                <p class="mt-3 whitespace-pre-line rounded-lg bg-slate-50 p-3 text-sm text-slate-700"><?= $view->e($orderResults[$order->id]) ?></p>
+                            <?php endif; ?>
+
+                            <div class="mt-3 flex flex-wrap items-center gap-2">
+                                <?php if (!$order->status->isTerminal() && PatientDetailAccess::canRecordResult($user, $order->category)): ?>
+                                    <a href="<?= $view->e($adminPath . '/lab/orders/' . $order->id . '/results') ?>" class="btn-secondary btn-sm">
+                                        <?= $order->hasResults() ? 'Edit results' : 'Enter results' ?>
+                                    </a>
+                                <?php endif; ?>
+                                <?php if ($order->hasResults()): ?>
+                                    <a href="<?= $view->e($adminPath . '/lab/orders/' . $order->id . '/report') ?>" class="btn-ghost btn-sm">Report sheet</a>
+                                <?php endif; ?>
+                            </div>
+                        <?php else: ?>
 
                         <?php if (isset($orderResults[$order->id])): ?>
                             <p class="mt-3 whitespace-pre-line rounded-lg bg-slate-50 p-3 text-sm text-slate-700"><?= $view->e($orderResults[$order->id]) ?></p>
@@ -70,6 +112,8 @@ $adminPath = '/' . $view->config->adminPath;
                                 </form>
                             </details>
                         <?php endif; ?>
+
+                        <?php endif; /* Lab vs Imaging/PACS */ ?>
                     </li>
                 <?php endforeach; ?>
             </ul>

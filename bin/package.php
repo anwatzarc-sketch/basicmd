@@ -67,9 +67,6 @@ $excludePatterns = [
     '#/node_modules(/|$)#',
     '#/\.DS_Store$#',
     '#/Thumbs\.db$#',
-    // Runtime config an administrator has saved on the live server - a
-    // redeploy must never clobber it, and a fresh bundle must never ship it.
-    '#/public/CompanyBrand\.json$#',
 ];
 
 // ---------------------------------------------------------------------

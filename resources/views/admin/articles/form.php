@@ -81,6 +81,32 @@ $val = static fn (string $key, mixed $current = ''): string => (string) ($old[$k
                 </span>
             </div>
         </div>
+
+        <div class="card-pad grid gap-5">
+            <h2 class="text-base font-extrabold text-medical-900">Afaan Oromoo translation</h2>
+
+            <div class="field">
+                <label class="label" for="title_om">Title (Afaan Oromoo)</label>
+                <input class="input text-lg font-bold" type="text" id="title_om" name="title_om" lang="om-ET"
+                       value="<?= $view->e($val('title_om', $article?->titleOm)) ?>">
+            </div>
+
+            <div class="field">
+                <label class="label" for="excerpt_om">Excerpt (Afaan Oromoo)</label>
+                <textarea class="textarea" id="excerpt_om" name="excerpt_om" rows="2" lang="om-ET"
+                          maxlength="500"><?= $view->e($val('excerpt_om', $article?->excerptOm)) ?></textarea>
+            </div>
+
+            <div class="field">
+                <label class="label" for="content_om">Body (Afaan Oromoo)</label>
+                <textarea class="textarea text-sm" id="content_om" name="content_om" rows="18"
+                          lang="om-ET"><?= $view->e($val('content_om', $article?->contentOm)) ?></textarea>
+                <span class="hint">
+                    Leave blank if not translated yet - the article falls back to English and is
+                    excluded from the Afaan Oromoo hreflang alternate.
+                </span>
+            </div>
+        </div>
     </div>
 
     <!-- ---------------- Sidebar ---------------- -->

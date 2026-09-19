@@ -16,9 +16,25 @@
 declare(strict_types=1);
 
 use Aster\Domain\Enum\ArticleStatus;
+use Aster\Domain\Enum\Locale;
 
 $t         = $view->translator;
 $adminPath = '/' . $view->config->adminPath;
+
+// Which languages this article is actually readable in. English is the base
+// column and therefore always present; the rest are listed only when both a
+// headline and a body have been translated.
+$languages = static function (\Aster\Domain\Entity\Article $article): string {
+    $tags = ['EN'];
+
+    foreach ([Locale::AM, Locale::OM] as $locale) {
+        if ($article->hasTranslation($locale)) {
+            $tags[] = strtoupper($locale->value);
+        }
+    }
+
+    return implode(' + ', $tags);
+};
 
 $query = static function (array $overrides) use ($filters): string {
     $params = array_filter(array_merge($filters, $overrides), static fn ($v): bool => $v !== null && $v !== '');
@@ -61,8 +77,8 @@ $query = static function (array $overrides) use ($filters): string {
                             <td>
                                 <b class="block text-slate-900"><?= $view->e($article->title) ?></b>
                                 <span class="text-xs text-slate-500">
-                                    <?php if ($article->hasTranslation()): ?>
-                                        <span class="text-emerald-600">EN + AM</span>
+                                    <?php if ($article->hasTranslation(Locale::AM) || $article->hasTranslation(Locale::OM)): ?>
+                                        <span class="text-emerald-600"><?= $view->e($languages($article)) ?></span>
                                     <?php else: ?>
                                         <span class="text-amber-600">English only</span>
                                     <?php endif; ?>

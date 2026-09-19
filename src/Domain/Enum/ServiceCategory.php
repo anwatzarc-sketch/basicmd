@@ -33,15 +33,19 @@ enum ServiceCategory: string
         return 'service_category.' . $this->value;
     }
 
+    /**
+     * Categories carry the brand tint rather than one hue each.
+     *
+     * A six-colour key only helps a reader who has learned the mapping, and
+     * nothing on the site publishes one - the chip already spells the category
+     * out in words. Emergency is the single exception: a warning colour there
+     * is doing safety work, not decoration.
+     */
     public function chipClass(): string
     {
         return match ($this) {
-            self::CLINICAL    => 'bg-medical-50 text-medical-700 border-medical-100',
-            self::DIAGNOSTICS => 'bg-sky-50 text-sky-700 border-sky-100',
-            self::IMAGING     => 'bg-violet-50 text-violet-700 border-violet-100',
-            self::PHARMACY    => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-            self::WELLNESS    => 'bg-amber-50 text-amber-700 border-amber-100',
-            self::EMERGENCY   => 'bg-rose-50 text-rose-700 border-rose-100',
+            self::EMERGENCY => 'bg-rose-50 text-rose-700 border-rose-100',
+            default         => 'bg-medical-50 text-medical-700 border-medical-100',
         };
     }
 

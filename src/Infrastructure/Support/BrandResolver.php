@@ -9,16 +9,21 @@ use Aster\Infrastructure\Persistence\SettingsRepository;
 use Throwable;
 
 /**
- * Reads public/CompanyBrand.json and resolves it into a CompanyBrand value
+ * Reads storage/CompanyBrand.json and resolves it into a CompanyBrand value
  * object, layering valid overrides on top of today's shipped defaults.
  *
- * The file is optional, admin-editable, and world-readable over HTTP (it
- * carries no secret data). Because it can be hand-edited or corrupted by a
- * failed write, this class treats ANY problem - a missing file, invalid
- * JSON, a wrong type, an invalid hex, an out-of-range transparency, an image
- * path that escapes the media root, or an unrecognised key - as "ignore that
- * one property, fall back to its default". It never throws: a broken brand
- * file must never be able to take the whole site down.
+ * Lives under storage/, not public/: a redeploy replaces public/ wholesale
+ * (see README's "Deploying to Plesk" notes) but never touches storage/, so
+ * an admin-saved brand must live there or it gets silently wiped on every
+ * release. It is not web-reachable from storage/, which is also stricter
+ * than the old public/ location (it carried no secret data either way).
+ *
+ * Because it can be hand-edited or corrupted by a failed write, this class
+ * treats ANY problem - a missing file, invalid JSON, a wrong type, an
+ * invalid hex, an out-of-range transparency, an image path that escapes the
+ * media root, or an unrecognised key - as "ignore that one property, fall
+ * back to its default". It never throws: a broken brand file must never be
+ * able to take the whole site down.
  */
 final class BrandResolver
 {
@@ -76,6 +81,9 @@ final class BrandResolver
             $primaryRamp = BrandPalette::buildRamp($primaryHex);
         }
 
+        // Resolved first: the footer accent is checked for contrast against it.
+        $footerBackground = $this->hexOrDefault($theme['footerbackground'] ?? null, self::DEFAULT_FOOTER_BG);
+
         return new CompanyBrand(
             businessName:      $this->validString($identity['businessName'] ?? null)
                 ?? $this->settings->string('clinic_name', $this->config->appName),
@@ -90,9 +98,38 @@ final class BrandResolver
             transparency:      $this->validTransparency($theme['transparency'] ?? null) ?? 1.0,
             headerText:        $this->hexOrDefault($theme['headertext'] ?? null, self::DEFAULT_TEXT_MAIN),
             bodyText:          $this->hexOrDefault($theme['bodytext'] ?? null, self::DEFAULT_TEXT_MAIN),
-            footerBackground:  $this->hexOrDefault($theme['footerbackground'] ?? null, self::DEFAULT_FOOTER_BG),
-            footerText:        $this->hexOrDefault($theme['footertext'] ?? null, self::DEFAULT_FOOTER_TEXT),
+            footerBackground:  $footerBackground,
+            footerText:        $this->legibleFooterText($theme['footertext'] ?? null, $footerBackground),
         );
+    }
+
+    /**
+     * The footer accent, but never one that disappears into the footer.
+     *
+     * The colour picker will happily accept near-black footer text on a
+     * near-black footer, and it did: the live brand file set #161d1c against
+     * a #032423 footer, which rendered the "Explore" and "Contact" headings
+     * and the emergency phone number as invisible. Anything below WCAG AA for
+     * body text falls back to the shipped accent rather than being drawn.
+     *
+     * This is the same stance the rest of this class takes - an administrator
+     * must not be able to type the public site into being unreadable.
+     */
+    private function legibleFooterText(mixed $value, string $footerBackground): string
+    {
+        $candidate = $this->hexOrDefault($value, self::DEFAULT_FOOTER_TEXT);
+
+        if (BrandPalette::contrastRatio($candidate, $footerBackground) >= 4.5) {
+            return $candidate;
+        }
+
+        $fallback = BrandPalette::hexToTriple(self::DEFAULT_FOOTER_TEXT);
+
+        // If even the shipped accent fails - a footer background close to the
+        // default teal - fall back to white, which always clears a dark bar.
+        return BrandPalette::contrastRatio($fallback, $footerBackground) >= 4.5
+            ? $fallback
+            : '255 255 255';
     }
 
     /** @return array<string, mixed> */
@@ -122,7 +159,7 @@ final class BrandResolver
 
     public function path(): string
     {
-        return $this->config->path('public/CompanyBrand.json');
+        return $this->config->path('storage/CompanyBrand.json');
     }
 
     private function validString(mixed $value): ?string

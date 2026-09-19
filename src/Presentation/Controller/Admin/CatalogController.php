@@ -92,8 +92,10 @@ final class CatalogController extends Controller
             'icon'           => mb_substr($request->string('icon', ''), 0, 16),
             'ser_name'       => $name,
             'name_am'        => $request->input('name_am'),
+            'name_om'        => $request->input('name_om'),
             'description'    => $request->input('description'),
             'description_am' => $request->input('description_am'),
+            'description_om' => $request->input('description_om'),
             'category'       => (ServiceCategory::tryFrom($request->string('category')) ?? ServiceCategory::CLINICAL)->value,
             'price'          => number_format(max(0, $request->float('price')), 2, '.', ''),
             'duration_min'   => max(5, min(480, $request->int('duration_min', 30))),
@@ -171,10 +173,12 @@ final class CatalogController extends Controller
         // easier for staff than a repeater widget.
         $itemsEn = array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $request->string('items_en')) ?: []));
         $itemsAm = array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $request->string('items_am')) ?: []));
+        $itemsOm = array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $request->string('items_om')) ?: []));
 
         $data = [
             'title'          => $title,
             'title_am'       => $request->input('title_am'),
+            'title_om'       => $request->input('title_om'),
             'price_etb'      => number_format(max(0, $request->float('price_etb')), 2, '.', ''),
             // Percentage in the form, fraction in the column.
             'deposit_rate'   => number_format(
@@ -185,9 +189,11 @@ final class CatalogController extends Controller
             ),
             'description'    => $request->input('description'),
             'description_am' => $request->input('description_am'),
+            'description_om' => $request->input('description_om'),
             'items_json'     => PackageRepository::encodeItems(
                 array_values($itemsEn),
                 array_values($itemsAm),
+                array_values($itemsOm),
             ),
             'badge'          => $request->input('badge'),
             'is_featured'    => $request->bool('is_featured') ? 1 : 0,
@@ -266,10 +272,12 @@ final class CatalogController extends Controller
         $data = [
             'fac_name'       => $name,
             'name_am'        => $request->input('name_am'),
+            'name_om'        => $request->input('name_om'),
             'type'           => $request->string('type', 'Clinical Room'),
             'room_label'     => $request->input('room_label'),
             'description'    => $request->input('description'),
             'description_am' => $request->input('description_am'),
+            'description_om' => $request->input('description_om'),
             'status'         => (FacilityStatus::tryFrom($request->string('status')) ?? FacilityStatus::OPERATIONAL)->value,
             'notes'          => $request->input('notes'),
             'is_public'      => $request->bool('is_public') ? 1 : 0,

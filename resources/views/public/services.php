@@ -50,7 +50,7 @@ $t = $view->translator;
     </div>
 
     <?php if ($services === []): ?>
-        <p class="mt-12 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+        <p class="empty-state mt-12">
             <?= $view->t('services.none') ?>
         </p>
     <?php else: ?>
@@ -59,12 +59,12 @@ $t = $view->translator;
                 <article class="service-card">
                     <div>
                         <div class="service-icon" aria-hidden="true"><?= $view->e($service->icon) ?></div>
-                        <h2 class="mt-4 text-xl font-extrabold text-medical-900">
-                            <a href="<?= $view->url('services/' . $service->slug) ?>" class="hover:text-medical-600">
+                        <h2 class="subsection-title mt-4">
+                            <a href="<?= $view->url('services/' . $service->slug) ?>" class="hover:text-medical-600 dark:hover:text-medical-300">
                                 <?= $view->e($service->title($locale)) ?>
                             </a>
                         </h2>
-                        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+                        <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                             <?= $view->excerpt($service->summary($locale), 130) ?>
                         </p>
                     </div>
@@ -73,7 +73,7 @@ $t = $view->translator;
                             <?= $view->t($service->category->translationKey()) ?>
                         </span>
                         <?php if ($service->hasPrice()): ?>
-                            <span class="text-sm font-bold text-medical-700"><?= $view->e($t->money($service->price)) ?></span>
+                            <span class="text-sm font-bold text-medical-700 dark:text-medical-300"><?= $view->e($t->money($service->price)) ?></span>
                         <?php endif; ?>
                     </div>
                     <a href="<?= $view->url('book?service=' . $service->id) ?>" class="btn-primary btn-sm mt-4 w-full">

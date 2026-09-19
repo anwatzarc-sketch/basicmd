@@ -71,11 +71,13 @@ declare(strict_types=1);
                                 'channel'         => $method->channel->value,
                                 'provider'        => $method->provider,
                                 'provider_am'     => $method->providerAm ?? '',
+                                'provider_om'     => $method->providerOm ?? '',
                                 'account_name'    => $method->accountName ?? '',
                                 'account_number'  => $method->accountNumber ?? '',
                                 'branch'          => $method->branch ?? '',
                                 'instructions'    => $method->instructions ?? '',
                                 'instructions_am' => $method->instructionsAm ?? '',
+                                'instructions_om' => $method->instructionsOm ?? '',
                                 'sort_order'      => $method->sortOrder,
                                 'requires_proof'  => $method->requiresProof,
                                 'active'          => $method->isActive,
@@ -129,6 +131,11 @@ declare(strict_types=1);
         </div>
 
         <div class="field">
+            <label class="label" for="provider_om">Provider (Afaan Oromoo)</label>
+            <input class="input" type="text" id="provider_om" name="provider_om" lang="om-ET">
+        </div>
+
+        <div class="field">
             <label class="label" for="account_name">Account name</label>
             <input class="input" type="text" id="account_name" name="account_name">
         </div>
@@ -151,6 +158,11 @@ declare(strict_types=1);
         <div class="field">
             <label class="label" for="instructions_am">Instructions (Amharic)</label>
             <textarea class="textarea font-ethiopic" id="instructions_am" name="instructions_am" rows="3" lang="am-ET"></textarea>
+        </div>
+
+        <div class="field">
+            <label class="label" for="instructions_om">Instructions (Afaan Oromoo)</label>
+            <textarea class="textarea" id="instructions_om" name="instructions_om" rows="3" lang="om-ET"></textarea>
         </div>
 
         <div class="field">

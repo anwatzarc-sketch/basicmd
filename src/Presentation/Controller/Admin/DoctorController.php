@@ -81,12 +81,15 @@ final class DoctorController extends Controller
         $data = [
             'full_name'        => $name,
             'full_name_am'     => $request->input('full_name_am'),
+            'full_name_om'     => $request->input('full_name_om'),
             'specialty'        => $request->string('specialty'),
             'specialty_am'     => $request->input('specialty_am'),
+            'specialty_om'     => $request->input('specialty_om'),
             'experience_years' => max(0, min(70, $request->int('experience_years'))),
             'credentials'      => $request->input('credentials'),
             'bio'              => $request->input('bio'),
             'bio_am'           => $request->input('bio_am'),
+            'bio_om'           => $request->input('bio_om'),
             'phone'            => $request->input('phone'),
             'initials'         => mb_strtoupper(mb_substr($request->string('initials'), 0, 4)),
             // Clamped: a capacity of zero silently removes the doctor from

@@ -9,13 +9,12 @@
 
 declare(strict_types=1);
 
-$address = $view->isAmharic()
-    ? ($settings->string('address_am', '') ?: $settings->string('address', ''))
-    : $settings->string('address', '');
+$address = $settings->localized('address', $locale);
+$hours   = $settings->localized('operating_hours', $locale);
 
-$hours = $view->isAmharic()
-    ? ($settings->string('operating_hours_am', '') ?: $settings->string('operating_hours', ''))
-    : $settings->string('operating_hours', '');
+// Hoisted out of the contact <dl> below so the emergency line can be given its
+// own high-contrast block: it is the one number a visitor in a hurry needs.
+$emergency = $settings->string('phone_emergency', '');
 ?>
 <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
     <div class="grid gap-10 lg:grid-cols-2">
@@ -25,20 +24,34 @@ $hours = $view->isAmharic()
             <h1 class="section-title"><?= $view->t('contact.title') ?></h1>
             <p class="section-lead"><?= $view->t('contact.lead') ?></p>
 
+            <?php if ($emergency !== ''): ?>
+                <?php /* Amber is a semantic urgency colour here, not a brand tint,
+                          so it is deliberately left off the medical-* scale. */ ?>
+                <div class="alert-warning mt-8">
+                    <svg class="mt-0.5 h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                    <div class="flex-1">
+                        <h2 class="text-xs font-bold uppercase tracking-wider opacity-80"><?= $view->t('hero.stat_emergency') ?></h2>
+                        <a class="mt-1 block text-2xl font-extrabold hover:underline"
+                           href="<?= $view->e('tel:' . $emergency) ?>"><?= $view->e($emergency) ?></a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <dl class="mt-8 grid gap-5">
                 <?php foreach ([
                     ['locations.address', $address, null],
                     ['locations.phone',   $settings->string('phone_primary', ''), 'tel'],
-                    ['hero.stat_emergency', $settings->string('phone_emergency', ''), 'tel'],
                     ['locations.email',   $settings->string('email_public', ''), 'mailto'],
                     ['locations.hours',   $hours, null],
                 ] as [$labelKey, $value, $scheme]): ?>
                     <?php if ($value === '') { continue; } ?>
                     <div>
-                        <dt class="text-xs font-bold uppercase tracking-wider text-slate-500"><?= $view->t($labelKey) ?></dt>
-                        <dd class="mt-1 font-semibold text-slate-900">
+                        <dt class="dt-label"><?= $view->t($labelKey) ?></dt>
+                        <dd class="mt-1 font-semibold text-slate-900 dark:text-slate-100">
                             <?php if ($scheme !== null): ?>
-                                <a class="hover:text-medical-700" href="<?= $view->e($scheme . ':' . $value) ?>"><?= $view->e($value) ?></a>
+                                <a class="hover:text-medical-700 dark:hover:text-medical-300" href="<?= $view->e($scheme . ':' . $value) ?>"><?= $view->e($value) ?></a>
                             <?php else: ?>
                                 <?= $view->e($value) ?>
                             <?php endif; ?>

@@ -7,9 +7,10 @@ declare(strict_types=1);
  *
  *     php bin/check-translations.php
  *
- * Fails with a non-zero exit when the English and Amharic dictionaries
- * disagree, so a half-finished translation cannot ship blank labels to
- * patients. Suitable for CI or a pre-commit hook.
+ * Compares the English dictionary against every other lang/*.php file and
+ * fails with a non-zero exit when one of them disagrees, so a half-finished
+ * translation cannot ship blank labels to patients. Suitable for CI or a
+ * pre-commit hook.
  */
 
 if (PHP_SAPI !== 'cli') {
@@ -35,66 +36,81 @@ $flatten = static function (array $items, string $prefix = '') use (&$flatten): 
 };
 
 $en = $flatten((array) require $basePath . '/lang/en.php');
-$am = $flatten((array) require $basePath . '/lang/am.php');
 
-$problems = 0;
+$files = glob($basePath . '/lang/*.php') ?: [];
+sort($files);
 
-printf("English keys: %d\nAmharic keys: %d\n\n", count($en), count($am));
-
-foreach (array_keys(array_diff_key($en, $am)) as $key) {
-    printf("MISSING in am.php : %s\n", $key);
-    $problems++;
-}
-
-foreach (array_keys(array_diff_key($am, $en)) as $key) {
-    printf("ORPHAN  in am.php : %s\n", $key);
-    $problems++;
-}
-
-foreach ($am as $key => $value) {
-    if (trim($value) === '') {
-        printf("EMPTY   in am.php : %s\n", $key);
-        $problems++;
-    }
-}
-
-// A :placeholder present in one language but not the other means the
-// substitution silently vanishes for those users.
-foreach ($en as $key => $value) {
-    if (!isset($am[$key])) {
-        continue;
-    }
-
-    preg_match_all('/:([a-z_]+)/', $value, $englishTokens);
-    preg_match_all('/:([a-z_]+)/', $am[$key], $amharicTokens);
-
-    sort($englishTokens[1]);
-    sort($amharicTokens[1]);
-
-    if ($englishTokens[1] !== $amharicTokens[1]) {
-        printf(
-            "PLACEHOLDER mismatch: %s  en[%s]  am[%s]\n",
-            $key,
-            implode(',', $englishTokens[1]),
-            implode(',', $amharicTokens[1]),
-        );
-        $problems++;
-    }
-}
-
-// Untranslated Amharic: a value identical to English that contains Latin
-// letters is almost always a copy-paste placeholder rather than a real
-// translation. Numeric and symbol-only strings are legitimately identical.
+$problems   = 0;
 $suspicious = 0;
 
-foreach ($am as $key => $value) {
-    if (!isset($en[$key]) || $value !== $en[$key]) {
+printf("English keys: %d\n", count($en));
+
+foreach ($files as $file) {
+    $locale = basename($file, '.php');
+
+    if ($locale === 'en') {
         continue;
     }
 
-    if (preg_match('/[A-Za-z]{4,}/', $value) === 1) {
-        printf("UNTRANSLATED?     : %s = %s\n", $key, $value);
-        $suspicious++;
+    $translated = $flatten((array) require $file);
+
+    printf("\n%s keys: %d\n", $locale, count($translated));
+
+    foreach (array_keys(array_diff_key($en, $translated)) as $key) {
+        printf("MISSING in %s.php : %s\n", $locale, $key);
+        $problems++;
+    }
+
+    foreach (array_keys(array_diff_key($translated, $en)) as $key) {
+        printf("ORPHAN  in %s.php : %s\n", $locale, $key);
+        $problems++;
+    }
+
+    foreach ($translated as $key => $value) {
+        if (trim($value) === '') {
+            printf("EMPTY   in %s.php : %s\n", $locale, $key);
+            $problems++;
+        }
+    }
+
+    // A :placeholder present in one language but not the other means the
+    // substitution silently vanishes for those users.
+    foreach ($en as $key => $value) {
+        if (!isset($translated[$key])) {
+            continue;
+        }
+
+        preg_match_all('/:([a-z_]+)/', $value, $englishTokens);
+        preg_match_all('/:([a-z_]+)/', $translated[$key], $localeTokens);
+
+        sort($englishTokens[1]);
+        sort($localeTokens[1]);
+
+        if ($englishTokens[1] !== $localeTokens[1]) {
+            printf(
+                "PLACEHOLDER mismatch: %s  en[%s]  %s[%s]\n",
+                $key,
+                implode(',', $englishTokens[1]),
+                $locale,
+                implode(',', $localeTokens[1]),
+            );
+            $problems++;
+        }
+    }
+
+    // Untranslated: a value identical to English that contains Latin letters
+    // is often a copy-paste placeholder rather than a real translation.
+    // Numeric and symbol-only strings are legitimately identical, and so are
+    // the handful of technical placeholders (email/reference formats).
+    foreach ($translated as $key => $value) {
+        if (!isset($en[$key]) || $value !== $en[$key]) {
+            continue;
+        }
+
+        if (preg_match('/[A-Za-z]{4,}/', $value) === 1) {
+            printf("UNTRANSLATED?     : %s.%s = %s\n", $locale, $key, $value);
+            $suspicious++;
+        }
     }
 }
 
